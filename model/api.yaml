@@ -1,0 +1,22 @@
+
+openapi: 3.0.2
+apiVersion: argome.argo.cisco.com/v1
+kind: ApiDef
+metadata:
+  name: argome
+  scope: openapi
+spec:
+  title: argome
+  description: TBD
+  terms-url: https://example.org
+  contact:
+    name: TBD
+    url: https://example.org
+    email: argome@example.org
+  license:
+    name: Apache 2.0
+    url: https://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.1
+  servers:
+    - server: /
+      description: Insecure URL for argome

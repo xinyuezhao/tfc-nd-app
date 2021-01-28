@@ -1,0 +1,22 @@
+{
+    "rest": {
+        "address":"0.0.0.0:8089"
+    },
+    "logger":{},
+    "app":{
+        "directory": true
+    },
+    "transport":{
+        "type": "kafka", 
+        "endpoint": "node-manager-topic",
+        "kafka":{
+            "brokerAddrs":[
+                "kafka:9092"
+                ],
+            "certfile": "/security/client.cer.pem",
+	        "cacertfile": "/security/server.cer.pem",
+	        "keyfile": "/security/client.key.pem",
+	        "secure": true
+        }
+    }
+}

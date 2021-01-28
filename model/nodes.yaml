@@ -1,0 +1,64 @@
+apiVersion: argome.argo.cisco.com/v1
+kind: Resource
+metadata:
+  name: Node
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: inbandIP
+      type: string
+      pkey: true
+    - prop: cluster
+      type: string
+    - prop: oper
+      type: string
+    - prop: name
+      type: string
+  apimethods:
+    - apimethod: GET
+    - apimethod: PUT
+    - apimethod: POST
+    - apimethod: DELETE
+---
+apiVersion: argome.argo.cisco.com/v1
+kind: Resource
+metadata:
+  name: NodeOper
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: inbandIP
+      type: string
+      pkey: true
+    - prop: status
+      type: string
+    - prop: cluster
+      type: string
+  apimethods:
+    - apimethod: GET
+---
+kind: ResourceHandler
+metadata:
+  name: NodeHandler
+spec:
+  resource: argome.argo.cisco.com/v1.Node
+  operations:
+    - CREATE
+  retryStrategy:
+    delay: 500
+  concurrencyKey: node
+  function: golang.cisco.com/examples/argome/pkg/handlers.NodeHandler
+---
+kind: ResourceHandler
+metadata:
+  name: ClusterMemberHandler
+spec:
+  resource: argome.argo.cisco.com/v1.ClusterMember
+  operations:
+    - CREATE
+  retryStrategy:
+    delay: 500
+  concurrencyKey: clustermember
+  function: golang.cisco.com/examples/argome/pkg/handlers.NodeClusterMemberHandler

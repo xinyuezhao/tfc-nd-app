@@ -1,0 +1,174 @@
+apiVersion: case.cncf.io/v1
+kind: App
+metadata:
+  name: cisco-argome
+spec:
+  vendor: cisco
+  app: argome
+  uiEntrypoint: /appcenter/cisco/argome/ui
+  security:
+    infraAccess:
+      enabled: true
+      autoRefresh: true
+  deploymentFlavors:
+  - name: virtual
+    enableInjection: true
+    storage:
+    - storageID: logger
+      size: 2Gi
+      diskType: Any
+    cpu:
+      target:
+      - resourceLabel: cpu-argome
+        request: "1"
+        limit: "2"
+    memory:
+      target:
+      - resourceLabel: memory-argome
+        request: 2Gi
+        limit: 3Gi
+  defaultFlavors:
+  - caseDeploymentProfile: physical-standard
+    flavor: virtual
+  - caseDeploymentProfile: physical-small
+    flavor: virtual
+  - caseDeploymentProfile: default
+    flavor: virtual
+---
+apiVersion: case.cncf.io/v1
+kind: Certificate
+metadata:
+  name: cisco-argome
+  namespace: cisco-argome
+spec:
+  services:
+  - name: cisco-argome-certs
+    cn:
+      name: cisco-argome
+      addNamespace: false
+      addDomain: false
+    sans:
+      dnsnames:
+      - "*"
+    extensions:
+      basicConstraints:
+        ca: false
+      extendedKeyUsage:
+      - ServerAuth
+      - ClientAuth
+---
+apiVersion: case.cncf.io/v1
+kind: Kafka
+metadata:
+  name: kafka-topics
+  namespace: cisco-argome
+spec:
+ topics:
+ - name: node-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ - name: nodeoper-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ - name: node-manager-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ - name: cluster-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ - name: clusterd-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ acls:
+ - name: node-topic-wr
+   cn: cisco-argome
+   topic: node-topic
+   op: Write
+ - name: node-topic-rd
+   cn: cisco-argome
+   topic: node-topic
+   op: Read
+ - name: nodeoper-topic-wr
+   cn: cisco-argome
+   topic: nodeoper-topic
+   op: Write
+ - name: nodeoper-topic-rd
+   cn: cisco-argome
+   topic: nodeoper-topic
+   op: Read
+ - name: node-manager-topic-wr
+   cn: cisco-argome
+   topic: node-manager-topic
+   op: Write
+ - name: node-manager-topic-rd
+   cn: cisco-argome
+   topic: node-manager-topic
+   op: Read
+ - name: cluster-topic-wr
+   cn: cisco-argome
+   topic: cluster-topic
+   op: Write
+ - name: cluster-topic-rd
+   cn: cisco-argome
+   topic: cluster-topic
+   op: Read
+ - name: clusterd-topic-wr
+   cn: cisco-argome
+   topic: clusterd-topic
+   op: Write
+ - name: clusterd-topic-rd
+   cn: cisco-argome
+   topic: clusterd-topic
+   op: Read
+---
+kind: PersistentVolumeClaim
+apiVersion: v1
+metadata:
+  name: kms
+  namespace: cisco-argome
+spec:
+  accessModes:
+  - ReadOnlyMany
+  resources:
+    requests:
+      storage: 1Gi
+  storageClassName: k8-system-kms
+---
+apiVersion: case.cncf.io/v1
+kind: APIGW
+metadata:
+  name: cisco-argome
+  namespace: cisco-argome
+spec:
+  apiEndpoints:
+  - target: nodemgr
+    service:
+      scheme: http
+      name: nodemgr
+      port: 80
+    authType: open
+    listenPaths:
+    - path: "/sedgeapi/v1/cisco-argome/nodemgr"
+  - target: clustermgr
+    service:
+      scheme: http
+      name: clustermgr
+      port: 80
+    authType: open
+    listenPaths:
+    - path: "/sedgeapi/v1/cisco-argome/clustermgr"
