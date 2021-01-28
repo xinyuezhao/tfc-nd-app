@@ -54,7 +54,7 @@ argo:
 	cp -R ../argo .
 
 bundle:
-	curl -O http://atom-lab-6.insieme.local:8080/argo-bundle.tar.gz
+	wget http://aci-artifactory-001.insieme.local:8081/artifactory/argo-artifactory/argo-bundle.tar.gz
 	tar zxvf argo-bundle.tar.gz --directory pkg/
 	rm argo-bundle.tar.gz
 
