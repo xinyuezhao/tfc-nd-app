@@ -1,0 +1,66 @@
+apiVersion: argome.argo.cisco.com/v1
+kind: Resource
+metadata:
+  name: Cluster
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: name
+      type: string
+      pkey: true
+    - prop: nodes
+      type: map[string]string
+    - prop: description
+      type: string
+  apimethods:
+    - apimethod: GET
+    - apimethod: PUT
+    - apimethod: POST
+    - apimethod: DELETE
+---
+apiVersion: argome.argo.cisco.com/v1
+kind: Resource
+metadata:
+  name: ClusterMember
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: name
+      type: string
+      pkey: true
+    - prop: cluster
+      type: string
+  apimethods:
+    - apimethod: GET
+    - apimethod: POST
+    - apimethod: DELETE
+---
+kind: ResourceHandler
+metadata:
+  name: ClusterHandler
+spec:
+  resource: argome.argo.cisco.com/v1.Cluster
+  operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+  retryStrategy:
+    delay: 500
+  concurrencyKey: cluster
+  function: golang.cisco.com/examples/argome/pkg/handlers.ClusterHandler
+---
+kind: ResourceHandler
+metadata:
+  name: ClusterNodeHandler
+spec:
+  resource: argome.argo.cisco.com/v1.Node
+  operations:
+    - CREATE
+    - UPDATE
+    - DELETE
+  retryStrategy:
+    delay: 500
+  concurrencyKey: clusternode
+  function: golang.cisco.com/examples/argome/pkg/handlers.ClusterNodeHandler

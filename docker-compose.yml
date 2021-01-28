@@ -1,0 +1,62 @@
+version: "2.2"
+services:
+  argome-pilot:
+    container_name: argome-pilot
+    image: argome-pilot:v1
+    depends_on: 
+      - kafka
+      - zookeeper-bitnami
+      - mongo-svc 
+    environment:
+      - ARGO_CONTAINERIZED_RUN=true
+      - ARGO_KAFKA_ADDR=kafka:9092
+  argome-testsuite:
+    container_name: argome-testsuite 
+    image: argome-testsuite:v1
+    depends_on:
+      - node-manager
+      - cluster
+  node-manager:
+    container_name: node-manager 
+    image: node-manager:v1
+    depends_on: 
+      - argome-pilot 
+    environment:
+      - ARGO_CONTAINERIZED_RUN=true
+      - ARGO_KAFKA_ADDR=kafka:9092
+  cluster:
+    container_name: cluster 
+    image: cluster:v1
+    depends_on: 
+      - argome-pilot 
+    environment:
+      - ARGO_CONTAINERIZED_RUN=true
+      - ARGO_KAFKA_ADDR=kafka:9092
+  kafka:
+    image: 'bitnami/kafka:latest'
+    container_name: kafka
+    hostname: kafka.example.com
+    ports:
+      - '9092'
+    environment:
+      - ALLOW_PLAINTEXT_LISTENER=yes
+      - KAFKA_CFG_ZOOKEEPER_CONNECT=zookeeper-bitnami:2181
+      - KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP=INTERNAL:PLAINTEXT,CLIENT:SSL
+      - KAFKA_ZOOKEEPER_PROTOCOL=INTERNAL
+      - KAFKA_CFG_LISTENERS=INTERNAL://:9093,CLIENT://:9092
+      - KAFKA_CFG_ADVERTISED_LISTENERS=INTERNAL://:9093,CLIENT://:9092
+      - KAFKA_CLIENT_USER=user
+      - KAFKA_CLIENT_PASSWORD=password
+      - KAFKA_CERTIFICATE_PASSWORD=argostore
+      - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+    volumes:
+      - './pkg/bundle/kafka.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
+      - './pkg/bundle/kafka.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro'
+  zookeeper-bitnami:
+    image: 'bitnami/zookeeper:latest'
+    container_name: zookeeper-bitnami
+    environment:
+      - ALLOW_ANONYMOUS_LOGIN=yes
+  mongo-svc:
+    image: mongo
+    container_name: mongo-svc

@@ -1,0 +1,31 @@
+{
+  "appid": "Argome",
+  "category": [
+    "Tools and Utilities"
+  ],
+  "contact": {
+    "contact-email": "apic-se-dev@cisco.com",
+    "contact-phone": "1800-553-2447",
+    "contact-url": "https://mycase.cloudapps.cisco.com/case"
+  },
+  "iconfile": "icon.png",
+  "name": "Argome",
+  "platforms": {
+    "se": {
+      "hostversion": "1.1.2"
+    }
+  },
+  "shortdescr": "App showcasing argo framework capabilities",
+  "signature": 666666,
+  "vendor": "Cisco",
+  "vendordomain": "Cisco",
+  "version": "0.0.1",
+  "se-info": {
+    "images-location": "Image",
+    "specs-location": {
+      "on-install": "ClusterMgrConfig/k8s-specs/on-install",
+      "on-enable": "ClusterMgrConfig/k8s-specs/on-enable"
+    },
+    "icon-location": "icon.png"
+  }
+}
