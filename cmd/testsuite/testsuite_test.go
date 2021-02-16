@@ -53,9 +53,9 @@ func TestNodeManager(t *testing.T) {
 			node := `{
 				"inbandIP": "10.1.1.1",
 				"name": "node-123",
-				"cluster": "/v1/clusters/cluster-1" 
+				"cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1" 
 			}`
-			resp, err := http.Post("http://node-manager:8089/api/v1/nodes", "application/json", strings.NewReader(node))
+			resp, err := http.Post("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes", "application/json", strings.NewReader(node))
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
@@ -65,7 +65,7 @@ func TestNodeManager(t *testing.T) {
 			So(nodeObj.InbandIP(), ShouldEqual, "10.1.1.1")
 			resp.Body.Close()
 
-			resp, err = http.Get("http://node-manager:8089/api/v1/nodes")
+			resp, err = http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
 			So(err, ShouldBeNil)
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
@@ -77,7 +77,7 @@ func TestNodeManager(t *testing.T) {
 		})
 	Convey("There should be a NodeOper object created for the node object and the node object should be pointing to it",
 		t, func(c C) {
-			resp, err := http.Get("http://node-manager:8089/api/v1/nodeOpers")
+			resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodeOpers")
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
@@ -89,7 +89,7 @@ func TestNodeManager(t *testing.T) {
 			nodeOperObjName, err := utils.AnyMetaName(nodeOperObj)
 			So(err, ShouldBeNil)
 
-			resp, err = http.Get("http://node-manager:8089/api/v1/nodes")
+			resp, err = http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
 			So(err, ShouldBeNil)
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
@@ -98,7 +98,7 @@ func TestNodeManager(t *testing.T) {
 			So(ok, ShouldBeTrue)
 			So(nodeObj.Oper(), ShouldEqual, nodeOperObjName)
 
-			resp, err = http.Get("http://cluster:8089/api/v1/clustermembers")
+			resp, err = http.Get("http://cluster:8089/api/argome.argo.cisco.com/v1/clustermembers")
 			So(err, ShouldBeNil)
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
