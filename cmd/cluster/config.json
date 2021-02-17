@@ -58,6 +58,7 @@
         }
     },
     "db":{
+        "appname": "argome",
         "path": "mongodb.mongodb.svc:27017",
         "type":"mongodb",
         "secure": true
