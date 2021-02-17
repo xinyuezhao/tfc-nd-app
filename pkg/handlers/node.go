@@ -57,6 +57,16 @@ func NodeClusterMemberHandler(ctx context.Context, event mo.Event) error {
 		return nil
 	}
 	node := obj.(argomev1.Node)
+
+	obj, err = event.Store().ResolveByName(ctx, clusterMember.Cluster())
+	if err != nil {
+		// cluster object lookup failed
+		log.Error(err, "could not resolve the cluster object")
+		return nil
+	}
+	cluster := obj.(argomev1.Cluster)
+	log.Info("Found cluster object", "name", cluster.Name())
+
 	obj, err = event.Store().ResolveByName(ctx, node.Oper())
 	if err != nil {
 		// No node oper object found. Get out
