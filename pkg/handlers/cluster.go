@@ -54,6 +54,7 @@ func ClusterNodeHandler(ctx context.Context, event mo.Event) error {
 			return errx
 		}
 		if errx := event.Store().Commit(ctx); errx != nil {
+			core.LoggerFromContext(ctx).Error(errx, "Failed to commit clustermember")
 			return errx
 		}
 	}

@@ -10,12 +10,16 @@ services:
     environment:
       - ARGO_CONTAINERIZED_RUN=true
       - ARGO_KAFKA_ADDR=kafka:9092
+    volumes:
+      - './pkg/bundle/:/tmp/:rw'
   argome-testsuite:
     container_name: argome-testsuite 
     image: argome-testsuite:v1
     depends_on:
       - node-manager
       - cluster
+    volumes:
+      - './pkg/bundle/:/tmp/:rw'
   node-manager:
     container_name: node-manager 
     image: node-manager:v1
