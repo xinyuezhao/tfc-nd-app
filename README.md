@@ -42,7 +42,7 @@ $ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/
 A node can be posted as follows.
 
 ```
-$ echo '{"inbandIP": "192.168.1.102", "name": "node2", "cluster": "/v1/clusters/cluster-1"}' | http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/nodemgr/api/argome.argo.cisco.com/v1/nodes
+$ echo '{"inbandIP": "192.168.1.102", "name": "node2", "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"}' | http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/nodemgr/api/argome.argo.cisco.com/v1/nodes
 ```
 
 Once the node is created, clustermgr gets notified and it admits the node. Query the nodeopers resource to verify that. You should see the `status` field in the node resource to say `admitted`.

@@ -16,6 +16,7 @@ import (
 
 	"golang.cisco.com/examples/argome/gen/argomev1"
 	"golang.cisco.com/examples/argome/gen/schema"
+	"golang.cisco.com/examples/argome/pkg/handshake"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -23,6 +24,24 @@ import (
 var (
 	testCtx = context.Background()
 )
+
+func waitForCondition(fn func() bool, duration time.Duration) bool {
+	ts := time.NewTimer(duration)
+	backoff := func() {
+		time.Sleep(duration / 10)
+	}
+	for {
+		select {
+		case <-ts.C:
+			return false
+		default:
+			if fn() {
+				return true
+			}
+			backoff()
+		}
+	}
+}
 
 func readResponse(resp *http.Response) ([]mo.Object, error) {
 	serde := mo.JSONSerdeFromContext(testCtx)
@@ -77,6 +96,31 @@ func TestNodeManager(t *testing.T) {
 		})
 	Convey("There should be a NodeOper object created for the node object and the node object should be pointing to it",
 		t, func(c C) {
+			So(waitForCondition(func() bool {
+				resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodeOpers")
+				if err != nil {
+					return false
+				}
+				objs, err := readResponse(resp)
+				if err != nil {
+					return false
+				}
+				if len(objs) != 1 {
+					return false
+				}
+				nodeOperObj, ok := objs[0].(argomev1.NodeOper)
+				if !ok {
+					return false
+				}
+				if nodeOperObj.InbandIP() != "10.1.1.1" {
+					return false
+				}
+				if nodeOperObj.Status() != "admitted" {
+					return false
+				}
+				return true
+			}, time.Second*10), ShouldBeTrue)
+
 			resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodeOpers")
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
@@ -111,6 +155,25 @@ func TestNodeManager(t *testing.T) {
 
 func TestMain(m *testing.M) {
 	testCtx = mo.ContextWithJSONSerde(testCtx, schema.Schema())
-	time.Sleep(time.Second * 10)
-	os.Exit(m.Run())
+	if !waitForCondition(func() bool {
+		r1, node := http.Get("http://node-manager:8089/")
+		r2, cluster := http.Get("http://cluster:8089/")
+		if r1 != nil {
+			r1.Body.Close()
+		}
+		if r2 != nil {
+			r2.Body.Close()
+		}
+		if node == nil && cluster == nil && handshake.Get() {
+			return true
+		}
+		return false
+	}, 60*time.Second) {
+		fmt.Println("Services did not come up")
+		os.Exit(1)
+	}
+	fmt.Println("Starting testsuite: ", time.Now())
+	ret := m.Run()
+	handshake.Clear()
+	os.Exit(ret)
 }

@@ -49,6 +49,24 @@ func waitForKafka(ctx context.Context, cfg *kafka.Config) error {
 	return errors.New("unable to connect to " + cfg.BrokerAddrs[0])
 }
 
+func createAdmin(ctx context.Context, cfg *kafka.Config) (kafka.Admin, error) {
+	//nolint: gomnd
+	ts := time.NewTimer(time.Second * 60)
+	for {
+		select {
+		case <-ts.C:
+			return nil, errors.New("admin creation timed out")
+		default:
+			admin, err := kafka.NewAdmin(ctx, cfg)
+			if err == nil {
+				return admin, err
+			}
+			//nolint: gomnd
+			time.Sleep(time.Millisecond * 500)
+		}
+	}
+}
+
 // setupKafkaTopics creates topics in kafka
 func setupKafkaTopics(ctx context.Context, topics ...string) error {
 	var admin kafka.Admin
@@ -73,7 +91,7 @@ func setupKafkaTopics(ctx context.Context, topics ...string) error {
 		return err
 	}
 	fmt.Println("Waited successfully")
-	admin, err := kafka.NewAdmin(ctx, cfg)
+	admin, err := createAdmin(ctx, cfg)
 	if err != nil {
 		return err
 	}
@@ -92,9 +110,6 @@ func setupKafkaTopics(ctx context.Context, topics ...string) error {
 }
 
 func setupTopics(ctx context.Context, topics ...string) error {
+	topics = append(topics, fw.ArgoSpecifications)
 	return setupKafkaTopics(ctx, topics...)
-}
-
-func setupDirectoryTopic(ctx context.Context) error {
-	return setupKafkaTopics(ctx, fw.ArgoSpecifications)
 }

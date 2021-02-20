@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"context"
+	"os"
 
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
@@ -58,14 +59,17 @@ func NodeClusterMemberHandler(ctx context.Context, event mo.Event) error {
 	}
 	node := obj.(argomev1.Node)
 
-	obj, err = event.Store().ResolveByName(ctx, clusterMember.Cluster())
-	if err != nil {
-		// cluster object lookup failed
-		log.Error(err, "could not resolve the cluster object")
-		return nil
+	// Skip for docker runs until docker run migrrates to mongo db
+	if val := os.Getenv("ARGO_CONTAINERIZED_RUN"); val != "true" {
+		obj, err = event.Store().ResolveByName(ctx, clusterMember.Cluster())
+		if err != nil {
+			// cluster object lookup failed
+			log.Error(err, "could not resolve the cluster object")
+			return nil
+		}
+		cluster := obj.(argomev1.Cluster)
+		log.Info("Found cluster object", "name", cluster.Name())
 	}
-	cluster := obj.(argomev1.Cluster)
-	log.Info("Found cluster object", "name", cluster.Name())
 
 	obj, err = event.Store().ResolveByName(ctx, node.Oper())
 	if err != nil {
