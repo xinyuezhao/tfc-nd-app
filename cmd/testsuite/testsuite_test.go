@@ -12,7 +12,6 @@ import (
 	"time"
 
 	"golang.cisco.com/argo/pkg/mo"
-	"golang.cisco.com/argo/pkg/utils"
 
 	"golang.cisco.com/examples/argome/gen/argomev1"
 	"golang.cisco.com/examples/argome/gen/schema"
@@ -21,9 +20,7 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
-var (
-	testCtx = context.Background()
-)
+var testCtx = context.Background()
 
 func waitForCondition(fn func() bool, duration time.Duration) bool {
 	ts := time.NewTimer(duration)
@@ -69,11 +66,15 @@ func TestNodeManager(t *testing.T) {
 		})
 	Convey("Should be able to post a node object to node manager",
 		t, func(c C) {
-			node := `{
-				"inbandIP": "10.1.1.1",
-				"name": "node-123",
-				"cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1" 
-			}`
+			node := `
+{
+  "spec": {
+    "inbandIP": "10.1.1.1",
+    "name": "node-123",
+    "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"
+  }
+}
+`
 			resp, err := http.Post("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes", "application/json", strings.NewReader(node))
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
@@ -81,7 +82,7 @@ func TestNodeManager(t *testing.T) {
 			So(len(objs), ShouldEqual, 1)
 			nodeObj, ok := objs[0].(argomev1.Node)
 			So(ok, ShouldBeTrue)
-			So(nodeObj.InbandIP(), ShouldEqual, "10.1.1.1")
+			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
 			resp.Body.Close()
 
 			resp, err = http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
@@ -91,13 +92,14 @@ func TestNodeManager(t *testing.T) {
 			So(len(objs), ShouldEqual, 1)
 			nodeObj, ok = objs[0].(argomev1.Node)
 			So(ok, ShouldBeTrue)
-			So(nodeObj.InbandIP(), ShouldEqual, "10.1.1.1")
+			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
 			time.Sleep(time.Second * 2)
 		})
+
 	Convey("There should be a NodeOper object created for the node object and the node object should be pointing to it",
 		t, func(c C) {
 			So(waitForCondition(func() bool {
-				resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodeOpers")
+				resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
 				if err != nil {
 					return false
 				}
@@ -108,39 +110,28 @@ func TestNodeManager(t *testing.T) {
 				if len(objs) != 1 {
 					return false
 				}
-				nodeOperObj, ok := objs[0].(argomev1.NodeOper)
+				nodeOperObj, ok := objs[0].(argomev1.Node)
 				if !ok {
 					return false
 				}
-				if nodeOperObj.InbandIP() != "10.1.1.1" {
+				if nodeOperObj.Status().InbandIP() != "10.1.1.1" {
 					return false
 				}
-				if nodeOperObj.Status() != "admitted" {
+				if nodeOperObj.Status().Status() != "admitted" {
 					return false
 				}
 				return true
 			}, time.Second*10), ShouldBeTrue)
 
-			resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodeOpers")
+			resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
 			So(len(objs), ShouldEqual, 1)
-			nodeOperObj, ok := objs[0].(argomev1.NodeOper)
+			nodeOperObj, ok := objs[0].(argomev1.Node)
 			So(ok, ShouldBeTrue)
-			So(nodeOperObj.InbandIP(), ShouldEqual, "10.1.1.1")
-			So(nodeOperObj.Status(), ShouldEqual, "admitted")
-			nodeOperObjName, err := utils.AnyMetaName(nodeOperObj)
-			So(err, ShouldBeNil)
-
-			resp, err = http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
-			So(err, ShouldBeNil)
-			objs, err = readResponse(resp)
-			So(err, ShouldBeNil)
-			So(len(objs), ShouldEqual, 1)
-			nodeObj, ok := objs[0].(argomev1.Node)
-			So(ok, ShouldBeTrue)
-			So(nodeObj.Oper(), ShouldEqual, nodeOperObjName)
+			So(nodeOperObj.Status().InbandIP(), ShouldEqual, "10.1.1.1")
+			So(nodeOperObj.Status().Status(), ShouldEqual, "admitted")
 
 			resp, err = http.Get("http://cluster:8089/api/argome.argo.cisco.com/v1/clustermembers")
 			So(err, ShouldBeNil)

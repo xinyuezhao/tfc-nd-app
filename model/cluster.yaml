@@ -1,37 +1,63 @@
-apiVersion: argome.argo.cisco.com/v1
+kind: Struct
+metadata:
+  name: ClusterSpec
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: name
+      type: string
+    - prop: description
+      type: string
+---
+kind: Struct
+metadata:
+  name: ClusterStatus
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: nodes
+      type: map[string]string
+---
 kind: Resource
 metadata:
   name: Cluster
   group: argome.argo.cisco.com
   version: v1
 spec:
-  props:
-    - prop: name
-      type: string
-      pkey: true
-    - prop: nodes
-      type: map[string]string
-    - prop: description
-      type: string
+  spec:
+    type: v1.ClusterSpec
+  status:
+    type: v1.ClusterStatus
+  pkey: spec.name
   apimethods:
     - apimethod: GET
     - apimethod: PUT
     - apimethod: POST
     - apimethod: DELETE
 ---
-apiVersion: argome.argo.cisco.com/v1
-kind: Resource
+kind: Struct
 metadata:
-  name: ClusterMember
+  name: ClusterMemberSpec
   group: argome.argo.cisco.com
   version: v1
 spec:
   props:
     - prop: name
       type: string
-      pkey: true
     - prop: cluster
       type: string
+---
+kind: Resource
+metadata:
+  name: ClusterMember
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  spec:
+    type: v1.ClusterMemberSpec
+  pkey: spec.name
   apimethods:
     - apimethod: GET
     - apimethod: POST

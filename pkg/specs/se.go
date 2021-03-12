@@ -20,12 +20,10 @@ func GenerateSESpec() (name string, ts []string, data []byte) {
 	clusterServiceTopic := "clusterd-topic"
 	node := argomev1.NodeFactory().Meta().Key()
 	nodeTopic := "node-topic"
-	nodeOper := argomev1.NodeOperFactory().Meta().Key()
-	nodeOperTopic := "nodeoper-topic"
 	cluster := argomev1.ClusterFactory().Meta().Key()
 	clusterTopic := "cluster-topic"
 	clusterMember := argomev1.ClusterMemberFactory().Meta().Key()
-	topics := []string{nodeServiceTopic, clusterServiceTopic, nodeTopic, nodeOperTopic, clusterTopic}
+	topics := []string{nodeServiceTopic, clusterServiceTopic, nodeTopic, clusterTopic}
 	appDoc := `{
 		"name": "` + appName + `",
 		"prefix": "` + appPrefix + `",
@@ -34,11 +32,6 @@ func GenerateSESpec() (name string, ts []string, data []byte) {
 			"name": "` + node + `",
 			"service": "` + nodeService + `",
 			"endpoint": "` + nodeTopic + `"
-		},
-		{
-			"name": "` + nodeOper + `",
-			"service": "` + nodeService + `",
-			"endpoint": "` + nodeOperTopic + `"
 		},
 		{
 			"name": "` + cluster + `",

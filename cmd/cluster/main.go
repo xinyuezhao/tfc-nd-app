@@ -18,7 +18,7 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("configuring some objects during app start")
 	cluster := argomev1.ClusterFactory()
-	cluster.SetName("cluster-1")
+	cluster.SpecMutable().SetName("cluster-1")
 	name, err := utils.AnyMetaName(cluster)
 	if err == nil {
 		_, err := changer.ResolveByName(ctx, name)
