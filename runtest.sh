@@ -7,6 +7,7 @@ function cleanup {
     docker stop kafka
     docker stop zookeeper-bitnami
     docker stop mongo-svc 
+    docker stop spartan 
     docker-compose rm -f
 }
 
@@ -30,6 +31,7 @@ do
        docker-compose logs argome-testsuite 
        docker-compose logs node-manager 
        docker-compose logs cluster 
+       docker-compose logs spartan 
        if [ $(docker inspect argome-testsuite --format='{{.State.ExitCode}}') == 0 ]
        then
            echo "Tests passed"
