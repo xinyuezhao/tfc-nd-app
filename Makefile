@@ -4,7 +4,7 @@ BINDIR=$(CURDIR)/.bin
 LINTER=$(BINDIR)/golangci-lint
 GENERATOR=$(BINDIR)/argen
 
-all: lint test argome
+all: argo lint test argome
 
 check: lint test
 

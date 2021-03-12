@@ -1,4 +1,3 @@
-
 openapi: 3.0.2
 apiVersion: argome.argo.cisco.com/v1
 kind: ApiDef

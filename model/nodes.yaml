@@ -1,30 +1,20 @@
-apiVersion: argome.argo.cisco.com/v1
-kind: Resource
+kind: Struct
 metadata:
-  name: Node
+  name: NodeSpec
   group: argome.argo.cisco.com
   version: v1
 spec:
   props:
     - prop: inbandIP
       type: string
-      pkey: true
     - prop: cluster
-      type: string
-    - prop: oper
       type: string
     - prop: name
       type: string
-  apimethods:
-    - apimethod: GET
-    - apimethod: PUT
-    - apimethod: POST
-    - apimethod: DELETE
 ---
-apiVersion: argome.argo.cisco.com/v1
-kind: Resource
+kind: Struct
 metadata:
-  name: NodeOper
+  name: NodeStatus
   group: argome.argo.cisco.com
   version: v1
 spec:
@@ -36,8 +26,23 @@ spec:
       type: string
     - prop: cluster
       type: string
+---
+kind: Resource
+metadata:
+  name: Node
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  spec:
+    type: v1.NodeSpec
+  status:
+    type: v1.NodeStatus
+  pkey: spec.inbandIP
   apimethods:
     - apimethod: GET
+    - apimethod: PUT
+    - apimethod: POST
+    - apimethod: DELETE
 ---
 kind: ResourceHandler
 metadata:

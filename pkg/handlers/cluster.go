@@ -23,7 +23,7 @@ func ClusterHandler(ctx context.Context, event mo.Event) error {
 }
 
 func nodeInCluser(cluster argomev1.Cluster, node string) bool {
-	for nodeIP := range cluster.Nodes() {
+	for nodeIP := range cluster.Status().Nodes() {
 		if nodeIP == node {
 			return true
 		}
@@ -33,30 +33,39 @@ func nodeInCluser(cluster argomev1.Cluster, node string) bool {
 
 // ClusterNodeHandler handles the node object in the cluster service
 func ClusterNodeHandler(ctx context.Context, event mo.Event) error {
-	log := core.LoggerFromContext(ctx)
-	log.Info("handling node", "resource", event.Resource())
 	node := event.Resource().(argomev1.Node)
-	cluster, err := event.Store().ResolveByName(ctx, node.Cluster())
-	if err == nil && !nodeInCluser(cluster.(argomev1.Cluster), node.InbandIP()) {
-		nodes := make(map[string]string)
-		if cluster.(argomev1.Cluster).NodesPtr() != nil {
-			nodes = cluster.(argomev1.Cluster).Nodes()
-		}
-		nodes[node.InbandIP()] = admitted
-		cluster.(argomev1.Cluster).MutableClusterV1Argome().SetNodes(nodes)
-		clusterMember := argomev1.ClusterMemberFactory()
-		clusterMember.SetName(node.MetaNames()["default"])
-		clusterMember.SetCluster(node.Cluster())
-		if errx := event.Store().Record(ctx, cluster); errx != nil {
-			return errx
-		}
-		if errx := event.Store().Record(ctx, clusterMember); errx != nil {
-			return errx
-		}
-		if errx := event.Store().Commit(ctx); errx != nil {
-			core.LoggerFromContext(ctx).Error(errx, "Failed to commit clustermember")
-			return errx
-		}
+
+	log := core.LoggerFromContext(ctx)
+	log.Info("handling node", "node", node)
+
+	obj, err := event.Store().ResolveByName(ctx, node.Spec().Cluster())
+	if err != nil {
+		return err
 	}
-	return err
+
+	cluster := obj.(argomev1.Cluster)
+	if nodeInCluser(cluster, node.Spec().InbandIP()) {
+		return nil
+	}
+
+	cluster.StatusMutable().SetNodesEl(node.Spec().InbandIP(), "admitted")
+
+	clusterMember := argomev1.ClusterMemberFactory()
+	clusterMember.SpecMutable().SetName(node.MetaNames()["default"])
+	clusterMember.SpecMutable().SetCluster(node.Spec().Cluster())
+
+	if err := event.Store().Record(ctx, cluster); err != nil {
+		return err
+	}
+
+	if err := event.Store().Record(ctx, clusterMember); err != nil {
+		return err
+	}
+
+	if err := event.Store().Commit(ctx); err != nil {
+		core.LoggerFromContext(ctx).Error(err, "failed to commit ClusterMember")
+		return err
+	}
+
+	return nil
 }
