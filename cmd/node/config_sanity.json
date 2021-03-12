@@ -57,5 +57,9 @@
 	        "secure": true
              }
         }
+    },
+    "db":{
+        "path": "mongo-svc:27017", 
+        "type":"mongodb"
     }
 }
