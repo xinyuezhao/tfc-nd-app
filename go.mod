@@ -6,7 +6,7 @@ replace golang.cisco.com/argo => ./argo
 
 require (
 	github.com/go-logr/stdr v0.2.0
-	github.com/go-logr/zapr v0.3.0
+	github.com/go-logr/zapr v0.4.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golangci/golangci-lint v1.33.0 // indirect
 	github.com/julienschmidt/httprouter v1.3.0

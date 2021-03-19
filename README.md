@@ -88,6 +88,116 @@ X-Xss-Protection: 1; mode=block
 
 TBD
 
-## Deploying on Kind
+## Deploying on kind
 
-TBD
+You can deploy argome on a local kind cluster by using the `deploy-on-kind` make
+target. If you haven't configured the kind cluster yet, refer to the next
+section on how to setup a kind cluster.
+
+```
+make deploy-on-kind
+```
+
+### Setup kind Cluster (Only Initial Setup)
+
+[kind](https://kind.sigs.k8s.io/) is a tool for running local Kubernetes
+clusters using Docker container “nodes”. Follow the [official
+documentation](https://kind.sigs.k8s.io/docs/user/quick-start#installation) to
+install kind.
+
+Create a new cluster named `argo` to use for argo specific projects.
+
+```
+kind create cluster --name argo
+```
+
+argo services require Kafka and MongoDB. To install Kafka and MongoDB, use
+[Helm](https://helm.sh/). Use the [official
+documentation](https://helm.sh/docs/intro/install/) to install Helm.
+
+We'll be using Bitnami's charts for Kafka and MongoDB. Add Bitnami Helm charts
+repo.
+
+```
+helm repo add bitnami https://charts.bitnami.com/bitnami
+```
+
+Create a namespace for `argo`.
+
+```
+kubectl --context kind-argo create ns argo
+```
+
+Install Kafka.
+
+```
+helm --kube-context kind-argo install -n argo --version 12.0.0 kafka bitnami/kafka --set autoCreateTopicsEnable=true
+```
+
+Install MongoDB.
+
+```
+helm --kube-context kind-argo install -n argo --version 12.0.0 kafka bitnami/kafka --set autoCreateTopicsEnable=true
+```
+
+### Interacting with REST API
+
+The following steps require [httpie](https://httpie.io/) command line utility to
+be installed.
+
+Use `kubectl port-forward` to setup port forwarding from your kind cluster onto
+your localhost.
+
+```
+kubectl -n cisco-argome port-forward service/nodemgr 3080:80
+```
+
+Create a new node resource.
+
+```
+echo '{"spec":{"inbandIP": "192.168.1.105", "name": "node5", "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"}}' | http :3080/api/argome.argo.cisco.com/v1/nodes
+```
+
+Get the list of nodes to see that the new node is now admitted.
+
+```
+http :3080/api/argome.argo.cisco.com/v1/nodes
+HTTP/1.1 200 OK
+Content-Length: 532
+Content-Type: application/json
+Date: Fri, 02 Apr 2021 22:42:22 GMT
+X-Powered-By: argo.cisco.com
+X-Request-Id: c84071f1-3f11-4f43-a77d-bb4c0e98e989
+
+[
+    {
+        "meta": {
+            "annotations": {},
+            "deleteTimestamp": "",
+            "domain": "",
+            "finalizers": {},
+            "id": "55c01217-994a-4dd9-9883-5f17c096067f",
+            "key": "argome.argo.cisco.com/v1.Node",
+            "labels": {},
+            "namespace": "",
+            "org": "ARGO-FW-TENANT",
+            "resourceVersion": 3,
+            "specDirty": false,
+            "specGenID": 0,
+            "status": 3,
+            "statusDirty": false,
+            "statusGenID": 0
+        },
+        "spec": {
+            "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1",
+            "inbandIP": "192.168.1.105",
+            "name": "node5"
+        },
+        "status": {
+            "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1",
+            "inbandIP": "192.168.1.105",
+            "status": "admitted"
+        }
+    }
+]
+```

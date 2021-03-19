@@ -1,0 +1,18 @@
+{
+  "rest": {
+    "address": "0.0.0.0:8089"
+  },
+  "logger": {},
+  "app": {
+    "directory": true
+  },
+  "transport": {
+    "type": "kafka",
+    "kafka": {
+      "brokerAddrs": [
+        "kafka.argo.svc:9092"
+      ],
+      "secure": false
+    }
+  }
+}

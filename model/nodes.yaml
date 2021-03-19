@@ -21,7 +21,6 @@ spec:
   props:
     - prop: inbandIP
       type: string
-      pkey: true
     - prop: status
       type: string
     - prop: cluster

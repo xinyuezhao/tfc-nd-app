@@ -1,0 +1,64 @@
+{
+  "rest": {
+    "address": "0.0.0.0:8089"
+  },
+  "logger": {},
+  "app": {
+    "applications": [
+      {
+        "name": "se",
+        "prefix": "sedge",
+        "resources": [
+          {
+            "name": "argome.argo.cisco.com/v1.Node",
+            "service": "node-manager",
+            "endpoint": "node-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.NodeOper",
+            "service": "node-manager",
+            "endpoint": "nodeoper-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.Cluster",
+            "service": "clusterd",
+            "endpoint": "cluster-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.ClusterMember",
+            "service": "clusterd",
+            "endpoint": "cluster-topic"
+          }
+        ],
+        "services": [
+          {
+            "name": "node-manager",
+            "endpoint": "node-manager-topic"
+          },
+          {
+            "name": "clusterd",
+            "endpoint": "clusterd-topic"
+          }
+        ]
+      }
+    ]
+  },
+  "transport": {
+    "type": "kafka",
+    "endpoint": "clusterd-topic",
+    "kafka": {
+      "stub": {
+        "brokerAddrs": [
+          "kafka.argo.svc:9092"
+        ],
+        "secure": false
+      }
+    }
+  },
+  "db": {
+    "appname": "argome",
+    "path": "mongodb-headless.argo.svc:27017",
+    "type": "mongodb",
+    "secure": false
+  }
+}
