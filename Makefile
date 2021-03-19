@@ -4,6 +4,12 @@ BINDIR=$(CURDIR)/.bin
 LINTER=$(BINDIR)/golangci-lint
 GENERATOR=$(BINDIR)/argen
 
+define build-for-linux
+$(1): export CGO_ENABLED=0
+$(1): export GOOS=linux
+$(1): export GOARCH=amd64
+endef
+
 all: argo lint test argome
 
 check: lint test
@@ -12,7 +18,7 @@ $(BINDIR):
 	@mkdir -p $@
 
 $(BINDIR)/%: | $(BINDIR)
-	env GOBIN=$(BINDIR) go install $(CMD)
+	env -u GOOS -u GOARCH GOBIN=$(BINDIR) go install $(CMD)
 
 $(LINTER): CMD=github.com/golangci/golangci-lint/cmd/golangci-lint
 
@@ -60,10 +66,8 @@ bundle:
 	tar zxvf argo-bundle.tar.gz --directory pkg/
 	rm argo-bundle.tar.gz
 
-sanity: clean argo bundle generate lint
-	GOOS=linux GOARCH=amd64 go build ./cmd/cluster
-	GOOS=linux GOARCH=amd64 go build ./cmd/node
-	GOOS=linux GOARCH=amd64 go build ./cmd/testsuite
+$(eval $(call build-for-linux,sanity))
+sanity: clean argo bundle generate lint services testsuite
 	docker build --file cmd/node/Dockerfile --tag node-manager:v1 .
 	docker build --file cmd/cluster/Dockerfile --tag cluster:v1 .
 	rm -rf $(BINDIR)
@@ -71,23 +75,31 @@ sanity: clean argo bundle generate lint
 	docker build --file cmd/testsuite/Dockerfile --tag argome-testsuite:v1 .
 	./runtest.sh
 
-clusterd: argo
+services: clusterd node
+
+clusterd: argo generate
 	go build ./cmd/cluster
 
-node: argo
+node: argo generate
 	go build ./cmd/node
 
-services: clusterd node pilot
+testsuite: argo generate
+	go build ./cmd/testsuite
 
-docker-images:
+# This is used for Nexus Dashboard and kind.
+$(eval $(call build-for-linux,docker-images))
+docker-images: services
 	cp node deployment/docker/nodemgr
 	cp cmd/node/config.json deployment/docker/nodemgr
+	cp cmd/node/config_kind.json deployment/docker/nodemgr
 	docker build --tag nodemgr:v1 deployment/docker/nodemgr
 
 	cp cluster deployment/docker/clustermgr
 	cp cmd/cluster/config.json deployment/docker/clustermgr
+	cp cmd/cluster/config_kind.json deployment/docker/clustermgr
 	docker build --tag clustermgr:v1 deployment/docker/clustermgr
 
+docker-archive: docker-images
 	docker save nodemgr:v1 clustermgr:v1 | gzip > images.tar.gz
 
 intersight:
@@ -102,5 +114,12 @@ intersight:
 	docker save polaris:v1 | gzip > polaris_image.tar.gz
 	docker save rigel:v1 | gzip > rigel_image.tar.gz
 
+deploy-on-kind: docker-images
+	kind get clusters | grep -E "^argo$$" || (echo 'No kind cluster found for argo. Run `kind create cluster --name argo`'; exit 1)
+	kind load docker-image nodemgr:v1 --name argo
+	kind load docker-image clustermgr:v1 --name argo
+
+	kubectl --context kind-argo delete --ignore-not-found -f deployment/kind/all-in-one.yaml
+	kubectl --context kind-argo apply -f deployment/kind/all-in-one.yaml
 
 .PHONY: generate lint test argome services

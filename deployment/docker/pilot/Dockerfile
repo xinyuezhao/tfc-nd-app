@@ -1,6 +1,6 @@
 FROM alpine:latest
 WORKDIR /bin/
-COPY ./cluster .
+COPY ./pilot .
 COPY ./config.json .
 COPY ./config_kind.json .
-CMD ./cluster --config.file ./config.json
+CMD ./pilot --config.file ./config.json
