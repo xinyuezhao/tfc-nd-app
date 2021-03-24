@@ -3,6 +3,7 @@ module golang.cisco.com/examples/argome
 go 1.15
 
 replace golang.cisco.com/argo => ./argo
+replace golang.cisco.com/spartan => aci-github.cisco.com/pafrank/spartan v0.0.0-20210324185241-4586bc2ab28d 
 
 require (
 	github.com/go-logr/stdr v0.2.0
@@ -14,4 +15,5 @@ require (
 	github.com/smartystreets/goconvey v1.6.4
 	go.uber.org/zap v1.13.0
 	golang.cisco.com/argo v0.0.0-00010101000000-000000000000
+	golang.cisco.com/spartan v0.0.0-00010101000000-000000000000
 )
