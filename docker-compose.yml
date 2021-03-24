@@ -1,17 +1,5 @@
 version: "2.2"
 services:
-  argome-pilot:
-    container_name: argome-pilot
-    image: argome-pilot:v1
-    depends_on: 
-      - kafka
-      - zookeeper-bitnami
-      - mongo-svc 
-    environment:
-      - ARGO_CONTAINERIZED_RUN=true
-      - ARGO_KAFKA_ADDR=kafka:9092
-    volumes:
-      - './pkg/bundle/:/tmp/:rw'
   argome-testsuite:
     container_name: argome-testsuite 
     image: argome-testsuite:v1
@@ -23,16 +11,12 @@ services:
   node-manager:
     container_name: node-manager 
     image: node-manager:v1
-    depends_on: 
-      - argome-pilot 
     environment:
       - ARGO_CONTAINERIZED_RUN=true
       - ARGO_KAFKA_ADDR=kafka:9092
   cluster:
     container_name: cluster 
     image: cluster:v1
-    depends_on: 
-      - argome-pilot 
     environment:
       - ARGO_CONTAINERIZED_RUN=true
       - ARGO_KAFKA_ADDR=kafka:9092
@@ -53,6 +37,7 @@ services:
       - KAFKA_CLIENT_PASSWORD=password
       - KAFKA_CERTIFICATE_PASSWORD=argostore
       - KAFKA_INTER_BROKER_LISTENER_NAME=CLIENT
+      - KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE=true
     volumes:
       - './pkg/bundle/kafka.keystore.jks:/opt/bitnami/kafka/config/certs/kafka.keystore.jks:ro'
       - './pkg/bundle/kafka.truststore.jks:/opt/bitnami/kafka/config/certs/kafka.truststore.jks:ro'

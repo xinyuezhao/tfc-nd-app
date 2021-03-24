@@ -60,5 +60,6 @@ func GenerateSESpec() (name string, ts []string, data []byte) {
 
 // CheckSEDirectory check the directory entires
 func CheckSEDirectory(dir fw.Directory) bool {
-	return dir.Service("node-manager").ID() == nodeManagerTopic
+	_, err := dir.Locator().Endpoint("node-manager")
+	return err == nil
 }

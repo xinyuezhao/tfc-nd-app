@@ -47,9 +47,6 @@ docker-cluster: clean argo
 docker-testsuite: clean argo
 	docker build --file cmd/testsuite/Dockerfile --tag argome-testsuite:v1 .
 
-docker-pilot: clean argo
-	docker build --file cmd/pilot/Dockerfile --tag argome-pilot:v1 .
-
 argo:
 	cp -R ../argo .
 
@@ -61,9 +58,7 @@ bundle:
 sanity: clean argo bundle generate lint
 	GOOS=linux GOARCH=amd64 go build ./cmd/cluster
 	GOOS=linux GOARCH=amd64 go build ./cmd/node
-	GOOS=linux GOARCH=amd64 go build ./cmd/pilot
 	GOOS=linux GOARCH=amd64 go build ./cmd/testsuite
-	docker build --file cmd/pilot/Dockerfile --tag argome-pilot:v1 .
 	docker build --file cmd/node/Dockerfile --tag node-manager:v1 .
 	docker build --file cmd/cluster/Dockerfile --tag cluster:v1 .
 	rm -rf $(BINDIR)
@@ -76,9 +71,6 @@ clusterd: argo
 
 node: argo
 	go build ./cmd/node
-
-pilot: argo
-	go build ./cmd/pilot
 
 services: clusterd node pilot
 
