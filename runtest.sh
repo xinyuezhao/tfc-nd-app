@@ -7,7 +7,6 @@ function cleanup {
     docker stop kafka
     docker stop zookeeper-bitnami
     docker stop mongo-svc 
-    docker stop argome-pilot 
     docker-compose rm -f
 }
 
@@ -31,7 +30,6 @@ do
        docker-compose logs argome-testsuite 
        docker-compose logs node-manager 
        docker-compose logs cluster 
-       docker-compose logs argome-pilot 
        if [ $(docker inspect argome-testsuite --format='{{.State.ExitCode}}') == 0 ]
        then
            echo "Tests passed"
@@ -50,5 +48,4 @@ echo "Tests did not complete"
 docker-compose logs argome-testsuite 
 docker-compose logs node-manager 
 docker-compose logs cluster 
-docker-compose logs argome-pilot 
 cleanup

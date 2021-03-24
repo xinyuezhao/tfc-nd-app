@@ -15,7 +15,6 @@ import (
 
 	"golang.cisco.com/examples/argome/gen/argomev1"
 	"golang.cisco.com/examples/argome/gen/schema"
-	"golang.cisco.com/examples/argome/pkg/handshake"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -155,7 +154,7 @@ func TestMain(m *testing.M) {
 		if r2 != nil {
 			r2.Body.Close()
 		}
-		if node == nil && cluster == nil && handshake.Get() {
+		if node == nil && cluster == nil {
 			return true
 		}
 		return false
@@ -165,6 +164,5 @@ func TestMain(m *testing.M) {
 	}
 	fmt.Println("Starting testsuite: ", time.Now())
 	ret := m.Run()
-	handshake.Clear()
 	os.Exit(ret)
 }
