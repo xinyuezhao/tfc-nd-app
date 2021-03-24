@@ -24,9 +24,12 @@ $(LINTER): CMD=github.com/golangci/golangci-lint/cmd/golangci-lint
 
 $(GENERATOR): CMD=golang.cisco.com/argo/cmd/argen
 
+cache:
+	go mod download
+
 # TODO: Fix the hardcoding of argo ddN path.
-generate: | $(GENERATOR)
-	$(GENERATOR) run -m ./argo/ddN -m ./model -g ./gen
+generate: | argo cache $(GENERATOR)
+	$(GENERATOR) run -r ./model/remote.yaml -m ./model/argome -g ./gen
 
 lint: | $(LINTER) generate
 	$(LINTER) run ./...
@@ -45,6 +48,7 @@ clean:
 	rm -f cisco-argome-v0.0.1.aci
 	rm -f polaris_image.tar.gz
 	rm -f rigel_image.tar.gz
+	rm -rf imported* 
 
 docker-node: clean argo 
 	docker build --file cmd/node/Dockerfile --tag node-manager:v1 .

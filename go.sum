@@ -1,5 +1,7 @@
 4d63.com/gochecknoglobals v0.0.0-20201008074935-acfc0b28355a h1:wFEQiK85fRsEVF0CRrPAos5LoAryUsIX1kPW/WrIqFw=
 4d63.com/gochecknoglobals v0.0.0-20201008074935-acfc0b28355a/go.mod h1:wfdC5ZjKSPr7CybKEcgJhUOgeAQW1+7WcyK8OvUilfo=
+aci-github.cisco.com/pafrank/spartan v0.0.0-20210324185241-4586bc2ab28d h1:BqFYWqtdElnxFMmf5F83EIujCORh3jGvuzRERxkMbxs=
+aci-github.cisco.com/pafrank/spartan v0.0.0-20210324185241-4586bc2ab28d/go.mod h1:szTrD/8Nh50sWGt4a6yksmKCVcq6Fmdf6s1NQ/BDLg4=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
