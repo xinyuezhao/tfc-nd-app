@@ -28,7 +28,7 @@ cache:
 	go mod download
 
 # TODO: Fix the hardcoding of argo ddN path.
-generate: | argo cache $(GENERATOR)
+generate: | $(GENERATOR)
 	$(GENERATOR) run -r ./model/remote.yaml -m ./model/argome -g ./gen
 
 lint: | $(LINTER) generate
