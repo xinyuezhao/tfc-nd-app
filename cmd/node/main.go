@@ -24,7 +24,7 @@ func main() {
 		handlers.NodeHandler,
 		handlers.NodeClusterMemberHandler,
 	}
-	apx := service.New("node-manager", schema.Schema(), NewLogger())
+	apx := service.New("node-manager", schema.Schema())
 	if apx == nil {
 		panic("Could not create the service")
 	}

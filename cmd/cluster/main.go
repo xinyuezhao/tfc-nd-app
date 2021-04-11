@@ -36,7 +36,7 @@ func main() {
 		handlers.ClusterHandler,
 		handlers.ClusterNodeHandler,
 	}
-	apx := service.New("clusterd", schema.Schema(), NewLogger())
+	apx := service.New("clusterd", schema.Schema())
 	if apx == nil {
 		panic("no service was created")
 	}
