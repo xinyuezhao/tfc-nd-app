@@ -47,6 +47,7 @@
         "type": "kafka",
         "endpoint": "clusterd-topic", 
         "kafka":{
+          "nexusDashboard": {
             "brokerAddrs":[
                 "kafka:9092"
                 ],
@@ -54,6 +55,7 @@
             "cacertfile": "/security/server.cer.pem",
             "keyfile": "/security/client.key.pem",
             "secure": true
+          }
         }
     }
 }

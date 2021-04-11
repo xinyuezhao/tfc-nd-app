@@ -62,3 +62,6 @@ spec:
           readOnly: true
         ports:
         - containerPort: 8089
+        env:
+          - name: EXT_PLATFORM
+            value: "NexusDashboard"

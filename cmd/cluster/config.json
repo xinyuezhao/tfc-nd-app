@@ -1,6 +1,6 @@
 {
     "rest": {
-        "address":"0.0.0.0:8089"
+        "address":":8089"
     },
     "logger":{}, 
     "app":{
@@ -47,6 +47,7 @@
         "type": "kafka",
         "endpoint": "clusterd-topic", 
         "kafka":{
+           "nexusDashboard": {
             "brokerAddrs":[
                 "kafka-svc.kafka.svc:9092"
                 ],
@@ -54,6 +55,7 @@
             "cacertfile": "/security/server.cer.pem",
             "keyfile": "/security/client.key.pem",
             "secure": true
+          }
         }
     },
     "db":{
