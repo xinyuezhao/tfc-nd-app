@@ -25,10 +25,12 @@ package:
 	cp ${ARGO_ONPREM}/install.sh ${BUILD_DIR}/
 	cp ${ARGO_ONPREM}/uninstall.sh ${BUILD_DIR}/
 	cp -R ${ARGO_ONPREM}/ansible ${BUILD_DIR}/
+	cp ${ARGO_ONPREM}/update.sh ${BUILD_DIR}/
 	cp -R ${ARGO_ONPREM}/kafka ${BUILD_DIR}/
 	cp -R ${ARGO_ONPREM}/k8s-specs ${BUILD_DIR}/
 	${ARGO_SCRIPT}/replace.sh -f ${BUILD_DIR}/install.sh -s aegis -r ${SERVICE}
 	${ARGO_SCRIPT}/replace.sh -f ${BUILD_DIR}/uninstall.sh -s aegis -r ${SERVICE}
+	${ARGO_SCRIPT}/replace.sh -f ${BUILD_DIR}/update.sh -s aegis -r ${SERVICE}
 	${ARGO_SCRIPT}/replace.sh -f ${BUILD_DIR}/ansible/onprem-master.yml -s aegis -r ${SERVICE}
 	${ARGO_SCRIPT}/replace.sh -f ${BUILD_DIR}/k8s-specs/sts.yaml -s aegis -r ${SERVICE}
 	${ARGO_SCRIPT}/replace.sh -f ${BUILD_DIR}/k8s-specs/service.yaml  -s aegis -r ${SERVICE}
