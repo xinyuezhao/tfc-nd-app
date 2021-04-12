@@ -1,4 +1,4 @@
-FROM centos
+FROM alpine:latest
 WORKDIR /bin/
 COPY ./polaris .
 COPY ./config.json .

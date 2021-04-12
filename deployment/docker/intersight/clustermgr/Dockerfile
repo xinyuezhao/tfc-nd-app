@@ -1,4 +1,4 @@
-FROM centos
+FROM alpine:latest
 WORKDIR /bin/
 COPY ./rigel .
 COPY ./config.json .

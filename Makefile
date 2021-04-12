@@ -52,6 +52,9 @@ docker-testsuite: clean argo
 argo:
 	cp -R ../argo .
 
+argo-build:
+	cp -R ../argo-build .
+
 bundle:
 	wget http://aci-artifactory-001.insieme.local:8081/artifactory/argo-artifactory/argo-bundle.tar.gz
 	tar zxvf argo-bundle.tar.gz --directory pkg/
