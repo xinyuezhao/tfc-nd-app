@@ -143,15 +143,6 @@ func TestNodeManager(t *testing.T) {
 		})
 }
 
-func TestSpartan(t *testing.T) {
-	Convey("Check if spartan is reachable",
-		t, func(c C) {
-			resp, err := http.Get("http://spartan:8089/")
-			So(err, ShouldBeNil)
-			resp.Body.Close()
-		})
-}
-
 func TestMain(m *testing.M) {
 	testCtx = mo.ContextWithJSONSerde(testCtx, schema.Schema())
 	if !waitForCondition(func() bool {

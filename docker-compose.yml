@@ -4,7 +4,6 @@ services:
     container_name: argome-testsuite 
     image: argome-testsuite:v1
     depends_on:
-      - spartan
       - node-manager
       - cluster
     volumes:
@@ -18,14 +17,6 @@ services:
   cluster:
     container_name: cluster 
     image: cluster:v1
-    environment:
-      - ARGO_CONTAINERIZED_RUN=true
-      - ARGO_KAFKA_ADDR=kafka:9092
-  spartan:
-    container_name: spartan 
-    image: docker-spartan:v1
-    depends_on: 
-      - argome-pilot 
     environment:
       - ARGO_CONTAINERIZED_RUN=true
       - ARGO_KAFKA_ADDR=kafka:9092
