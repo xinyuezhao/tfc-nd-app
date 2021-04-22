@@ -10,13 +10,15 @@ services:
       - './pkg/bundle/:/tmp/:rw'
   node-manager:
     container_name: node-manager 
-    image: node-manager:v1
+    image: nodemgr:v1
+    command: ./node --config.file ./config_sanity.json
     environment:
       - ARGO_CONTAINERIZED_RUN=true
       - ARGO_KAFKA_ADDR=kafka:9092
   cluster:
     container_name: cluster 
-    image: cluster:v1
+    image: clustermgr:v1
+    command: ./cluster --config.file ./config_sanity.json
     environment:
       - ARGO_CONTAINERIZED_RUN=true
       - ARGO_KAFKA_ADDR=kafka:9092
