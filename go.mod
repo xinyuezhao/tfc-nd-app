@@ -2,7 +2,7 @@ module golang.cisco.com/examples/argome
 
 go 1.15
 
-replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.4.1-0.20210416012048-0d430b28f86f
+replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.5.0 
 
 replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b
 

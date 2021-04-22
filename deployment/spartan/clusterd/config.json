@@ -1,0 +1,23 @@
+{
+    "rest": {
+        "address":"0.0.0.0:8089"
+    },
+    "logger":{},
+    "transport":{
+        "type": "kafka", 
+        "endpoint": "clusterd",
+        "kafka":{
+            "brokerAddrs":[
+                "kafka-svc:9092"
+                ],
+            "certfile": "/security/client.cer.pem",
+	        "cacertfile": "/security/server.cer.pem",
+	        "keyfile": "/security/client.key.pem",
+	        "secure": true
+        }
+    },
+    "db":{
+        "path": "mongo-svc:27017", 
+        "type":"mongodb"
+    }
+}

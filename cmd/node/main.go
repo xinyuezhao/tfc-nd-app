@@ -23,7 +23,6 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 }
 
 func main() {
-
 	handlerReg := []interface{}{
 		handlers.NodeHandler,
 		handlers.NodeClusterMemberHandler,

@@ -74,8 +74,7 @@ $(eval $(call build-for-linux,sanity))
 sanity: clean argo bundle generate lint services testsuite
 	docker build --file cmd/node/Dockerfile --tag node-manager:v1 .
 	docker build --file cmd/cluster/Dockerfile --tag cluster:v1 .
-	rm -rf $(BINDIR)
-	rm -rf $(CURDIR)/gen
+	cd cmd/testsuite && go test -c
 	docker build --file cmd/testsuite/Dockerfile --tag argome-testsuite:v1 .
 	./runtest.sh
 
@@ -125,5 +124,13 @@ deploy-on-kind: docker-images
 
 	kubectl --context kind-argo delete --ignore-not-found -f deployment/kind/all-in-one.yaml
 	kubectl --context kind-argo apply -f deployment/kind/all-in-one.yaml
+
+spartan: clean bundle generate
+	GOOS=linux GOARCH=amd64 go build ./cmd/cluster
+	GOOS=linux GOARCH=amd64 go build ./cmd/node
+	docker build --file deployment/spartan/node/Dockerfile --tag argome-spartan-node:v1 .
+	docker build --file deployment/spartan/clusterd/Dockerfile --tag argome-spartan-cluster:v1 .
+	rm node
+	rm cluster
 
 .PHONY: generate lint test argome services

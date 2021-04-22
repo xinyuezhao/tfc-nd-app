@@ -1,0 +1,45 @@
+{
+        "meta": {
+                "key": "spartan.argo.cisco.com/v1.Application"
+        },
+        "spec": {
+        	"name": "nexus-dashboard",
+        	"prefix": "nexus",
+                "services": [
+			{
+                    		"name": "node-manager",
+                    		"endpoint": "node-manager-topic"
+                	},
+                	{
+                    		"name": "clusterd",
+                    		"endpoint": "clusterd-topic"
+                	}
+                ],
+                "resources": [
+			{
+                    		"name": "argome.argo.cisco.com/v1.Node",
+                    		"service": "node-manager",
+                    		"endpoint": "node-topic",
+				"url": "/api/argome.argo.cisco.com/v1/nodes"
+                	},
+                	{
+                    		"name": "argome.argo.cisco.com/v1.NodeOper",
+                    		"service": "node-manager",
+                    		"endpoint": "nodeoper-topic",
+				"url": "/api/argome.argo.cisco.com/v1/nodeopers"
+                	},
+                	{
+                    		"name": "argome.argo.cisco.com/v1.Cluster",
+                    		"service": "clusterd",
+                    		"endpoint": "cluster-topic",
+                    		"url": "/api/argome.argo.cisco.com/v1/clusters"
+                	},
+                	{
+                    		"name": "argome.argo.cisco.com/v1.ClusterMember",
+                    		"service": "clusterd",
+                    		"endpoint": "cluster-topic",
+                    		"url": "/api/argome.argo.cisco.com/v1/clustermembers"
+                	}
+                ]
+        }
+}

@@ -1,0 +1,29 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: clusterd
+  namespace: argome-ns 
+  labels:
+    argo.deploy: argome-clusterd 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      argo.deploy: argome-clusterd 
+  template:
+    metadata:
+      labels:
+        argo.deploy: argome-clusterd 
+      creationTimestamp: null
+    spec:
+      containers:
+      - image: argome-spartan-cluster:v1
+        imagePullPolicy: ""
+        name: clusterd
+        env:
+          - name: SPARTAN_ENV 
+            value: "true"  
+      volumes: null
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}
