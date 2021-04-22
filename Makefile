@@ -50,57 +50,31 @@ clean:
 	rm -f rigel_image.tar.gz
 	rm -rf imported* 
 
-docker-node: clean argo 
-	docker build --file cmd/node/Dockerfile --tag node-manager:v1 .
-
-docker-cluster: clean argo 
-	docker build --file cmd/cluster/Dockerfile --tag cluster:v1 .
-
-docker-testsuite: clean argo
-	docker build --file cmd/testsuite/Dockerfile --tag argome-testsuite:v1 .
-
-argo:
-	cp -R ../argo .
-
-argo-build:
-	cp -R ../argo-build .
-
 bundle:
 	wget http://aci-artifactory-001.insieme.local:8081/artifactory/argo-artifactory/argo-bundle.tar.gz
 	tar zxvf argo-bundle.tar.gz --directory pkg/
 	rm argo-bundle.tar.gz
 
 $(eval $(call build-for-linux,sanity))
-sanity: clean argo bundle generate lint services testsuite
-	docker build --file cmd/node/Dockerfile --tag node-manager:v1 .
-	docker build --file cmd/cluster/Dockerfile --tag cluster:v1 .
+sanity: clean docker-images
 	cd cmd/testsuite && go test -c
 	docker build --file cmd/testsuite/Dockerfile --tag argome-testsuite:v1 .
+	rm -rf cmd/testsuite/testsuite.test
 	./runtest.sh
 
 services: clusterd node
 
-clusterd: argo generate
+clusterd: generate
 	go build ./cmd/cluster
 
-node: argo generate
+node: generate
 	go build ./cmd/node
-
-testsuite: argo generate
-	go build ./cmd/testsuite
 
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
-docker-images: services
-	cp node deployment/docker/nodemgr
-	cp cmd/node/config.json deployment/docker/nodemgr
-	cp cmd/node/config_kind.json deployment/docker/nodemgr
-	docker build --tag nodemgr:v1 deployment/docker/nodemgr
-
-	cp cluster deployment/docker/clustermgr
-	cp cmd/cluster/config.json deployment/docker/clustermgr
-	cp cmd/cluster/config_kind.json deployment/docker/clustermgr
-	docker build --tag clustermgr:v1 deployment/docker/clustermgr
+docker-images: bundle services
+	docker build --file deployment/docker/nodemgr/Dockerfile --tag nodemgr:v1 .
+	docker build --file deployment/docker/clustermgr/Dockerfile --tag clustermgr:v1 .
 
 docker-archive: docker-images
 	docker save nodemgr:v1 clustermgr:v1 | gzip > images.tar.gz

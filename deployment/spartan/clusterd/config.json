@@ -7,13 +7,15 @@
         "type": "kafka", 
         "endpoint": "clusterd",
         "kafka":{
-            "brokerAddrs":[
-                "kafka-svc:9092"
+            "stub": {
+                "brokerAddrs":[
+                    "kafka-svc:9092"
                 ],
-            "certfile": "/security/client.cer.pem",
-	        "cacertfile": "/security/server.cer.pem",
-	        "keyfile": "/security/client.key.pem",
-	        "secure": true
+                "certfile": "/security/client.cer.pem",
+	            "cacertfile": "/security/server.cer.pem",
+	            "keyfile": "/security/client.key.pem",
+	            "secure": true
+            }
         }
     },
     "db":{

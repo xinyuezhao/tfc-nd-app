@@ -1,6 +1,11 @@
 FROM alpine:latest
+WORKDIR /security/
+COPY pkg/bundle/client.cer.pem .
+COPY pkg/bundle/client.key.pem .
+COPY pkg/bundle/server.cer.pem .
 WORKDIR /bin/
 COPY ./node .
-COPY ./config.json .
-COPY ./config_kind.json .
+COPY cmd/node/config.json .
+COPY cmd/node/config_kind.json .
+COPY cmd/node/config_sanity.json .
 CMD ./node --config.file ./config.json
