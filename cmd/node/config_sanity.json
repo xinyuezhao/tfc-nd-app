@@ -47,7 +47,7 @@
         "type": "kafka", 
         "endpoint": "node-manager-topic",
         "kafka":{
-            "nexusDashboard": {
+            "stub": {
             "brokerAddrs":[
                 "kafka:9092"
                 ],

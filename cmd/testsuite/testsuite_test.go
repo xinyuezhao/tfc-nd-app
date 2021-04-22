@@ -47,7 +47,7 @@ func readResponse(resp *http.Response) ([]mo.Object, error) {
 	}
 	fmt.Println(string(data))
 	resp.Body.Close()
-	return serde.Unmarshal(data)
+	return serde.Unmarshal(mo.UnmarshalContextUnknown, data)
 }
 
 func TestNodeManager(t *testing.T) {
