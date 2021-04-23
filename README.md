@@ -137,7 +137,7 @@ helm --kube-context kind-argo install -n argo --version 12.0.0 kafka bitnami/kaf
 Install MongoDB.
 
 ```
-helm --kube-context kind-argo install -n argo --version 12.0.0 kafka bitnami/kafka --set autoCreateTopicsEnable=true
+helm --kube-context kind-argo install -n argo --version 10.0.1 mongodb bitnami/mongodb --set auth.enabled=false --set architecture=replicaset
 ```
 
 ### Interacting with REST API
