@@ -27,7 +27,7 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 		_, err := changer.ResolveByName(ctx, name)
 		if err != nil {
 			log.Info("creating cluster object")
-			cluster.Meta().MutableManagedObjectMetaV1Mo().SetStatus(mo.StatusCreated)
+			cluster.Meta().MutableManagedObjectMetaV1Argo().SetStatus(mo.StatusCreated)
 			return mo.ChangerFromContext(ctx).Apply(ctx, cluster)
 		}
 	}
