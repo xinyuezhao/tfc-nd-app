@@ -3,7 +3,7 @@ apiVersion: argome.argo.cisco.com/v1
 kind: ApiDef
 metadata:
   name: argome
-  scope: openapi
+  scope: deployment
 spec:
   title: argome
   description: TBD
