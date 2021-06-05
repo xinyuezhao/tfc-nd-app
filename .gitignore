@@ -1,9 +1,8 @@
 .bin
 gen
-argo
-./node
-./cluster
-./pilot
+/node
+/cluster
 cmd/node/node
 cmd/cluster/cluster
-cmd/pilot/pilot
+/pkg/bundle
+/imported*

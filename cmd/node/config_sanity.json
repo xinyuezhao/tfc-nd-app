@@ -49,13 +49,9 @@
         "kafka":{
             "stub": {
             "brokerAddrs":[
-                "kafka:9092"
-                ],
-            "certfile": "/security/client.cer.pem",
-	        "cacertfile": "/security/server.cer.pem",
-	        "keyfile": "/security/client.key.pem",
-	        "secure": true
-             }
+                "kafka-svc:9092"
+                ]
+            }
         }
     },
     "db":{

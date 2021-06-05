@@ -1,0 +1,190 @@
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: argo-infra
+  labels:
+    name: argo-infra
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kafka
+  namespace: argo-infra
+  labels:
+    argo.deploy: kafka 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      argo.deploy: kafka 
+  template:
+    metadata:
+      labels:
+        argo.deploy: kafka 
+      creationTimestamp: null
+    spec:
+      hostname: kafka-svc
+      containers:
+      - image: bitnami/kafka:2.7.0 
+        imagePullPolicy: ""
+        name: kafka 
+        env:
+          - name: ALLOW_PLAINTEXT_LISTENER 
+            value: "yes"
+          - name: KAFKA_CFG_AUTO_CREATE_TOPICS_ENABLE
+            value: "true" 
+          - name: KAFKA_CFG_ZOOKEEPER_CONNECT 
+            value: "zookeeper:2181"
+          - name: KAFKA_CFG_LISTENER_SECURITY_PROTOCOL_MAP 
+            value: "INTERNAL:PLAINTEXT,CLIENT:PLAINTEXT"
+          - name: KAFKA_ZOOKEEPER_PROTOCOL 
+            value: "INTERNAL"
+          - name: KAFKA_CFG_LISTENERS
+            value: "INTERNAL://kafka-svc:9093,CLIENT://kafka-svc:9092"
+          - name: KAFKA_CFG_ADVERTISED_LISTENERS
+            value: "INTERNAL://kafka-svc:9093,CLIENT://kafka-svc:9092" 
+          - name: KAFKA_CLIENT_USER
+            value: "user"
+          - name: KAFKA_CLIENT_PASSWORD
+            value: "password"
+          - name: KAFKA_CERTIFICATE_PASSWORD
+            value: "argostore" 
+          - name: KAFKA_INTER_BROKER_LISTENER_NAME
+            value: "CLIENT"
+          - name: KAFKA_CFG_SSL_ENDPOINT_IDENTIFICATION_ALGORITHM
+            value: ""
+          - name: KAFKA_CFG_ADVERTISED_HOST_NAME
+            value: "kafka-svc"
+        volumeMounts:
+          - name: keystore 
+            mountPath: /opt/bitnami/kafka/config/certs/kafka.keystore.jks 
+            readOnly: true
+          - name: truststore 
+            mountPath: /opt/bitnami/kafka/config/certs/kafka.truststore.jks 
+            readOnly: true
+      volumes:
+        - name: keystore 
+          hostPath:
+            path: /secure/kafka.keystore.jks
+        - name: truststore 
+          hostPath:
+            path: /secure/kafka.truststore.jks
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mongo
+  namespace: argo-infra 
+  labels:
+    argo.deploy: mongo 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      argo.deploy: mongo 
+  template:
+    metadata:
+      labels:
+        argo.deploy: mongo 
+      creationTimestamp: null
+    spec:
+      hostname: mongo-svc
+      containers:
+      - image: mongo:4.4.4
+        command: ["/tmp/docker-entrypoint.sh"]
+        args: ["--bind_ip", "mongo-svc", "--replSet", "rs0"]
+        imagePullPolicy: ""
+        name: mongo 
+        volumeMounts:
+          - name: initfile 
+            mountPath: /docker-entrypoint-initdb.d/init-mongo.js 
+            readOnly: true
+          - name: mongofile 
+            mountPath: /tmp/docker-entrypoint.sh
+      volumes:
+        - name: initfile
+          hostPath:
+            path: /deployment/init-mongo.js
+        - name: mongofile
+          hostPath:
+            path: /deployment/mongo-docker-entrypoint.sh
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: zookeeper 
+  namespace: argo-infra
+  labels:
+    argo.deploy: zoo 
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      argo.deploy: zoo 
+  template:
+    metadata:
+      labels:
+        argo.deploy: zoo 
+      creationTimestamp: null
+    spec:
+      containers:
+      - image: bitnami/zookeeper:3.7.0 
+        imagePullPolicy: ""
+        name: zookeeper 
+        env:
+          - name: ALLOW_ANONYMOUS_LOGIN 
+            value: "yes"
+      volumes: null
+      restartPolicy: Always
+      serviceAccountName: ""
+status: {}
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: zookeeper
+  namespace: argo-infra
+  labels:
+    argo.deploy: zoo
+spec:
+  ports:
+  - port: 2181
+    protocol: TCP
+  selector:
+    argo.deploy: zoo
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: mongo-svc
+  namespace: argo-infra
+  labels:
+    argo.deploy: mongo 
+spec:
+  ports:
+  - port: 27017 
+    protocol: TCP
+  selector:
+    argo.deploy: mongo
+  type: ClusterIP 
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kafka-svc
+  namespace: argo-infra
+  labels:
+    argo.deploy: kafka
+spec:
+  ports:
+  - port: 9092
+    protocol: TCP
+  selector:
+    argo.deploy: kafka
+  type: ClusterIP
