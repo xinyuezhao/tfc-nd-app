@@ -23,11 +23,9 @@ index 8151618..e510113 100644
 +inventory: argo
 +       go build ./cmd/inventory
 +
- pilot: argo
-        go build ./cmd/pilot
 
--services: clusterd node pilot
-+services: clusterd node pilot inventory
+-services: clusterd node
++services: clusterd node inventory
 
 
 ```

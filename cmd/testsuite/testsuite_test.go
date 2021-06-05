@@ -19,6 +19,13 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 )
 
+const (
+	nodemgrBaseURL    = "http://nodemgr:80/"
+	nodesURL          = nodemgrBaseURL + "api/argome.argo.cisco.com/v1/nodes"
+	clustermgrBaseURL = "http://clustermgr:80/"
+	clusterMembersURL = clustermgrBaseURL + "api/argome.argo.cisco.com/v1/clustermembers"
+)
+
 var testCtx = context.Background()
 
 func waitForCondition(fn func() bool, duration time.Duration) bool {
@@ -53,13 +60,13 @@ func readResponse(resp *http.Response) ([]mo.Object, error) {
 func TestNodeManager(t *testing.T) {
 	Convey("Check if node manager is reachable",
 		t, func(c C) {
-			resp, err := http.Get("http://node-manager:8089/")
+			resp, err := http.Get(nodemgrBaseURL)
 			So(err, ShouldBeNil)
 			resp.Body.Close()
 		})
 	Convey("Check if cluster is reachable",
 		t, func(c C) {
-			resp, err := http.Get("http://cluster:8089/")
+			resp, err := http.Get(clustermgrBaseURL)
 			So(err, ShouldBeNil)
 			resp.Body.Close()
 		})
@@ -74,7 +81,7 @@ func TestNodeManager(t *testing.T) {
   }
 }
 `
-			resp, err := http.Post("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes", "application/json", strings.NewReader(node))
+			resp, err := http.Post(nodesURL, "application/json", strings.NewReader(node))
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
@@ -84,7 +91,7 @@ func TestNodeManager(t *testing.T) {
 			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
 			resp.Body.Close()
 
-			resp, err = http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
+			resp, err = http.Get(nodesURL)
 			So(err, ShouldBeNil)
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
@@ -98,7 +105,7 @@ func TestNodeManager(t *testing.T) {
 	Convey("There should be a NodeOper object created for the node object and the node object should be pointing to it",
 		t, func(c C) {
 			So(waitForCondition(func() bool {
-				resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
+				resp, err := http.Get(nodesURL)
 				if err != nil {
 					return false
 				}
@@ -122,7 +129,7 @@ func TestNodeManager(t *testing.T) {
 				return true
 			}, time.Second*10), ShouldBeTrue)
 
-			resp, err := http.Get("http://node-manager:8089/api/argome.argo.cisco.com/v1/nodes")
+			resp, err := http.Get(nodesURL)
 			So(err, ShouldBeNil)
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
@@ -132,7 +139,7 @@ func TestNodeManager(t *testing.T) {
 			So(nodeOperObj.Status().InbandIP(), ShouldEqual, "10.1.1.1")
 			So(nodeOperObj.Status().Status(), ShouldEqual, "admitted")
 
-			resp, err = http.Get("http://cluster:8089/api/argome.argo.cisco.com/v1/clustermembers")
+			resp, err = http.Get(clusterMembersURL)
 			So(err, ShouldBeNil)
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
@@ -144,10 +151,11 @@ func TestNodeManager(t *testing.T) {
 }
 
 func TestMain(m *testing.M) {
+	fmt.Println("Starting testsuite: ", time.Now())
 	testCtx = mo.ContextWithJSONSerde(testCtx, schema.Schema())
 	if !waitForCondition(func() bool {
-		r1, node := http.Get("http://node-manager:8089/")
-		r2, cluster := http.Get("http://cluster:8089/")
+		r1, node := http.Get(nodemgrBaseURL)
+		r2, cluster := http.Get(clustermgrBaseURL)
 		if r1 != nil {
 			r1.Body.Close()
 		}
@@ -162,7 +170,7 @@ func TestMain(m *testing.M) {
 		fmt.Println("Services did not come up")
 		os.Exit(1)
 	}
-	fmt.Println("Starting testsuite: ", time.Now())
+	fmt.Println("Running testsuite: ", time.Now())
 	ret := m.Run()
 	os.Exit(ret)
 }

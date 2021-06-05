@@ -1,0 +1,22 @@
+apiVersion: batch/v1
+kind: Job 
+metadata:
+  name: argometester
+  namespace: cisco-argome
+  labels:
+    argo.job: argometester 
+spec:
+  template:
+    metadata:
+      labels:
+        argo.job: argometester 
+      creationTimestamp: null
+    spec:
+      containers:
+      - env:
+        image: argome-testsuite:v1
+        imagePullPolicy: ""
+        name: argometester
+        resources: {}
+      restartPolicy: Never 
+  backoffLimit: 0

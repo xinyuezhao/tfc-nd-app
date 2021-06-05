@@ -40,7 +40,6 @@ clean:
 	rm -f node
 	rm -f cluster 
 	rm -f testsuite 
-	rm -f pilot 
 	rm -rf argo
 	rm -rf pkg/bundle 
 	rm -f images.tar.gz
@@ -56,11 +55,11 @@ bundle:
 	rm argo-bundle.tar.gz
 
 $(eval $(call build-for-linux,sanity))
-sanity: clean docker-images
-	cd cmd/testsuite && go test -c
-	docker build --file cmd/testsuite/Dockerfile --tag argome-testsuite:v1 .
-	rm -rf cmd/testsuite/testsuite.test
-	./runtest.sh
+sanity: clean generate docker-images
+	go test -c ./cmd/testsuite
+	docker build --file deployment/docker/testsuite/Dockerfile --tag argome-testsuite:v1 .
+	rm -rf testsuite.test
+	./deployment/sanity/scripts/sanity.sh
 
 services: clusterd node
 
