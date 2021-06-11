@@ -1,5 +1,5 @@
 REPO_DIR=$(shell git rev-parse --show-toplevel)
-ARGO_BUILD_INTERSIGHT=${REPO_DIR}/argo-build/intersight
+ARGO_BUILD_INTERSIGHT=${REPO_DIR}/deployment/intersight/onprem/argo-build/intersight
 ARGO_BUILD_SCRIPT=${ARGO_BUILD_INTERSIGHT}/script
 ARGO_BUILD_ONPREM=${ARGO_BUILD_INTERSIGHT}/onprem
 

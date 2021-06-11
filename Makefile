@@ -48,6 +48,16 @@ clean:
 	rm -f polaris_image.tar.gz
 	rm -f rigel_image.tar.gz
 	rm -rf imported* 
+	rm -rf deployment/intersight/onprem/argo-build
+	rm -rf deployment/docker/intersight/clustermgr/config.json
+	rm -rf deployment/docker/intersight/clustermgr/rigel
+	rm -rf deployment/docker/intersight/nodemgr/config.json
+	rm -rf deployment/docker/intersight/nodemgr/polaris
+	rm -rf deployment/intersight/onprem/polaris/.build/
+	rm -rf deployment/intersight/onprem/rigel/.build/
+	rm -rf polaris-onprem.tar.gz
+	rm -rf rigel-onprem.tar.gz
+
 
 bundle:
 	wget http://aci-artifactory-001.insieme.local:8081/artifactory/argo-artifactory/argo-bundle.tar.gz
@@ -78,7 +88,7 @@ docker-images: bundle services
 docker-archive: docker-images
 	docker save nodemgr:v1 clustermgr:v1 | gzip > images.tar.gz
 
-intersight:
+intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris
 	cp cmd/node/config.json deployment/docker/intersight/nodemgr/
 	docker build --tag polaris:v1 deployment/docker/intersight/nodemgr
