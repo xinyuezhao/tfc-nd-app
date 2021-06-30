@@ -14,7 +14,7 @@ func NodeHandler(ctx context.Context, event mo.Event) error {
 	node := event.Resource().(argomev1.Node)
 
 	log := core.LoggerFromContext(ctx)
-	log.Info("handling node", "node", node)
+	log.Info("handling node resource", "node", node)
 
 	status := node.StatusMutable()
 	status.SetInbandIP(node.Spec().InbandIP())

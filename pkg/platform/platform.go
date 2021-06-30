@@ -2,9 +2,9 @@ package platform
 
 import (
 	"golang.cisco.com/argo/pkg/config"
-	"golang.cisco.com/argo/pkg/platformenv/intersight"
 	"golang.cisco.com/argo/pkg/platformenv/kind"
 	"golang.cisco.com/argo/pkg/platformenv/platform"
+	"golang.cisco.com/argogalaxies/intersight"
 	"golang.cisco.com/argogalaxies/nexusdashboard"
 )
 
