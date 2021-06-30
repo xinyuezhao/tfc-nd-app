@@ -10,7 +10,7 @@ $(1): export GOOS=linux
 $(1): export GOARCH=amd64
 endef
 
-all: argo lint test argome
+all: lint test argome
 
 check: lint test
 
