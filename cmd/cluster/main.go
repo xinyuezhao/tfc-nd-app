@@ -15,6 +15,7 @@ import (
 
 	"golang.cisco.com/examples/argome/gen/schema"
 	"golang.cisco.com/examples/argome/pkg/handlers"
+	"golang.cisco.com/examples/argome/pkg/platform"
 )
 
 func onStart(ctx context.Context, changer mo.Changer) error {
@@ -43,11 +44,12 @@ func main() {
 	senv := os.Getenv("SPARTAN_ENV")
 
 	var apx service.Service
+	var opts service.Options
+	opts.Platform = platform.New
 	if senv == "true" {
-		apx = service.NewWithDirectory("clusterd", schema.Schema(), directory.New(schema.Schema()))
-	} else {
-		apx = service.New("clusterd", schema.Schema())
+		opts.Directory = directory.New(schema.Schema())
 	}
+	apx = service.New("clusterd", schema.Schema(), &opts)
 	if apx == nil {
 		panic("no service was created")
 	}

@@ -45,14 +45,12 @@
     },
     "transport":{
         "type": "kafka",
-        "endpoint": "clusterd-topic", 
-        "kafka":{
-          "stub": {
-            "brokerAddrs":[
-                "kafka-svc:9092"
-                ]
-            }
-        }
+        "endpoint": "clusterd-topic"
+    },
+    "kafka":{
+        "brokerAddrs":[
+            "kafka-svc:9092"
+        ]
     },
     "db":{
         "path": "mongo-svc:27017", 

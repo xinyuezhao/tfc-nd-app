@@ -45,18 +45,16 @@
     },
     "transport":{
         "type": "kafka", 
-        "endpoint": "node-manager-topic",
-        "kafka":{
-          "nexusDashboard": {
-            "brokerAddrs":[
-                "kafka-svc.kafka.svc:9092"
-                ],
-            "certfile": "/security/client.cer.pem",
-	        "cacertfile": "/security/server.cer.pem",
-	        "keyfile": "/security/client.key.pem",
-	        "secure": true
-           }
-        }
+        "endpoint": "node-manager-topic"
+    },
+    "kafka":{
+        "brokerAddrs":[
+            "kafka-svc.kafka.svc:9092"
+        ],
+        "certfile": "/security/client.cer.pem",
+        "cacertfile": "/security/server.cer.pem",
+        "keyfile": "/security/client.key.pem",
+        "secure": true
     },
     "db":{
         "appname": "argome",

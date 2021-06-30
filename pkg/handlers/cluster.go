@@ -22,7 +22,7 @@ func ClusterHandler(ctx context.Context, event mo.Event) error {
 	return nil
 }
 
-func nodeInCluser(cluster argomev1.Cluster, node string) bool {
+func nodeInCluster(cluster argomev1.Cluster, node string) bool {
 	for nodeIP := range cluster.Status().Nodes() {
 		if nodeIP == node {
 			return true
@@ -44,7 +44,7 @@ func ClusterNodeHandler(ctx context.Context, event mo.Event) error {
 	}
 
 	cluster := obj.(argomev1.Cluster)
-	if nodeInCluser(cluster, node.Spec().InbandIP()) {
+	if nodeInCluster(cluster, node.Spec().InbandIP()) {
 		return nil
 	}
 
