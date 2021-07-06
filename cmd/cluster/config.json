@@ -47,14 +47,23 @@
         "type": "kafka",
         "endpoint": "clusterd-topic"
     },
-    "kafka":{
-        "brokerAddrs":[
+    "platform": {
+        "kafka":{
+            "brokerAddrs":[
             "kafka-svc.kafka.svc:9092"
-        ],
-        "certfile": "/security/client.cer.pem",
-        "cacertfile": "/security/server.cer.pem",
-        "keyfile": "/security/client.key.pem",
-        "secure": true
+            ],
+            "certfile": "/security/client.cer.pem",
+            "cacertfile": "/security/server.cer.pem",
+            "keyfile": "/security/client.key.pem",
+            "secure": true
+        },
+        "mongo":{
+            "cacertfile": "/certs/cacerts.crt",
+            "duration": 120000,
+            "path": "mongodb.mongodb.svc:27017",
+            "secure": "true",
+            "name": "argome"
+        }
     },
     "db":{
         "appname": "argome",

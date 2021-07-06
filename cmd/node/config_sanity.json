@@ -47,10 +47,13 @@
         "type": "kafka", 
         "endpoint": "node-manager-topic"
     },
-    "kafka":{
-        "brokerAddrs":[
-            "kafka-svc:9092"
-        ]
+    "platform":{
+        "kafka":{
+            "brokerAddrs":[
+                "kafka-svc:9092"
+            ],
+            "secure": false
+        }
     },
     "db":{
         "path": "mongo-svc:27017", 

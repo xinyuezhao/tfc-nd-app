@@ -42,6 +42,9 @@ spec:
       - name: clustermgr
         image: clustermgr:v1
         imagePullPolicy: IfNotPresent
+        env:
+          - name: ARGO_KAFKA_ADDR
+            value: "kafka-svc:9092"
         ports:
         - containerPort: 8089
         command: ["/bin/cluster"]
@@ -85,6 +88,9 @@ spec:
       - name: nodemgr
         image: nodemgr:v1
         imagePullPolicy: IfNotPresent
+        env:
+          - name: ARGO_KAFKA_ADDR
+            value: "kafka-svc:9092"
         ports:
         - containerPort: 8089
         command: ["/bin/node"]

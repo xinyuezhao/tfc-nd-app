@@ -33,7 +33,7 @@ func main() {
 
 	var apx service.Service
 	var opts service.Options
-	opts.Platform = platform.New
+	opts.PlatformFactory = platform.New
 	if senv == "true" {
 		opts.Directory = directory.New(schema.Schema())
 	}
