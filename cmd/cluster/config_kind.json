@@ -45,14 +45,19 @@
   },
   "transport": {
     "type": "kafka",
-    "endpoint": "clusterd-topic",
-    "kafka": {
-      "stub": {
-        "brokerAddrs": [
-          "kafka.argo.svc:9092"
+    "endpoint": "clusterd-topic"
+  },
+  "platform":{
+    "kafka":{
+        "brokerAddrs":[
+            "kafka.argo.svc:9092"
         ],
         "secure": false
-      }
+    },
+    "mongo":{
+      "duration": 120000,
+      "path": "mongodb-headless.argo.svc:27017",
+      "name": "argome"
     }
   },
   "db": {

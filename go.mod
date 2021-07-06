@@ -2,11 +2,11 @@ module golang.cisco.com/examples/argome
 
 go 1.15
 
-replace golang.cisco.com/argo => aci-github.cisco.com/pafrank/argo v0.3.1-0.20210630165339-aa56ac9cec1c
+replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.8.1-0.20210706222906-fb00b772c0a4  
 
-replace golang.cisco.com/argogalaxies/nexusdashboard => aci-github.cisco.com/pafrank/argogalaxies/nexusdashboard v0.0.0-20210630165149-56fe68b11bb0
+replace golang.cisco.com/argogalaxies/nexusdashboard => aci-github.cisco.com/pafrank/argogalaxies/nexusdashboard v0.0.0-20210706175703-3f42803ec165 
 
-replace golang.cisco.com/argogalaxies/intersight => aci-github.cisco.com/pafrank/argogalaxies/intersight v0.0.0-20210630165149-56fe68b11bb0
+replace golang.cisco.com/argogalaxies/intersight => aci-github.cisco.com/pafrank/argogalaxies/intersight v0.0.0-20210706175703-3f42803ec165 
 
 replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b
 
