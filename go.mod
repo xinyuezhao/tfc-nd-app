@@ -2,12 +2,9 @@ module golang.cisco.com/examples/argome
 
 go 1.15
 
-replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.8.1-0.20210706222906-fb00b772c0a4  
-
-replace golang.cisco.com/argogalaxies/nexusdashboard => aci-github.cisco.com/pafrank/argogalaxies/nexusdashboard v0.0.0-20210706175703-3f42803ec165 
-
-replace golang.cisco.com/argogalaxies/intersight => aci-github.cisco.com/pafrank/argogalaxies/intersight v0.0.0-20210706175703-3f42803ec165 
-
+replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.8.1-0.20210707184224-a74252ea2e20 
+replace golang.cisco.com/argo-galaxies/nexusdashboard => aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210707204732-89854617835c 
+replace golang.cisco.com/argo-galaxies/intersight => aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210707204732-89854617835c 
 replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b
 
 require (
@@ -20,7 +17,7 @@ require (
 	github.com/smartystreets/goconvey v1.6.4
 	go.uber.org/zap v1.18.1
 	golang.cisco.com/argo v0.0.0-00010101000000-000000000000
-	golang.cisco.com/argogalaxies/intersight v0.0.0-00010101000000-000000000000
-	golang.cisco.com/argogalaxies/nexusdashboard v0.0.0-00010101000000-000000000000
+	golang.cisco.com/argo-galaxies/intersight v0.0.0-00010101000000-000000000000
+	golang.cisco.com/argo-galaxies/nexusdashboard v0.0.0-00010101000000-000000000000
 	golang.cisco.com/spartan v0.0.0-00010101000000-000000000000
 )
