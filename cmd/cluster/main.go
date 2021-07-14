@@ -22,13 +22,17 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("configuring some objects during app start")
 	cluster := argomev1.ClusterFactory()
-	cluster.SpecMutable().SetName("cluster-1")
+	if err := cluster.SpecMutable().SetName("cluster-1"); err != nil {
+		return err
+	}
 	name, err := utils.AnyMetaName(cluster)
 	if err == nil {
 		_, err := changer.ResolveByName(ctx, name)
 		if err != nil {
 			log.Info("creating cluster object")
-			cluster.Meta().MutableManagedObjectMetaV1Argo().SetStatus(mo.StatusCreated)
+			if errx := cluster.Meta().MutableManagedObjectMetaV1Argo().SetStatus(mo.StatusCreated); errx != nil {
+				return errx
+			}
 			return mo.ChangerFromContext(ctx).Apply(ctx, cluster)
 		}
 	}

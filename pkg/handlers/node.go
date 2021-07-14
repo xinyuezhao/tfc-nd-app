@@ -17,15 +17,21 @@ func NodeHandler(ctx context.Context, event mo.Event) error {
 	log.Info("handling node resource", "node", node)
 
 	status := node.StatusMutable()
-	status.SetInbandIP(node.Spec().InbandIP())
-	status.SetStatus("initialized")
+	if err := core.NewError(status.SetInbandIP(node.Spec().InbandIP()),
+		status.SetStatus("initialized")); err != nil {
+		return err
+	}
 
 	if node.Spec().ClusterPtr() != nil && node.Spec().Cluster() != "" {
-		status.SetCluster(node.Spec().Cluster())
+		if err := status.SetCluster(node.Spec().Cluster()); err != nil {
+			return err
+		}
 		// get the cluster and set status to adding to cluster
 		_, err := event.Store().ResolveByName(ctx, node.Spec().Cluster())
 		if err != nil {
-			status.SetStatus("admitting")
+			if errx := status.SetStatus("admitting"); errx != nil {
+				return errx
+			}
 		}
 	}
 
@@ -67,7 +73,9 @@ func NodeClusterMemberHandler(ctx context.Context, event mo.Event) error {
 
 	nodeStatus := node.StatusMutable()
 	if nodeStatus.Status() != admitted {
-		nodeStatus.SetStatus(admitted)
+		if err := nodeStatus.SetStatus(admitted); err != nil {
+			return err
+		}
 		if err := event.Store().Record(ctx, node); err != nil {
 			return err
 		}
