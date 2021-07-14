@@ -48,11 +48,15 @@ func ClusterNodeHandler(ctx context.Context, event mo.Event) error {
 		return nil
 	}
 
-	cluster.StatusMutable().SetNodesEl(node.Spec().InbandIP(), "admitted")
+	if err := cluster.StatusMutable().SetNodesEl(node.Spec().InbandIP(), "admitted"); err != nil {
+		return err
+	}
 
 	clusterMember := argomev1.ClusterMemberFactory()
-	clusterMember.SpecMutable().SetName(node.MetaNames()["default"])
-	clusterMember.SpecMutable().SetCluster(node.Spec().Cluster())
+	if err := core.NewError(clusterMember.SpecMutable().SetName(node.MetaNames()["default"]),
+		clusterMember.SpecMutable().SetCluster(node.Spec().Cluster())); err != nil {
+		return err
+	}
 
 	if err := event.Store().Record(ctx, cluster); err != nil {
 		return err

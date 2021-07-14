@@ -10,9 +10,9 @@ $(1): export GOOS=linux
 $(1): export GOARCH=amd64
 endef
 
-all: lint test argome
+all: lint argome
 
-check: lint test
+check: lint
 
 $(BINDIR):
 	@mkdir -p $@
@@ -65,7 +65,7 @@ bundle:
 	rm argo-bundle.tar.gz
 
 $(eval $(call build-for-linux,sanity))
-sanity: clean generate docker-images
+sanity: clean lint docker-images
 	go test -c ./cmd/testsuite
 	docker build --file deployment/docker/testsuite/Dockerfile --tag argome-testsuite:v1 .
 	rm -rf testsuite.test
