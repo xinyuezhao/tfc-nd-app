@@ -4,8 +4,8 @@ go 1.15
 
 replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.9.0
 replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.9.0
-replace golang.cisco.com/argo-galaxies/nexusdashboard => aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210715163151-144807c05624 
-replace golang.cisco.com/argo-galaxies/intersight => aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210715163151-144807c05624 
+replace golang.cisco.com/argo-galaxies/nexusdashboard => aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.9.0
+replace golang.cisco.com/argo-galaxies/intersight => aci-github.cisco.com/atom/argo-galaxies/intersight v0.9.0
 
 require (
 	github.com/go-logr/stdr v0.2.0
