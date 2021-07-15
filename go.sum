@@ -30,6 +30,8 @@ aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210714015752-cb52d2c
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210714015752-cb52d2c26825/go.mod h1:/npMayzRIfxof+sHgd8d2J2N6eBZmDRxNL/KZZdMGw4=
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210715163151-144807c05624 h1:ReDTth5OBGO6m5rOWEMIRfPQUIN7d74exZ1y9IPZ+DM=
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210715163151-144807c05624/go.mod h1:pMkWxAc4uXECM2Jy9q7cdrbrYv0ykBt515yQH+0k3lo=
+aci-github.cisco.com/atom/argo-galaxies/intersight v0.9.0 h1:qZ9Z6NzKfEhhBeLnKsXs5u/JgxfoE7LIo6cBPcSoSFg=
+aci-github.cisco.com/atom/argo-galaxies/intersight v0.9.0/go.mod h1:pMkWxAc4uXECM2Jy9q7cdrbrYv0ykBt515yQH+0k3lo=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210707204732-89854617835c h1:b1a8SlC2UZdgXtJK3IMB2XtKiNDWkgPY25FRcLZ0lRY=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210707204732-89854617835c/go.mod h1:ePlEi3Ayed2FGQr38nmBiSa8X07skge/q4e1i45l7jY=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210713234805-e92cdc140c8d h1:ft7rq/Q+W2sw5K3AGjru270z4RnxhO0gf5l2ukyfOVQ=
@@ -40,6 +42,8 @@ aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210714015752-cb5
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210714015752-cb52d2c26825/go.mod h1:ATRtvImuQsJREQZHg4T/p1cCXvRxQweImLugS9of33o=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210715163151-144807c05624 h1:yPKGAl4Z+dI6bB0zeG7+0yWV0KS3vhd4UYxkcZDDoLE=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210715163151-144807c05624/go.mod h1:fLq1xhRp4+bfA3UQyV3jD5BKR8y41DTv9FtffMK92Uo=
+aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.9.0 h1:VP5gL2M+sG9CxL/xl+MUe6+zJFAdtFHHScu0CMNJ1AA=
+aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.9.0/go.mod h1:fLq1xhRp4+bfA3UQyV3jD5BKR8y41DTv9FtffMK92Uo=
 aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b h1:6usvKEElFXkiQj8D2HtWEhACsByaPB1lNlvRzjR3Uz0=
 aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b/go.mod h1:mQO8Hfc0ZKRrVqtdUs5Ph15hpYNkTO4BD5JnuWALQSE=
 aci-github.cisco.com/atom/spartan v0.0.0-20210714014553-ec9eac68fce3 h1:N9SSmgN3SdqckPGEw/I/IkaX4Ida4w0tnm9qJg7BhT0=
