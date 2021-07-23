@@ -2,13 +2,10 @@ package main
 
 import (
 	"context"
-	"os"
 
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
-
-	"golang.cisco.com/spartan/pkg/directory"
 
 	"golang.cisco.com/examples/argome/gen/schema"
 	"golang.cisco.com/examples/argome/pkg/handlers"
@@ -29,14 +26,9 @@ func main() {
 		handlers.NodeClusterMemberHandler,
 	}
 
-	senv := os.Getenv("SPARTAN_ENV")
-
 	var apx service.Service
 	var opts service.Options
 	opts.PlatformFactory = platform.New
-	if senv == "true" {
-		opts.Directory = directory.New(schema.Schema())
-	}
 	apx = service.New("node-manager", schema.Schema(), &opts)
 	if apx == nil {
 		panic("Could not create the service")

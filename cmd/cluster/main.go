@@ -2,11 +2,8 @@ package main
 
 import (
 	"context"
-	"os"
 
 	"golang.cisco.com/examples/argome/gen/argomev1"
-
-	"golang.cisco.com/spartan/pkg/directory"
 
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
@@ -45,14 +42,9 @@ func main() {
 		handlers.ClusterNodeHandler,
 	}
 
-	senv := os.Getenv("SPARTAN_ENV")
-
 	var apx service.Service
 	var opts service.Options
 	opts.PlatformFactory = platform.New
-	if senv == "true" {
-		opts.Directory = directory.New(schema.Schema())
-	}
 	apx = service.New("clusterd", schema.Schema(), &opts)
 	if apx == nil {
 		panic("no service was created")

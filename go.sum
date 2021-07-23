@@ -62,6 +62,8 @@ aci-github.cisco.com/pafrank/argo v0.3.1-0.20210706175328-066d536acbe1 h1:PXMyLS
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210706175328-066d536acbe1/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210707011708-2b6901724835 h1:67zxnuf8HhtkiCFC6Icw9XgunQvYhBbu6Rc05lUIJgU=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210707011708-2b6901724835/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
+aci-github.cisco.com/pafrank/argo v0.3.1-0.20210723161721-e7edb7a3693a h1:cklhyc3DRJf3PnJ6wer3emdqnV5RU7Ju9jCFlanNmls=
+aci-github.cisco.com/pafrank/argo v0.3.1-0.20210723161721-e7edb7a3693a/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
 aci-github.cisco.com/pafrank/argo-galaxies/intersight v0.0.0-20210707203204-bded7b221d4b h1:LseEFzcpCVj07UH0XJwLNo4xLmhtr96tFGZwnkFcOj8=
 aci-github.cisco.com/pafrank/argo-galaxies/intersight v0.0.0-20210707203204-bded7b221d4b/go.mod h1:7QOD2HrDQZYU9GXXFHbg8UEPE/hJm+kWDvHJKm+GP+k=
 aci-github.cisco.com/pafrank/argo-galaxies/intersight v0.0.0-20210714000852-f4bb852e97cb h1:ziU/jzW43mVlihnCzVkcqGQqtBnBfaMYK4QeuA5DZeM=
@@ -72,6 +74,8 @@ aci-github.cisco.com/pafrank/argo-galaxies/nexusdashboard v0.0.0-20210714000852-
 aci-github.cisco.com/pafrank/argo-galaxies/nexusdashboard v0.0.0-20210714000852-f4bb852e97cb/go.mod h1:ATRtvImuQsJREQZHg4T/p1cCXvRxQweImLugS9of33o=
 aci-github.cisco.com/pafrank/spartan v0.0.0-20210324185241-4586bc2ab28d h1:BqFYWqtdElnxFMmf5F83EIujCORh3jGvuzRERxkMbxs=
 aci-github.cisco.com/pafrank/spartan v0.0.0-20210324185241-4586bc2ab28d/go.mod h1:szTrD/8Nh50sWGt4a6yksmKCVcq6Fmdf6s1NQ/BDLg4=
+aci-github.cisco.com/pafrank/spartan v0.0.0-20210723180317-565dc505d446 h1:qg3qV14enX/7g35YW4EZXgl/Rxq+48RbYBiCMuIcgRo=
+aci-github.cisco.com/pafrank/spartan v0.0.0-20210723180317-565dc505d446/go.mod h1:eVNRRO3VehaxjqnV5WO5AdluWnWVpNLjIEGWRipdQ2M=
 cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 cloud.google.com/go v0.38.0/go.mod h1:990N+gfupTy94rShfmMCWGDn0LpTmnzTp2qbd1dvSRU=
