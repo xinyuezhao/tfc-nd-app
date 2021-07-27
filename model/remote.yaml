@@ -1,6 +1,6 @@
 repos:
-  - repo: git@aci-github.cisco.com:pafrank/argo.git
-    branch: dbseparation
+  - repo: git@aci-github.cisco.com:atom/argo.git
+    branch: master
     node-mutator: imported-node-mutator
     import-kinds:
       - Resource
@@ -10,8 +10,8 @@ repos:
       - Handler
     models:
       - model: ddN
-  - repo: git@aci-github.cisco.com:pafrank/spartan.git
-    branch: directory
+  - repo: git@aci-github.cisco.com:atom/spartan.git
+    branch: master
     node-mutator: imported-node-mutator
     import-kinds:
       - Resource
