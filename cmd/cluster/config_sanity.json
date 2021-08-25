@@ -33,11 +33,13 @@
                 "services": [
                     {
                     "name": "node-manager",
-                    "endpoint": "node-manager-topic"
+                    "endpoint": "node-manager-topic",
+                    "database": "nodemgr"
                 },
                 {
                     "name": "clusterd",
-                    "endpoint": "clusterd-topic"
+                    "endpoint": "clusterd-topic",
+                    "database": "clusterd"
                 }
                 ]
             }
@@ -57,6 +59,7 @@
     },
     "db":{
         "path": "mongo-svc:27017", 
-        "type":"mongodb"
+        "type": "mongodb",
+        "name": "clusterd"
     }
 }
