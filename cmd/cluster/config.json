@@ -70,5 +70,13 @@
         "path": "mongodb.mongodb.svc:27017",
         "type":"mongodb",
         "secure": true
+    },
+    "directory":{
+        "service": "clusterd",
+        "type": "mongodb",
+        "skipDefault": true,
+        "database": {
+            "name": "directory"
+        }
     }
 }
