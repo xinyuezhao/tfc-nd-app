@@ -25,6 +25,8 @@ aci-github.cisco.com/atom/argo v0.9.2-0.20210727210029-9e07ae53cc17/go.mod h1:4y
 aci-github.cisco.com/atom/argo v0.10.0/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
 aci-github.cisco.com/atom/argo v0.10.1-0.20210830235722-c114d3eccea9 h1:642sCk16DPytiWtYy9fUw2yIHocoSlCIvWhyf/D31Tk=
 aci-github.cisco.com/atom/argo v0.10.1-0.20210830235722-c114d3eccea9/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
+aci-github.cisco.com/atom/argo v0.10.1-0.20210910210433-e2c8a13025a5 h1:beW7cI1J3CBwUc2wo0TzCorFJfDiuJEcXDeESNXBccQ=
+aci-github.cisco.com/atom/argo v0.10.1-0.20210910210433-e2c8a13025a5/go.mod h1:PPflbkfcT32rlbeXOIuqJeB498TSOuPB0TVvwK27xd8=
 aci-github.cisco.com/atom/argo-galaxies v0.9.0 h1:63rwSvBXg/qKM5AQgsaF7oMdrQ3GnGUiNqMtS8oHSGk=
 aci-github.cisco.com/atom/argo-galaxies v0.9.0/go.mod h1:7w0yNRiDjRFlMAzYtdijBU0oOV/PKrUqnkMd4qf9TTY=
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210707204732-89854617835c h1:KaSwaN+rsEt0c3AyYQUlvxwAV5mVlEu4KRNCpKg5r20=
@@ -62,6 +64,7 @@ aci-github.cisco.com/atom/spartan v0.9.0/go.mod h1:LoN8Pb/DanpQA9Dw7smBa6S2Nm+Wi
 aci-github.cisco.com/atom/spartan v0.9.1-0.20210727211824-68eb657d7af8/go.mod h1:7Q8vTm7JO9f4k9V8HFOBYMdDNp29JuSftlTFg+kGtkA=
 aci-github.cisco.com/atom/spartan v0.9.1-0.20210727215616-50e96919e7b2/go.mod h1:7Q8vTm7JO9f4k9V8HFOBYMdDNp29JuSftlTFg+kGtkA=
 aci-github.cisco.com/atom/spartan v0.9.1-0.20210831002801-640c2751923d/go.mod h1:ieJWQZFUrGD/JXMlwmOwJ4ahGroT3rZQM49sFplh7vM=
+aci-github.cisco.com/atom/spartan v0.9.1-0.20210910232245-917b95d30f01/go.mod h1:RDxWRUWbA0gjKe9Z6SaAMyuhBWNjXm4VTv4+DKxiILk=
 aci-github.cisco.com/atom/spartan v0.10.0/go.mod h1:7AkHFt61snWQmdcE++XDG7fh3zcRpW5i7ebEQIcX2a0=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210630004401-6612907f986f h1:ZVMP3G/0Sx0OfjTAnDPOlXGlp5AWhsrnFOcxjXnHlQw=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210630004401-6612907f986f/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=

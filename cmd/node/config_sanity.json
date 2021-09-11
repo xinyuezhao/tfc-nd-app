@@ -24,8 +24,9 @@
         "service": "clusterd",
         "type": "mongodb",
         "skipDefault": true,
+        "endpoint": "clusterd-directory-notifier",
         "database": {
-            "name": "clusterd"
+            "name": "clusterd-directory"
         }
     }
 }
