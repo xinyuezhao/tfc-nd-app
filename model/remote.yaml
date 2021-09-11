@@ -1,23 +1,22 @@
 repos:
   - repo: git@aci-github.cisco.com:atom/argo.git
-    sha1: c114d3eccea9da003638caf97ff86bfdeac22c87 
+    sha1: e2c8a13025a59e1eb792f4c72cb53213129a7600 
     node-mutator: imported-node-mutator
     import-kinds:
       - Resource
       - Struct
       - Scope
       - Enum
-      - Handler
+      - ResourceHandler
     models:
       - model: ddN
   - repo: git@aci-github.cisco.com:atom/spartan.git
-    sha1: 640c2751923da9422da30d43ffd8a32d79facab3  
+    sha1: 917b95d30f01073437dbfe960b09657fd6a67ccd  
     node-mutator: imported-node-mutator
     import-kinds:
       - Resource
       - Struct
       - Scope
       - Enum
-      - Handler
     models:
       - model: model/spartan

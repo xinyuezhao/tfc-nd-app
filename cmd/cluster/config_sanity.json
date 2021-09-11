@@ -61,5 +61,14 @@
         "path": "mongo-svc:27017", 
         "type": "mongodb",
         "name": "clusterd"
+    },
+    "directory":{
+        "service": "clusterd",
+        "type": "mongodb",
+        "skipDefault": true,
+        "endpoint": "clusterd-directory-notifier",
+        "database": {
+            "name": "clusterd-directory"
+        }
     }
 }
