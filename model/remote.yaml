@@ -1,6 +1,6 @@
 repos:
   - repo: git@aci-github.cisco.com:atom/argo.git
-    sha1: e2c8a13025a59e1eb792f4c72cb53213129a7600 
+    tag: v0.11.0
     node-mutator: imported-node-mutator
     import-kinds:
       - Resource
@@ -11,7 +11,7 @@ repos:
     models:
       - model: ddN
   - repo: git@aci-github.cisco.com:atom/spartan.git
-    sha1: 917b95d30f01073437dbfe960b09657fd6a67ccd  
+    tag: v0.11.0
     node-mutator: imported-node-mutator
     import-kinds:
       - Resource
