@@ -27,6 +27,7 @@ aci-github.cisco.com/atom/argo v0.10.1-0.20210830235722-c114d3eccea9 h1:642sCk16
 aci-github.cisco.com/atom/argo v0.10.1-0.20210830235722-c114d3eccea9/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
 aci-github.cisco.com/atom/argo v0.10.1-0.20210910210433-e2c8a13025a5 h1:beW7cI1J3CBwUc2wo0TzCorFJfDiuJEcXDeESNXBccQ=
 aci-github.cisco.com/atom/argo v0.10.1-0.20210910210433-e2c8a13025a5/go.mod h1:PPflbkfcT32rlbeXOIuqJeB498TSOuPB0TVvwK27xd8=
+aci-github.cisco.com/atom/argo v0.11.0/go.mod h1:UYkmG0ZqZ+k11ik+E1Bl09sc1dSv1Qjg+e5153ZYHc4=
 aci-github.cisco.com/atom/argo-galaxies v0.9.0 h1:63rwSvBXg/qKM5AQgsaF7oMdrQ3GnGUiNqMtS8oHSGk=
 aci-github.cisco.com/atom/argo-galaxies v0.9.0/go.mod h1:7w0yNRiDjRFlMAzYtdijBU0oOV/PKrUqnkMd4qf9TTY=
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.0.0-20210707204732-89854617835c h1:KaSwaN+rsEt0c3AyYQUlvxwAV5mVlEu4KRNCpKg5r20=
@@ -41,6 +42,7 @@ aci-github.cisco.com/atom/argo-galaxies/intersight v0.9.0 h1:qZ9Z6NzKfEhhBeLnKsX
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.9.0/go.mod h1:pMkWxAc4uXECM2Jy9q7cdrbrYv0ykBt515yQH+0k3lo=
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.10.0 h1:73BUxbJ3nwek2/YOkAmKPMUxUF3ASFKh5f/+6XE3fto=
 aci-github.cisco.com/atom/argo-galaxies/intersight v0.10.0/go.mod h1:LL2jqWPMzeCs5oGzKKcj/8l2xo/+0sGHODHxwaSsytE=
+aci-github.cisco.com/atom/argo-galaxies/intersight v0.11.0/go.mod h1:oMV9KTgi6XV+TlR74nXaISsKCMJtnQd8WmCl6GW67Qc=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210707204732-89854617835c h1:b1a8SlC2UZdgXtJK3IMB2XtKiNDWkgPY25FRcLZ0lRY=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210707204732-89854617835c/go.mod h1:ePlEi3Ayed2FGQr38nmBiSa8X07skge/q4e1i45l7jY=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.0.0-20210713234805-e92cdc140c8d h1:ft7rq/Q+W2sw5K3AGjru270z4RnxhO0gf5l2ukyfOVQ=
@@ -55,6 +57,7 @@ aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.9.0 h1:VP5gL2M+sG9CxL/
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.9.0/go.mod h1:fLq1xhRp4+bfA3UQyV3jD5BKR8y41DTv9FtffMK92Uo=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.10.0 h1:A25K90zrtOO7Un7y1aPX+/7BnqhFd00HO14Nvv87iME=
 aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.10.0/go.mod h1:YLEQjaqyYoFXpeAbNiMta5FSjYolivW/ShYX7Vw3BE0=
+aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.11.0/go.mod h1:WU6sSl2Qzala7CEEfpIgiAAOY0Ho8Qzlcy3e09UWs+w=
 aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b h1:6usvKEElFXkiQj8D2HtWEhACsByaPB1lNlvRzjR3Uz0=
 aci-github.cisco.com/atom/spartan v0.0.0-20210420001520-45fd84d8759b/go.mod h1:mQO8Hfc0ZKRrVqtdUs5Ph15hpYNkTO4BD5JnuWALQSE=
 aci-github.cisco.com/atom/spartan v0.0.0-20210714014553-ec9eac68fce3 h1:N9SSmgN3SdqckPGEw/I/IkaX4Ida4w0tnm9qJg7BhT0=
@@ -66,6 +69,7 @@ aci-github.cisco.com/atom/spartan v0.9.1-0.20210727215616-50e96919e7b2/go.mod h1
 aci-github.cisco.com/atom/spartan v0.9.1-0.20210831002801-640c2751923d/go.mod h1:ieJWQZFUrGD/JXMlwmOwJ4ahGroT3rZQM49sFplh7vM=
 aci-github.cisco.com/atom/spartan v0.9.1-0.20210910232245-917b95d30f01/go.mod h1:RDxWRUWbA0gjKe9Z6SaAMyuhBWNjXm4VTv4+DKxiILk=
 aci-github.cisco.com/atom/spartan v0.10.0/go.mod h1:7AkHFt61snWQmdcE++XDG7fh3zcRpW5i7ebEQIcX2a0=
+aci-github.cisco.com/atom/spartan v0.11.0/go.mod h1:Iah9dzu/rG+cBNJxV4wKzHjMKx18wbQMk0iBq0pctHY=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210630004401-6612907f986f h1:ZVMP3G/0Sx0OfjTAnDPOlXGlp5AWhsrnFOcxjXnHlQw=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210630004401-6612907f986f/go.mod h1:4yIOYYQbT4+AsQsqerXbQPvbxHzF5qWzWA3vWvnS+BE=
 aci-github.cisco.com/pafrank/argo v0.3.1-0.20210630013916-0d3389f642a5 h1:HGwHl6TzzaB2ODbPghCWCL2wrhlL6DDIql0TKKWDoNM=

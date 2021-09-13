@@ -2,10 +2,10 @@ module golang.cisco.com/examples/argome
 
 go 1.15
 
-replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.10.1-0.20210910210433-e2c8a13025a5 
-replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.9.1-0.20210910232245-917b95d30f01 
-replace golang.cisco.com/argo-galaxies/nexusdashboard => aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.10.0
-replace golang.cisco.com/argo-galaxies/intersight => aci-github.cisco.com/atom/argo-galaxies/intersight v0.10.0
+replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.11.0
+replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.11.0
+replace golang.cisco.com/argo-galaxies/nexusdashboard => aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.11.0
+replace golang.cisco.com/argo-galaxies/intersight => aci-github.cisco.com/atom/argo-galaxies/intersight v0.11.0
 
 require (
 	github.com/go-logr/stdr v0.2.0
