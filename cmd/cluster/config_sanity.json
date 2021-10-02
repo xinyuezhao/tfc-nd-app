@@ -28,6 +28,11 @@
                     "name": "argome.argo.cisco.com/v1.ClusterMember",
                     "service": "clusterd",
                     "endpoint": "cluster-topic"
+                },
+                {
+                    "name": "argome.argo.cisco.com/v1.World",
+                    "service": "world-manager",
+                    "endpoint": "world-manager-topic"
                 }
                 ],
                 "services": [
@@ -40,6 +45,11 @@
                     "name": "clusterd",
                     "endpoint": "clusterd-topic",
                     "database": "clusterd"
+                },
+                {
+                    "name": "world-manager",
+                    "endpoint": "world-manager-topic",
+                    "database": "worldmgr"
                 }
                 ]
             }
