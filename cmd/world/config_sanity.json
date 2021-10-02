@@ -1,0 +1,32 @@
+{
+    "rest": {
+        "address":"0.0.0.0:8089"
+    },
+    "logger":{},
+    "transport":{
+        "type": "kafka", 
+        "endpoint": "world-manager-topic"
+    },
+    "platform":{
+        "kafka":{
+            "brokerAddrs":[
+                "kafka-svc:9092"
+            ],
+            "secure": false
+        }
+    },
+    "db":{
+        "path": "mongo-svc:27017", 
+        "type": "mongodb",
+        "name": "worldmgr"
+    },
+    "directory":{
+        "service": "clusterd",
+        "type": "mongodb",
+        "skipDefault": true,
+        "endpoint": "clusterd-directory-notifier",
+        "database": {
+            "name": "clusterd-directory"
+        }
+    }
+}

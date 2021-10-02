@@ -28,16 +28,25 @@
                     "name": "argome.argo.cisco.com/v1.ClusterMember",
                     "service": "clusterd",
                     "endpoint": "cluster-topic"
+                },
+                {
+                    "name": "argome.argo.cisco.com/v1.World",
+                    "service": "world-manager",
+                    "endpoint": "world-manager-topic"
                 }
                 ],
                 "services": [
-                    {
+                {
                     "name": "node-manager",
                     "endpoint": "node-manager-topic"
                 },
                 {
                     "name": "clusterd",
                     "endpoint": "clusterd-topic"
+                },
+                {
+                    "name": "world-manager",
+                    "endpoint": "world-manager-topic"
                 }
                 ]
             }
