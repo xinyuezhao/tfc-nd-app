@@ -117,3 +117,49 @@ spec:
         - containerPort: 8089
         command: ["/bin/node"]
         args: ["-config.file", "/bin/config_sanity.json"]
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: worldmgr
+  namespace: cisco-argome
+  labels:
+    service: worldmgr
+spec:
+  ports:
+  - name: worldmgr
+    port: 80
+    targetPort: 8089
+  selector:
+    service: worldmgr
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: worldmgr
+  namespace: cisco-argome
+  labels:
+    service: worldmgr
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service: worldmgr
+  template:
+    metadata:
+      labels:
+        service: worldmgr
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: worldmgr
+        image: worldmgr:v1
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: ARGO_KAFKA_ADDR
+            value: "kafka-svc:9092"
+        ports:
+        - containerPort: 8089
+        command: ["/bin/node"]
+        args: ["-config.file", "/bin/config_sanity.json"]
