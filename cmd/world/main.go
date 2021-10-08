@@ -10,6 +10,7 @@ import (
 	v1 "golang.cisco.com/examples/argome/gen/argomev1"
 	"golang.cisco.com/examples/argome/gen/schema"
 	"golang.cisco.com/examples/argome/pkg/handlers"
+	"golang.cisco.com/examples/argome/pkg/platform"
 )
 
 func onStart(ctx context.Context, changer mo.Changer) error {
@@ -28,9 +29,19 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 }
 
 func main() {
-	if err := service.New("example", schema.Schema()).
-		OnStart(onStart).
-		Start(handlers.WorldHandler); err != nil {
+	handlerReg := []interface{}{
+		handlers.WorldHandler,
+	}
+
+	var apx service.Service
+	var opts service.Options
+	opts.PlatformFactory = platform.New
+	apx = service.New("world-manager", schema.Schema(), &opts)
+	if apx == nil {
+		panic("Could not create the service")
+	}
+	if err := apx.OnStart(onStart).
+		Start(handlerReg...); err != nil {
 		panic(err)
 	}
 }
