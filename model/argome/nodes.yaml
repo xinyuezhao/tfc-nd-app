@@ -50,6 +50,7 @@ spec:
   resource: argome.argo.cisco.com/v1.Node
   operations:
     - CREATE
+    - UPDATE
   retryStrategy:
     delay: 500
   concurrencyKey: node

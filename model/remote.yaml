@@ -1,15 +1,19 @@
 repos:
   - repo: git@aci-github.cisco.com:atom/argo.git
     tag: v0.11.0
-    node-mutator: imported-node-mutator
+    node-mutator: imported-node-with-apis
     import-kinds:
       - Resource
       - Struct
       - Scope
       - Enum
       - ResourceHandler
+      - Union
+      - ResourceHandler
+      - Default
     models:
       - model: ddN
+      - model: cmd/example/model/ddN
   - repo: git@aci-github.cisco.com:atom/spartan.git
     tag: v0.11.0
     node-mutator: imported-node-mutator

@@ -1,0 +1,17 @@
+{
+  "meta": {
+    "status": 0,
+    "labels": {},
+    "annotations": {},
+    "deleteTimestamp": "",
+    "finalizers": {},
+    "domain": "",
+    "namespace": "",
+    "key": "argome.argo.cisco.com/v1.Node"
+  },
+  "spec": {
+    "inbandIP": "10.10.10.1",
+    "cluster": "cluster-2",
+    "name": "node2"
+  }
+}

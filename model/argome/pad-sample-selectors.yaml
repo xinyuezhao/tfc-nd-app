@@ -1,0 +1,14 @@
+---
+apiVersion: plastic.aci.cisco.com/v1
+kind: Resource
+metadata:
+  name: Book
+  group: book.aci.cisco.com
+  version: v1
+  namespaced: true
+spec:
+  apimethods:
+    - apimethod: GET
+    - apimethod: POST
+    - apimethod: PUT
+    - apimethod: DELETE

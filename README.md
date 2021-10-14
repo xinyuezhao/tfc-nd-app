@@ -189,12 +189,12 @@ X-Request-Id: c84071f1-3f11-4f43-a77d-bb4c0e98e989
             "statusGenID": 0
         },
         "spec": {
-            "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1",
+            "cluster": "cluster-1",
             "inbandIP": "192.168.1.105",
             "name": "node5"
         },
         "status": {
-            "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1",
+            "cluster": "cluster-1",
             "inbandIP": "192.168.1.105",
             "status": "admitted"
         }

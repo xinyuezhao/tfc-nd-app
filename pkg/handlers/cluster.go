@@ -38,9 +38,10 @@ func ClusterNodeHandler(ctx context.Context, event mo.Event) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling node", "node", node)
 
-	obj, err := event.Store().ResolveByName(ctx, node.Spec().Cluster())
+	clusterKey := argomev1.ClusterDNForDefault(node.Spec().Cluster())
+	obj, err := event.Store().ResolveByName(ctx, clusterKey)
 	if err != nil {
-		return err
+		return nil
 	}
 
 	cluster := obj.(argomev1.Cluster)
@@ -54,8 +55,19 @@ func ClusterNodeHandler(ctx context.Context, event mo.Event) error {
 
 	clusterMember := argomev1.ClusterMemberFactory()
 	if err := core.NewError(clusterMember.SpecMutable().SetName(node.MetaNames()["default"]),
-		clusterMember.SpecMutable().SetCluster(node.Spec().Cluster())); err != nil {
+		clusterMember.SpecMutable().SetCluster(clusterKey)); err != nil {
 		return err
+	}
+	cmDN := argomev1.ClusterMemberDNForDefault(node.MetaNames()["default"])
+	if cm, err := event.Store().ResolveByName(ctx, cmDN); err == nil {
+		if cm.(argomev1.ClusterMember).Spec().Cluster() != node.Status().Cluster() {
+			if err := cm.Meta().MutableManagedObjectMetaV1Argo().SetStatus(mo.StatusDeleted); err != nil {
+				return err
+			}
+			if err := event.Store().Record(ctx, cm); err != nil {
+				return err
+			}
+		}
 	}
 
 	if err := event.Store().Record(ctx, cluster); err != nil {
