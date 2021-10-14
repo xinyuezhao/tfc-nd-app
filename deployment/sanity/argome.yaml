@@ -33,10 +33,10 @@ metadata:
   labels:
     service: clustermgr
 spec:
+  type: NodePort
   ports:
-  - name: clustermgr
-    port: 80
-    targetPort: 8089
+    - port: 8090
+      nodePort: 30001
   selector:
     service: clustermgr
 ---
@@ -80,10 +80,10 @@ metadata:
   labels:
     service: nodemgr
 spec:
+  type: NodePort
   ports:
-  - name: nodemgr
-    port: 80
-    targetPort: 8089
+    - port: 8089
+      nodePort: 30000
   selector:
     service: nodemgr
 ---

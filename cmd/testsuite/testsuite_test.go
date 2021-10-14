@@ -4,150 +4,21 @@ package main
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 	"os"
-	"strings"
 	"testing"
 	"time"
 
 	"golang.cisco.com/argo/pkg/mo"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
 	"golang.cisco.com/examples/argome/gen/schema"
-
-	. "github.com/smartystreets/goconvey/convey"
-)
-
-const (
-	nodemgrBaseURL    = "http://nodemgr:80/"
-	nodesURL          = nodemgrBaseURL + "api/argome.argo.cisco.com/v1/nodes"
-	clustermgrBaseURL = "http://clustermgr:80/"
-	clusterMembersURL = clustermgrBaseURL + "api/argome.argo.cisco.com/v1/clustermembers"
 )
 
 var testCtx = context.Background()
 
-func waitForCondition(fn func() bool, duration time.Duration) bool {
-	ts := time.NewTimer(duration)
-	backoff := func() {
-		time.Sleep(duration / 10)
-	}
-	for {
-		select {
-		case <-ts.C:
-			return false
-		default:
-			if fn() {
-				return true
-			}
-			backoff()
-		}
-	}
-}
-
-func readResponse(resp *http.Response) ([]mo.Object, error) {
-	serde := mo.JSONSerdeFromContext(testCtx)
-	data, err := ioutil.ReadAll(resp.Body)
-	if err != nil {
-		return nil, err
-	}
-	fmt.Println(string(data))
-	resp.Body.Close()
-	return serde.Unmarshal(mo.UnmarshalContextUnknown, data)
-}
-
-func TestNodeManager(t *testing.T) {
-	Convey("Check if node manager is reachable",
-		t, func(c C) {
-			resp, err := http.Get(nodemgrBaseURL)
-			So(err, ShouldBeNil)
-			resp.Body.Close()
-		})
-	Convey("Check if cluster is reachable",
-		t, func(c C) {
-			resp, err := http.Get(clustermgrBaseURL)
-			So(err, ShouldBeNil)
-			resp.Body.Close()
-		})
-	Convey("Should be able to post a node object to node manager",
-		t, func(c C) {
-			node := `
-{
-  "spec": {
-    "inbandIP": "10.1.1.1",
-    "name": "node-123",
-    "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"
-  }
-}
-`
-			resp, err := http.Post(nodesURL, "application/json", strings.NewReader(node))
-			So(err, ShouldBeNil)
-			objs, err := readResponse(resp)
-			So(err, ShouldBeNil)
-			So(len(objs), ShouldEqual, 1)
-			nodeObj, ok := objs[0].(argomev1.Node)
-			So(ok, ShouldBeTrue)
-			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
-			resp.Body.Close()
-
-			resp, err = http.Get(nodesURL)
-			So(err, ShouldBeNil)
-			objs, err = readResponse(resp)
-			So(err, ShouldBeNil)
-			So(len(objs), ShouldEqual, 1)
-			nodeObj, ok = objs[0].(argomev1.Node)
-			So(ok, ShouldBeTrue)
-			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
-			time.Sleep(time.Second * 2)
-		})
-
-	Convey("There should be a NodeOper object created for the node object and the node object should be pointing to it",
-		t, func(c C) {
-			So(waitForCondition(func() bool {
-				resp, err := http.Get(nodesURL)
-				if err != nil {
-					return false
-				}
-				objs, err := readResponse(resp)
-				if err != nil {
-					return false
-				}
-				if len(objs) != 1 {
-					return false
-				}
-				nodeOperObj, ok := objs[0].(argomev1.Node)
-				if !ok {
-					return false
-				}
-				if nodeOperObj.Status().InbandIP() != "10.1.1.1" {
-					return false
-				}
-				if nodeOperObj.Status().Status() != "admitted" {
-					return false
-				}
-				return true
-			}, time.Second*10), ShouldBeTrue)
-
-			resp, err := http.Get(nodesURL)
-			So(err, ShouldBeNil)
-			objs, err := readResponse(resp)
-			So(err, ShouldBeNil)
-			So(len(objs), ShouldEqual, 1)
-			nodeOperObj, ok := objs[0].(argomev1.Node)
-			So(ok, ShouldBeTrue)
-			So(nodeOperObj.Status().InbandIP(), ShouldEqual, "10.1.1.1")
-			So(nodeOperObj.Status().Status(), ShouldEqual, "admitted")
-
-			resp, err = http.Get(clusterMembersURL)
-			So(err, ShouldBeNil)
-			objs, err = readResponse(resp)
-			So(err, ShouldBeNil)
-			So(len(objs), ShouldEqual, 1)
-			cmObj, ok := objs[0].(argomev1.ClusterMember)
-			So(ok, ShouldBeTrue)
-			So(cmObj, ShouldNotBeNil)
-		})
+func TestRunner(t *testing.T) {
+	t.Run("Handlers=1", testNodeManager)
+	t.Run("FieldSelector=1", fieldSelectorTest)
 }
 
 func TestMain(m *testing.M) {
@@ -162,9 +33,15 @@ func TestMain(m *testing.M) {
 		if r2 != nil {
 			r2.Body.Close()
 		}
+		var services []string
 		if node == nil && cluster == nil {
 			return true
+		} else if node != nil {
+			services = append(services, "nodemgr")
+		} else if cluster != nil {
+			services = append(services, "clustermgr")
 		}
+		fmt.Println("Waiting for Services: ", services)
 		return false
 	}, 60*time.Second) {
 		fmt.Println("Services did not come up")

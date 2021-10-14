@@ -17,7 +17,7 @@ spec:
         databaseName: clusterd-directory
   services:
     - service: clusterd
-      restPort: 0.0.0.0:8089
+      restPort: 0.0.0.0:8090
       endpoint: clusterd-topic
       databaseName: clusterd
       managedResources:
@@ -31,4 +31,8 @@ spec:
       databaseName: nodemgr
       managedResources:
         - managedResource: argome.argo.cisco.com/v1.Node
+          endpoint: node-topic
+        - managedResource: book.aci.cisco.com/v1.Book
+          endpoint: node-topic
+        - managedResource: book.aci.cisco.com/v1.Publisher
           endpoint: node-topic

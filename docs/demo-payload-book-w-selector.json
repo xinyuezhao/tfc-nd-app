@@ -1,0 +1,13 @@
+{
+  "spec": {
+    "name": "Danny Grother",
+    "description": "Not Quite Harry Potter",
+    "publisherSelectorSpec": {
+      "MatchExpression": {
+          "operator": "eq",
+          "field": "spec.favPet.name",
+          "value": "Terra"
+      }
+    }
+  }
+}
