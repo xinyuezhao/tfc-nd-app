@@ -5,7 +5,7 @@
     "logger":{},
     "transport":{
         "type": "kafka", 
-        "endpoint": "world-manager-topic"
+        "endpoint": "organization-manager-topic"
     },
     "platform": {
         "kafka":{

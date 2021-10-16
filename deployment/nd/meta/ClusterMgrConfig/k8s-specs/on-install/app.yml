@@ -94,13 +94,13 @@ spec:
    topicProperties:
     retention.ms: 86400
     segment.ms: 86400
- - name: world-topic
+ - name: organization-topic
    partitions: 6
    replicas: 1
    topicProperties:
     retention.ms: 86400
     segment.ms: 86400
- - name: world-manager-topic
+ - name: organization-manager-topic
    partitions: 6
    replicas: 1
    topicProperties:
@@ -147,21 +147,21 @@ spec:
    cn: cisco-argome
    topic: clusterd-topic
    op: Read
- - name: world-topic-wr
+ - name: organization-topic-wr
    cn: cisco-argome
-   topic: world-topic
+   topic: organization-topic
    op: Write
- - name: world-topic-rd
+ - name: organization-topic-rd
    cn: cisco-argome
-   topic: world-topic
+   topic: organization-topic
    op: Read
- - name: world-manager-topic-wr
+ - name: organization-manager-topic-wr
    cn: cisco-argome
-   topic: world-manager-topic
+   topic: organization-manager-topic
    op: Write
- - name: world-manager-topic-rd
+ - name: organization-manager-topic-rd
    cn: cisco-argome
-   topic: world-manager-topic
+   topic: organization-manager-topic
    op: Read
 ---
 kind: PersistentVolumeClaim
@@ -200,11 +200,11 @@ spec:
     authType: open
     listenPaths:
     - path: "/sedgeapi/v1/cisco-argome/clustermgr"
-  - target: worldmgr
+  - target: organizationmgr
     service:
       scheme: http
-      name: worldmgr
+      name: organizationmgr
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-argome/worldmgr"
+    - path: "/sedgeapi/v1/cisco-argome/organizationmgr"

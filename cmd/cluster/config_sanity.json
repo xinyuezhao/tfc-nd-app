@@ -30,9 +30,9 @@
                     "endpoint": "cluster-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.World",
-                    "service": "world-manager",
-                    "endpoint": "world-manager-topic"
+                    "name": "argome.argo.cisco.com/v1.Organization",
+                    "service": "organization-manager",
+                    "endpoint": "organization-manager-topic"
                 }
                 ],
                 "services": [
@@ -47,9 +47,9 @@
                     "database": "clusterd"
                 },
                 {
-                    "name": "world-manager",
-                    "endpoint": "world-manager-topic",
-                    "database": "worldmgr"
+                    "name": "organization-manager",
+                    "endpoint": "organization-manager-topic",
+                    "database": "organizationmgr"
                 }
                 ]
             }
