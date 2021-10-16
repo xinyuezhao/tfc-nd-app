@@ -39,7 +39,7 @@ clean:
 	rm -rf $(CURDIR)/gen
 	rm -f node
 	rm -f cluster 
-	rm -f world
+	rm -f organization
 	rm -f testsuite 
 	rm -rf argo
 	rm -rf pkg/bundle 
@@ -72,7 +72,7 @@ sanity: clean lint docker-images
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
-services: clusterd node world
+services: clusterd node organization
 
 clusterd: generate
 	go build ./cmd/cluster
@@ -80,18 +80,18 @@ clusterd: generate
 node: generate
 	go build ./cmd/node
 
-world: generate
-	go build ./cmd/world
+organization: generate
+	go build ./cmd/organization
 
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
 	docker build --file deployment/docker/nodemgr/Dockerfile --tag nodemgr:v1 .
 	docker build --file deployment/docker/clustermgr/Dockerfile --tag clustermgr:v1 .
-	docker build --file deployment/docker/worldmgr/Dockerfile --tag worldmgr:v1 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v1 .
 
 docker-archive: docker-images
-	docker save nodemgr:v1 clustermgr:v1 worldmgr:v1 | gzip > images.tar.gz
+	docker save nodemgr:v1 clustermgr:v1 organizationmgr:v1 | gzip > images.tar.gz
 
 intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris
