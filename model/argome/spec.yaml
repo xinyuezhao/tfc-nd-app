@@ -1,0 +1,34 @@
+kind: Application
+metadata:
+  name: Argome
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  platforms:
+    - platform: kind
+      kafka:
+        addresses: 
+          - kafka-svc:9092
+      mongo:
+        address: mongo-svc:27017
+      directory:
+        service: clusterd
+        endpoint: clusterd-directory-notifier
+        databaseName: clusterd-directory
+  services:
+    - service: clusterd
+      restPort: 0.0.0.0:8089
+      endpoint: clusterd-topic
+      databaseName: clusterd
+      managedResources:
+        - managedResource: argome.argo.cisco.com/v1.Cluster
+          endpoint: cluster-topic
+        - managedResource: argome.argo.cisco.com/v1.ClusterMember
+          endpoint: cluster-topic
+    - service: node-manager
+      endpoint: node-manager-topic
+      restPort: 0.0.0.0:8089
+      databaseName: nodemgr
+      managedResources:
+        - managedResource: argome.argo.cisco.com/v1.Node
+          endpoint: node-topic

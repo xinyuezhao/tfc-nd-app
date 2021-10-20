@@ -7,5 +7,5 @@ WORKDIR /bin/
 COPY ./node .
 COPY cmd/node/config.json .
 COPY cmd/node/config_kind.json .
-COPY cmd/node/config_sanity.json .
+COPY .bin/deployment-spec.argome.argo.cisco.com.v1.Argome.node-manager-kind-config.json config_sanity.json
 CMD ./node --config.file ./config.json

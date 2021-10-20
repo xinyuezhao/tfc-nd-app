@@ -3,6 +3,7 @@
 BINDIR=$(CURDIR)/.bin
 LINTER=$(BINDIR)/golangci-lint
 GENERATOR=$(BINDIR)/argen
+DEPLOYMENT_SPEC_PATH_PREFIX=$(BINDIR)/deployment-spec
 
 define build-for-linux
 $(1): export CGO_ENABLED=0
@@ -29,7 +30,7 @@ cache:
 
 # TODO: Fix the hardcoding of argo ddN path.
 generate: | $(GENERATOR)
-	$(GENERATOR) run -r ./model/remote.yaml -m ./model/argome -g ./gen
+	$(GENERATOR) run -r ./model/remote.yaml -m ./model/argome -g ./gen -d $(DEPLOYMENT_SPEC_PATH_PREFIX)
 
 lint: | $(LINTER) generate
 	$(LINTER) run ./...
