@@ -19,6 +19,7 @@ var testCtx = context.Background()
 func TestRunner(t *testing.T) {
 	t.Run("Handlers=1", testNodeManager)
 	t.Run("FieldSelector=1", fieldSelectorTest)
+	t.Run("TestLockable=1", testLockable)
 }
 
 func TestMain(m *testing.M) {

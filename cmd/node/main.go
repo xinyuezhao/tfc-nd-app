@@ -24,6 +24,7 @@ func main() {
 	handlerReg := []interface{}{
 		handlers.NodeHandler,
 		handlers.NodeClusterMemberHandler,
+		handlers.TaskHandler,
 	}
 
 	var apx service.Service
