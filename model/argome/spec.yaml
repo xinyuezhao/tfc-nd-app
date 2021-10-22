@@ -36,3 +36,5 @@ spec:
           endpoint: node-topic
         - managedResource: book.aci.cisco.com/v1.Publisher
           endpoint: node-topic
+        - managedResource: argome.argo.cisco.com/v1.Task
+          endpoint: task-topic

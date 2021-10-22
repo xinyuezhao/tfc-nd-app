@@ -1,0 +1,50 @@
+kind: Struct
+metadata:
+  name: TaskSpec
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: name
+      type: string
+---
+kind: Struct
+metadata:
+  name: TaskStatus
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: status
+      type: bool
+    - prop: nodeList
+      type: "[]v1.NodeStatus"
+---
+kind: Resource
+metadata:
+  name: Task
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  spec:
+    type: v1.TaskSpec
+  status:
+    type: v1.TaskStatus
+  pkey: spec.name
+  apimethods:
+    - apimethod: GET
+    - apimethod: PUT
+    - apimethod: POST
+    - apimethod: DELETE
+---
+kind: ResourceHandler
+metadata:
+  name: TaskHandler
+spec:
+  resource: argome.argo.cisco.com/v1.Task
+  operations:
+    - CREATE
+  retryStrategy:
+    delay: 500
+  concurrencyKey: Task
+  function: golang.cisco.com/examples/argome/pkg/handlers.TaskHandler
