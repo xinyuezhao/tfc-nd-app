@@ -52,12 +52,9 @@ function App(props) {
               <AppSidebar />
               <div className="content-header"></div>
               <main className="main-con">
-                <header
-                  class="header header--compressed"
-                  style={{ background: "transparent" }}
-                >
-                  <div class="header-bar container">
-                    <div class="header-bar__main"></div>
+                <header className="header header--compressed" style={{ background: "transparent" }}>
+                  <div className="header-bar container">
+                    <div className="header-bar__main"></div>
                   </div>
                 </header>
                 <div>
@@ -67,7 +64,7 @@ function App(props) {
                         exact
                         path={pathPrefix + "/login"}
                         component={LoginPage}
-                      /> */}
+                      />*/}
                       <Route
                         exact
                         path={pathPrefix + "/dashboard"}
@@ -86,7 +83,7 @@ function App(props) {
                       <Route
                         exact
                         path={pathPrefix + "/"}
-                        component={Dashboard}
+                        component={TestTable}
                       />
                       <Redirect exact from="*" to={pathPrefix} />
                     </Switch>

@@ -1,4 +1,3 @@
-// This create agent part is used to test
 import React, { useCallback, useState, useEffect } from "react";
 import {
   DetailScreen,
@@ -8,7 +7,8 @@ import {
   LABELS,
 } from "blueprint-react";
 import _ from 'lodash';
-import {getData, DetailRenderer} from './utils';
+import {getPoolData, PoolDetailRenderer} from './AgentPoolUtils';
+import {getOrgData, OrgDetailRenderer} from './OrganizationUtils';
 import CreateNew from './CreateNew';
 import './CiscoObjectPicker.scss';
 
@@ -28,8 +28,8 @@ function Agent(props) {
   const [organization, setOrganization] = useState("");
   const [isOpen, setIsOpen] = useState(true);
 
-  const [orgData] = useState(getData(0, 10, 10));
-  const [poolData, setPoolData] = useState(getData(0, 10, 10));
+  const [orgData] = useState(getOrgData(0, 10, 10));
+  const [poolData, setPoolData] = useState(getPoolData(0, 10, 10));
 
 
   useEffect(() => {
@@ -115,7 +115,7 @@ function Agent(props) {
       applyButtonLabel={`${agent ? "Update" : "Save"}`}
     >
       <div style={{ paddingLeft: "10%" }}>
-        <text style={{ fontSize: "20px" }}>General</text>
+        <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General test</div>
         <Card className="col" style={{ width: "90%", paddingLeft: "30px", paddingTop: "0px" }}>
             <div className="agent-container justify-content-center">
               <div className="row">Agent Name:</div>
@@ -143,7 +143,7 @@ function Agent(props) {
                   labelSuffix={'Organization'}
                   value={organization}
                   onSelect={handleOrgSelect}
-                  detailItemRenderer={DetailRenderer}
+                  detailItemRenderer={OrgDetailRenderer}
                   idBy='id'
                 />
               </div>
@@ -157,7 +157,7 @@ function Agent(props) {
                   labelSuffix={'Agent Pool'}
                   value={agentPool}
                   onSelect={handlePoolSelect}
-                  detailItemRenderer={DetailRenderer}
+                  detailItemRenderer={PoolDetailRenderer}
                   idBy='id'
                   createItemRenderer={CreateNew}
                 />

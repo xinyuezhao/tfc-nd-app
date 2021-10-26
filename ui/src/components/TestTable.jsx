@@ -12,12 +12,12 @@ import {
   SuccessAlert,
   Dropdown,
 } from "blueprint-react";
-// import {
-//   fetchAgents,
-//   deleteAgentsInBulk,
-//   updateAgents,
-//   createAgents,
-// } from "../service/api_service";
+import {
+  fetchAgents,
+  deleteAgentsInBulk,
+  updateAgents,
+  createAgents,
+} from "../service/api_service";
 import AddAgent from "./AddAgent";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import { pathPrefix } from "../App";
@@ -108,41 +108,41 @@ function AgentTable(props) {
 
       setfilterRemove(!!!queryParam);
       setFetchingData(setLoading === false ? false : true);
-      // fetchAgents(
-      //   pageSizeLimit ? pageSizeLimit : limit.current.value,
-      //   offset.current.value,
-      //   queryParam
-      // )
-      //   .then((res) => {
-      //     if (res?.data?.status_code === 401) {
-      //       props.history.push({
-      //         pathname: pathPrefix + "/login",
-      //         state: { sessionExpired: true },
-      //       });
-      //     } else {
-      //       finalAgent.current.totalAgents = _.unionBy(
-      //         res.data.result,
-      //         finalAgent.current.totalAgents,
-      //         "sys_id"
-      //       );
-      //       setAgents(finalAgent.current.totalAgents);
-      //       setTotalAgents(res.data?.total_agent);
-      //     }
+      fetchAgents(
+        pageSizeLimit ? pageSizeLimit : limit.current.value,
+        offset.current.value,
+        queryParam
+      )
+        .then((res) => {
+          if (res?.data?.status_code === 401) {
+            props.history.push({
+              pathname: pathPrefix + "/login",
+              state: { sessionExpired: true },
+            });
+          } else {
+            finalAgent.current.totalAgents = _.unionBy(
+              res.data.result,
+              finalAgent.current.totalAgents,
+              "sys_id"
+            );
+            setAgents(finalAgent.current.totalAgents);
+            setTotalAgents(res.data?.total_agent);
+          }
 
-      //     setFetchingData(false);
-      //   })
-      //   .catch((err) => {
-      //     if (err.response?.status === 401) {
-      //       props.history.push({
-      //         pathname: pathPrefix + "/login",
-      //         state: { sessionExpired: true },
-      //       });
-      //     } else {
-      //       err.response?.data?.detail?.message &&
-      //         setWarningAlert(err.response.data?.detail?.message);
-      //       setFetchingData(false);
-      //     }
-      //   });
+          setFetchingData(false);
+        })
+        .catch((err) => {
+          if (err.response?.status === 401) {
+            props.history.push({
+              pathname: pathPrefix + "/login",
+              state: { sessionExpired: true },
+            });
+          } else {
+            err.response?.data?.detail?.message &&
+              setWarningAlert(err.response.data?.detail?.message);
+            setFetchingData(false);
+          }
+        });
     },
     [props.history]
   );
@@ -161,51 +161,51 @@ function AgentTable(props) {
     const payload = {
       ids: sys_ids,
     };
-    // deleteAgentsInBulk(payload)
-    //   .then(() => {
-    //     setInfoAlert("");
-    //     setSuccessAlert("Deleted Agents Successfully");
-    //     _.remove(finalAgent.current.totalAgents, (agent) => {
-    //       return sys_ids.includes(agent.sys_id);
-    //     });
-    //     setAgents(finalAgent.current.totalAgents);
-    //     setSelectedAgents([]);
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     setInfoAlert("");
-    //     setSuccessAlert("");
-    //   });
+    deleteAgentsInBulk(payload)
+      .then(() => {
+        setInfoAlert("");
+        setSuccessAlert("Deleted Agents Successfully");
+        _.remove(finalAgent.current.totalAgents, (agent) => {
+          return sys_ids.includes(agent.sys_id);
+        });
+        setAgents(finalAgent.current.totalAgents);
+        setSelectedAgents([]);
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+      });
   }
 
   const handleUpdateAgent = useCallback((sys_id, payload) => {
     setInfoAlert("Updating Agent");
-    // updateAgents(sys_id, payload)
-    //   .then((res) => {
-    //     setViewAgent(res.data.result);
-    //     finalAgent.current.totalAgents = _.unionBy(
-    //       [res.data.result],
-    //       finalAgent.current.totalAgents,
-    //       "sys_id"
-    //     );
-    //     setAgents(finalAgent.current.totalAgents);
-    //     setInfoAlert("");
-    //     setSuccessAlert("Updated Agent Successfully");
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //     setInfoAlert("");
-    //     setSuccessAlert("");
-    //     error.response?.data?.detail?.detail &&
-    //       setWarningAlert(error.response?.data?.detail?.detail);
-    //   });
+    updateAgents(sys_id, payload)
+      .then((res) => {
+        setViewAgent(res.data.result);
+        finalAgent.current.totalAgents = _.unionBy(
+          [res.data.result],
+          finalAgent.current.totalAgents,
+          "sys_id"
+        );
+        setAgents(finalAgent.current.totalAgents);
+        setInfoAlert("");
+        setSuccessAlert("Updated Agent Successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+        error.response?.data?.detail?.detail &&
+          setWarningAlert(error.response?.data?.detail?.detail);
+      });
   }, []);
 
   const handleCreateAgent = useCallback((payload) => {
     setInfoAlert("Creating Agent");
     console.log("HI");
-    console.log(AddAgent(payload));
-    AddAgent(payload)
+    console.log(createAgents(payload));
+    createAgents(payload)
       .then((res) => {
         setInfoAlert("");
         setSuccessAlert("Created Agent Successfully");
@@ -384,7 +384,7 @@ function AgentTable(props) {
       <div className="row">
         <div className="col-xl-12">
           <div className="section">
-            <h2 style={{ fontWeight: "350" }}>Agents</h2>
+            <h2 style={{ fontWeight: "350" }}> TEST Agents</h2>
           </div>
         </div>
       </div>

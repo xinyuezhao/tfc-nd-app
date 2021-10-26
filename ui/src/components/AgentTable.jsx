@@ -1,532 +1,440 @@
-// import React, { useState, useEffect, useCallback, useRef } from "react";
-// import _ from "lodash";
-// import {
-//   FilterableTable,
-//   Modal,
-//   useScreenActions,
-//   Button,
-//   Icon,
-//   Tooltip,
-//   DangerAlert,
-//   InfoAlert,
-//   SuccessAlert,
-//   Dropdown,
-//   SelectInput,
-//   LoaderOverlay,
-// } from "blueprint-react";
-// import {
-//   fetchAgents,
-//   deleteAgentsInBulk,
-//   updateAgents,
-//   createAgents,
-// } from "../service/api_service";
-// import Agent from "./Agent";
-// import AgentView from "./AgentView";
-// import AgentDetails from "./AgentDetails";
-// import { checkForTernary, checkComponentRender } from "../shared/utils";
-// import { pathPrefix } from "../App";
-// import NoData from "./NoData";
+import React, { useState, useEffect, useCallback, useRef } from "react";
+import _ from "lodash";
+import {
+  FilterableTable,
+  Modal,
+  useScreenActions,
+  Button,
+  Icon,
+  DangerAlert,
+  InfoAlert,
+  SuccessAlert,
+  Dropdown,
+} from "blueprint-react";
+import {
+  fetchAgents,
+  deleteAgentsInBulk,
+  updateAgents,
+  createAgents,
+} from "../service/api_service";
+import AddAgent from "./AddAgent";
+import { checkForTernary, checkComponentRender } from "../shared/utils";
+import { pathPrefix } from "../App";
 
-// function AgentTable(props) {
-//   const allColumns = [
-//     {
-//       id: "Agent Name",
-//       Header: "Agent Name",
-//       sortable: true,
-//       accessor: "assigned_to.display_value",
-//       align: "center",
-//       filter: {
-//         type: "text",
-//       },
-//       tooltips: true,
-//     },
-//     {
-//       id: "Agent Pool",
-//       Header: "Agent pool",
-//       accessor: "agent_pool",
-//       sortable: true,
-//       align: "center",
-//       filter: {
-//         type: "text",
-//       },
-//       tooltips: true,
-//     },
-//     {
-//       id: "Organization",
-//       Header: "Organization",
-//       accessor: "organization",
-//       sortable: true,
-//       align: "center",
-//       filter: {
-//         type: "text",
-//       },
-//       tooltips: true,
-//     },
-//     {
-//       id: "Updated at",
-//       Header: "Updated",
-//       sortable: true,
-//       accessor: "sys_updated_on",
-//       align: "center",
-//       filter: {
-//         type: "text",
-//       },
-//       tooltips: true,
-//     },
-//   ];
+function AgentTable(props) {
+  const allColumns = [
+    {
+      id: "Agent Name",
+      Header: "Agent Name",
+      sortable: true,
+      accessor: "assigned_to.display_value",
+      align: "center",
+      filter: {
+        type: "text",
+      },
+      tooltips: true,
+    },
+    {
+      id: "Agent Pool",
+      Header: "Agent pool",
+      accessor: "agentPool",
+      sortable: true,
+      align: "center",
+      filter: {
+        type: "text",
+      },
+      tooltips: true,
+    },
+    {
+      id: "Organization",
+      Header: "Organization",
+      accessor: "organization",
+      sortable: true,
+      align: "center",
+      filter: {
+        type: "text",
+      },
+      tooltips: true,
+    },
+  ];
 
-//   const action = useScreenActions();
+  const action = useScreenActions();
 
-//   const [selectedAgents, setSelectedAgents] = useState([]);
-//   const [showConfirm, setShowConfirm] = useState(false);
-//   const [showAssignToModal, setShowAssignToModal] = useState(false);
-//   const [fetchingData, setFetchingData] = useState(false);
-//   const [agents, setAgents] = useState([]);
-//   const [viewAgent, setViewAgent] = useState({});
-//   const [warningAlert, setWarningAlert] = useState("");
-//   const [infoAlert, setInfoAlert] = useState("");
-//   const [successAlert, setSuccessAlert] = useState("");
-//   const [secondarySidebarData, setSecondarySidebarData] = useState({});
-//   const [openSidebar, setOpenSidebar] = useState(false);
-//   const [categoryMetadata, setCategoryMetadata] = useState([]);
-//   const [stateMetadata, setStateMetadata] = useState([]);
-//   const [severityMetadata, setSeverityMetadata] = useState([]);
-//   const [subcategoryMetadata, setSubcategoryMetadata] = useState([]);
-//   const [onHoldReasonMetadata, setOnHoldReasonMetadata] = useState([]);
-//   const [resolutionCodeMetadata, setResolutionCodeMetadata] = useState([]);
-//   const [usersList, setUsersList] = useState([]);
-//   const [groupsList, setGroupsList] = useState([]);
-//   const [selectedGroupMembers, setSelectedGroupMembers] = useState([]);
-//   const [assignmentGroup, setAssignmentGroup] = useState("");
-//   const [assignTo, setAssignTo] = useState("");
-//   const [filterRemove, setfilterRemove] = useState(true);
-//   const [currentPage, setCurrentPage] = useState(1);
-//   const [pageSize, setPageSize] = useState(
-//     checkForTernary(
-//       localStorage.getItem("per_page_value"),
-//       parseInt(localStorage.getItem("per_page_value")),
-//       10
-//     )
-//   );
-//   const [totalAgents, setTotalAgents] = useState(0);
+  const [selectedAgents, setSelectedAgents] = useState([]);
+  const [showConfirm, setShowConfirm] = useState(false);
+  const [showAssignToModal, setShowAssignToModal] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
+  const [agents, setAgents] = useState([]);
+  const [viewAgent, setViewAgent] = useState({});
+  const [warningAlert, setWarningAlert] = useState("");
+  const [infoAlert, setInfoAlert] = useState("");
+  const [successAlert, setSuccessAlert] = useState("");
+  const [secondarySidebarData, setSecondarySidebarData] = useState({});
+  const [openSidebar, setOpenSidebar] = useState(false);
+  const [filterRemove, setfilterRemove] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(
+    checkForTernary(
+      localStorage.getItem("per_page_value"),
+      parseInt(localStorage.getItem("per_page_value")),
+      10
+    )
+  );
+  const [totalAgents, setTotalAgents] = useState(0);
 
-//   const offset = useRef({ value: 0 });
-//   const limit = useRef({ value: 50 });
-//   const finalAgent = useRef({ totalAgents: agents });
+  const offset = useRef({ value: 0 });
+  const limit = useRef({ value: 50 });
+  const finalAgent = useRef({ totalAgents: agents });
 
-//   useEffect(() => {
-//     if (warningAlert || successAlert) {
-//       setTimeout(() => {
-//         setWarningAlert("");
-//         setSuccessAlert("");
-//       }, 5000);
-//     }
-//   }, [warningAlert, successAlert]);
+  useEffect(() => {
+    if (warningAlert || successAlert) {
+      setTimeout(() => {
+        setWarningAlert("");
+        setSuccessAlert("");
+      }, 5000);
+    }
+  }, [warningAlert, successAlert]);
 
-//   const getAgents = useCallback(
-//     (setLoading, pageSizeLimit, removefilter = true) => {
-//       //const flag = removeFilter ? true : flase
+  const getAgents = useCallback(
+    (setLoading, pageSizeLimit, removefilter = true) => {
+      //const flag = removeFilter ? true : flase
 
-//       const queryParam = removefilter
-//         ? props.history.location?.state?.queryParam
-//           ? props.history.location?.state?.queryParam
-//           : ""
-//         : "";
+      const queryParam = removefilter
+        ? props.history.location?.state?.queryParam
+          ? props.history.location?.state?.queryParam
+          : ""
+        : "";
 
-//       setfilterRemove(!!!queryParam);
-//       setFetchingData(setLoading === false ? false : true);
-//       fetchAgents(
-//         pageSizeLimit ? pageSizeLimit : limit.current.value,
-//         offset.current.value,
-//         queryParam
-//       )
-//         .then((res) => {
-//           if (res?.data?.status_code === 401) {
-//             props.history.push({
-//               pathname: pathPrefix + "/login",
-//               state: { sessionExpired: true },
-//             });
-//           } else {
-//             finalAgent.current.totalAgents = _.unionBy(
-//               res.data.result,
-//               finalAgent.current.totalAgents,
-//               "sys_id"
-//             );
-//             setAgents(finalAgent.current.totalAgents);
-//             setTotalAgents(res.data?.total_agent);
-//           }
+      setfilterRemove(!!!queryParam);
+      setFetchingData(setLoading === false ? false : true);
+      fetchAgents(
+        pageSizeLimit ? pageSizeLimit : limit.current.value,
+        offset.current.value,
+        queryParam
+      )
+        .then((res) => {
+          if (res?.data?.status_code === 401) {
+            props.history.push({
+              pathname: pathPrefix + "/login",
+              state: { sessionExpired: true },
+            });
+          } else {
+            finalAgent.current.totalAgents = _.unionBy(
+              res.data.result,
+              finalAgent.current.totalAgents,
+              "sys_id"
+            );
+            setAgents(finalAgent.current.totalAgents);
+            setTotalAgents(res.data?.total_agent);
+          }
 
-//           setFetchingData(false);
-//         })
-//         .catch((err) => {
-//           if (err.response?.status === 401) {
-//             props.history.push({
-//               pathname: pathPrefix + "/login",
-//               state: { sessionExpired: true },
-//             });
-//           } else {
-//             err.response?.data?.detail?.message &&
-//               setWarningAlert(err.response.data?.detail?.message);
-//             setFetchingData(false);
-//           }
-//         });
-//     },
-//     [props.history]
-//   );
-//   useEffect(getAgents, [getAgents]);
+          setFetchingData(false);
+        })
+        .catch((err) => {
+          if (err.response?.status === 401) {
+            props.history.push({
+              pathname: pathPrefix + "/login",
+              state: { sessionExpired: true },
+            });
+          } else {
+            err.response?.data?.detail?.message &&
+              setWarningAlert(err.response.data?.detail?.message);
+            setFetchingData(false);
+          }
+        });
+    },
+    [props.history]
+  );
+  useEffect(getAgents, [getAgents]);
 
-//   function openDeleteConfirm() {
-//     setShowConfirm(true);
-//   }
+  function openDeleteConfirm() {
+    setShowConfirm(true);
+  }
 
-//   function deleteAgent() {
-//     setShowConfirm(false);
-//     setInfoAlert("Deleting Agents");
-//     const sys_ids = selectedAgents.map(
-//       (agentsData) => agentsData.sys_id
-//     );
-//     const payload = {
-//       ids: sys_ids,
-//     };
-//     deleteAgentsInBulk(payload)
-//       .then(() => {
-//         setInfoAlert("");
-//         setSuccessAlert("Deleted Agents Successfully");
-//         _.remove(finalAgent.current.totalAgents, (agent) => {
-//           return sys_ids.includes(agent.sys_id);
-//         });
-//         setAgents(finalAgent.current.totalAgents);
-//         setSelectedAgents([]);
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         setInfoAlert("");
-//         setSuccessAlert("");
-//       });
-//   }
+  function deleteAgent() {
+    setShowConfirm(false);
+    setInfoAlert("Deleting Agents");
+    const sys_ids = selectedAgents.map(
+      (agentsData) => agentsData.sys_id
+    );
+    const payload = {
+      ids: sys_ids,
+    };
+    deleteAgentsInBulk(payload)
+      .then(() => {
+        setInfoAlert("");
+        setSuccessAlert("Deleted Agents Successfully");
+        _.remove(finalAgent.current.totalAgents, (agent) => {
+          return sys_ids.includes(agent.sys_id);
+        });
+        setAgents(finalAgent.current.totalAgents);
+        setSelectedAgents([]);
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+      });
+  }
 
-//   const handleUpdateAgent = useCallback((sys_id, payload) => {
-//     setInfoAlert("Updating Agent");
-//     updateAgents(sys_id, payload)
-//       .then((res) => {
-//         setViewAgent(res.data.result);
-//         finalAgent.current.totalAgents = _.unionBy(
-//           [res.data.result],
-//           finalAgent.current.totalAgents,
-//           "sys_id"
-//         );
-//         setAgents(finalAgent.current.totalAgents);
-//         setInfoAlert("");
-//         setSuccessAlert("Updated Agent Successfully");
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         setInfoAlert("");
-//         setSuccessAlert("");
-//         error.response?.data?.detail?.detail &&
-//           setWarningAlert(error.response?.data?.detail?.detail);
-//       });
-//   }, []);
+  const handleUpdateAgent = useCallback((sys_id, payload) => {
+    setInfoAlert("Updating Agent");
+    updateAgents(sys_id, payload)
+      .then((res) => {
+        setViewAgent(res.data.result);
+        finalAgent.current.totalAgents = _.unionBy(
+          [res.data.result],
+          finalAgent.current.totalAgents,
+          "sys_id"
+        );
+        setAgents(finalAgent.current.totalAgents);
+        setInfoAlert("");
+        setSuccessAlert("Updated Agent Successfully");
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+        error.response?.data?.detail?.detail &&
+          setWarningAlert(error.response?.data?.detail?.detail);
+      });
+  }, []);
 
-//   const handleCreateAgent = useCallback((payload) => {
-//     setInfoAlert("Creating Agent");
-//     createAgents(payload)
-//       .then((res) => {
-//         setInfoAlert("");
-//         setSuccessAlert("Created Agent Successfully");
-//         finalAgent.current.totalAgents.push(res.data.result);
-//         setAgents(finalAgent.current.totalAgents);
-//       })
-//       .catch((error) => {
-//         console.log(error);
-//         setInfoAlert("");
-//         setSuccessAlert("");
-//         error.response?.data?.detail?.detail &&
-//           setWarningAlert(error.response?.data?.detail?.detail);
-//       });
-//   }, []);
+  const handleCreateAgent = useCallback((payload) => {
+    setInfoAlert("Creating Agent");
+    createAgents(payload)
+      .then((res) => {
+        setInfoAlert("");
+        setSuccessAlert("Created Agent Successfully");
+        finalAgent.current.totalAgents.push(res.data.result);
+        setAgents(finalAgent.current.totalAgents);
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+        error.response?.data?.detail?.detail &&
+          setWarningAlert(error.response?.data?.detail?.detail);
+      });
+  }, []);
 
-//   const handleSecondarySidebar = (data) => {
-//     setSecondarySidebarData(data);
-//     setOpenSidebar(true);
-//   };
+  const handleSecondarySidebar = (data) => {
+    setSecondarySidebarData(data);
+    setOpenSidebar(true);
+  };
 
-//   const handleOpenAgent = useCallback(
-//     (data) => {
-//       const title = `${data ? "Update" : "Create"} Agent`;
-//       action.openScreen(Agent, {
-//         title: title,
-//         screenId: `agent-${data && data.number}`,
-//         agent: data,
-//         categoryList: categoryMetadata,
-//         stateList: stateMetadata,
-//         severityList: severityMetadata,
-//         subcategoryList: subcategoryMetadata,
-//         onHoldReasonList: onHoldReasonMetadata,
-//         resolutionCodeList: resolutionCodeMetadata,
-//         usersList,
-//         groupsList,
-//         updateAgent: handleUpdateAgent,
-//         createAgent: handleCreateAgent,
-//       });
-//     },
-//     [
-//       action,
-//       categoryMetadata,
-//       stateMetadata,
-//       severityMetadata,
-//       subcategoryMetadata,
-//       usersList,
-//       groupsList,
-//       onHoldReasonMetadata,
-//       resolutionCodeMetadata,
-//       handleUpdateAgent,
-//       handleCreateAgent,
-//     ]
-//   );
+  const handleOpenAgent = useCallback(
+    (data) => {
+      const title = `${data ? "Update" : "Create"} Agent`;
+      action.openScreen(AddAgent, {
+        title: title,
+        screenId: `AddAgent-${data && data.number}`,
+        agent: data,
+        updateAgent: handleUpdateAgent,
+        createAgent: handleCreateAgent,
+      });
+    },
+    [
+      action,
+      handleUpdateAgent,
+      handleCreateAgent,
+    ]
+  );
 
-//   const handleViewAgent = useCallback(
-//     (data) => {
-//       setViewAgent(data);
-//       const title = `Agent ${data.number}`;
-//       action.openScreen(AgentView, {
-//         title: title,
-//         screenId: `agent-display-view-${data && data.number}`,
-//         viewAgent,
-//         agent: data,
-//         categoryList: categoryMetadata,
-//         stateList: stateMetadata,
-//         severityList: severityMetadata,
-//         subcategoryList: subcategoryMetadata,
-//         onHoldReasonList: onHoldReasonMetadata,
-//         resolutionCodeList: resolutionCodeMetadata,
-//         usersList,
-//         groupsList,
-//         close: () => {
-//           setOpenSidebar(false);
-//         },
-//         updateAgent: handleUpdateAgent,
-//         createAgent: handleCreateAgent,
-//       });
-//     },
-//     [
-//       action,
-//       categoryMetadata,
-//       stateMetadata,
-//       severityMetadata,
-//       subcategoryMetadata,
-//       usersList,
-//       groupsList,
-//       onHoldReasonMetadata,
-//       resolutionCodeMetadata,
-//       viewAgent,
-//       handleUpdateAgent,
-//       handleCreateAgent,
-//     ]
-//   );
+  const handleViewAgent = useCallback(
+    (data) => {
+      setViewAgent(data);
+      const title = `AddAgent ${data.number}`;
+      action.openScreen(
+        {
+        title: title,
+        screenId: `agent-display-view-${data && data.number}`,
+        viewAgent,
+        agent: data,
+        close: () => {
+          setOpenSidebar(false);
+        },
+        updateAgent: handleUpdateAgent,
+        createAgent: handleCreateAgent,
+      });
+    },
+    [
+      action,
+      viewAgent,
+      handleUpdateAgent,
+      handleCreateAgent,
+    ]
+  );
 
-//   useEffect(() => {
-//     if (
-//       [50, 100].includes(pageSize) &&
-//       currentPage % Math.ceil(50 / pageSize) === 0 &&
-//       currentPage >=
-//         Math.ceil(finalAgent.current.totalAgents.length / pageSize) &&
-//       totalAgents > finalAgent.current.totalAgents.length
-//     ) {
-//       offset.current.value = finalAgent.current.totalAgents.length;
-//       getAgents(currentPage === 1, pageSize, false);
-//     } else if (
-//       currentPage % Math.ceil(50 / pageSize) === 0 &&
-//       currentPage >=
-//         Math.ceil(finalAgent.current.totalAgents.length / pageSize) &&
-//       currentPage !== 1 &&
-//       totalAgents > finalAgent.current.totalAgents.length
-//     ) {
-//       offset.current.value = finalAgent.current.totalAgents.length;
-//       getAgents(false, undefined, false);
-//     }
-//   }, [currentPage, pageSize, totalAgents, getAgents]);
+  useEffect(() => {
+    if (
+      [50, 100].includes(pageSize) &&
+      currentPage % Math.ceil(50 / pageSize) === 0 &&
+      currentPage >=
+        Math.ceil(finalAgent.current.totalAgents.length / pageSize) &&
+      totalAgents > finalAgent.current.totalAgents.length
+    ) {
+      offset.current.value = finalAgent.current.totalAgents.length;
+      getAgents(currentPage === 1, pageSize, false);
+    } else if (
+      currentPage % Math.ceil(50 / pageSize) === 0 &&
+      currentPage >=
+        Math.ceil(finalAgent.current.totalAgents.length / pageSize) &&
+      currentPage !== 1 &&
+      totalAgents > finalAgent.current.totalAgents.length
+    ) {
+      offset.current.value = finalAgent.current.totalAgents.length;
+      getAgents(false, undefined, false);
+    }
+  }, [currentPage, pageSize, totalAgents, getAgents]);
 
-//   const menuItems = [
-//     {
-//       label: "Create Agent",
-//       action: () => handleOpenAgent(),
-//     },
-//     {
-//       label: "Delete Agent(s)",
-//       action: () => openDeleteConfirm(),
-//       disabled: !selectedAgents.length,
-//     },
-//   ];
+  const menuItems = [
+    {
+      label: "Create Agent",
+      action: () => handleOpenAgent(),
+    },
+    {
+      label: "Delete Agent(s)",
+      action: () => openDeleteConfirm(),
+      disabled: !selectedAgents.length,
+    },
+  ];
 
-//   const removeFilter = () => {
-//     getAgents(true, undefined, false);
-//     finalAgent.current.totalAgents = [];
-//     setAgents(finalAgent.current.totalAgents);
-//   };
+  const removeFilter = () => {
+    getAgents(true, undefined, false);
+    finalAgent.current.totalAgents = [];
+    setAgents(finalAgent.current.totalAgents);
+  };
 
 
-//   const handleOrderBy = (orderBy) => {
-//     const keyMap = {
-//       Number: "number",
-//       Opened: "opened_at",
-//       "Organization": [
-//         (item) => item?.organization === "",
-//         "organization",
-//       ],
-//       Caller: [
-//         (item) => item?.caller_id === "",
-//         (item) => item?.caller_id?.display_value?.toLowerCase(),
-//       ],
-//       "Agent Name": [
-//         (item) => item?.assigned_to === "",
-//         (item) => item?.assigned_to?.display_value?.toLowerCase(),
-//       ],
-//       "Agent Pool": [(item) => item?.agent_pool === "", "agent_pool"],
-//     };
-//     return keyMap[orderBy] ? keyMap[orderBy] : "number";
-//   };
+  const handleOrderBy = (orderBy) => {
+    const keyMap = {
+      Number: "number",
+      "Organization": [(item) => item?.organization === "", "organization"],
+      "Agent Name": [
+        (item) => item?.assigned_to === "", "agentName"
+      ],
+      "Agent Pool": [(item) => item?.agentPool === "", "agentPool"],
+    };
+    return keyMap[orderBy] ? keyMap[orderBy] : "number";
+  };
 
-//   const TableData = _.orderBy(
-//     agents,
-//     handleOrderBy(localStorage.getItem("sort_key_value"))
-//   ).map((item) => ({ ...item, _id: item.sys_id }));
+  const TableData = _.orderBy(
+    agents,
+    handleOrderBy(localStorage.getItem("sort_key_value"))
+  ).map((item) => ({ ...item, _id: item.sys_id }));
 
-//   const NoDataConst = props => (
-//     <NoData noDataTitle="This is the dynamic title" {...props} />
-//   );
+  return (
+    <div className="background-container">
+      {checkComponentRender(
+        warningAlert,
+        <div className="alert-handler">
+          <DangerAlert dismissHandler={() => setWarningAlert("")}>
+            <div className="alert-box"> {warningAlert}</div>
+          </DangerAlert>
+        </div>
+      )}
 
-//   return (
-//     <div className="background-container">
-//       {/* <LoaderOverlay
-//         loading={
-//           FetchingMetaData ||
-//           FetchingUsersData ||
-//           FetchingGroups ||
-//           FetchingServices ||
-//           FetchingServiceOffering ||
-//           FetchingConfigurationItem
-//         }
-//       /> */}
-//       {/* {checkComponentRender(
-//         openSidebar,
-//         // <AgentDetails
-//         //   secondarySidebarData={secondarySidebarData}
-//         //   handleOpenAgent={handleViewAgent}
-//         //   openSidebar={openSidebar}
-//         //   setOpenSidebar={(isOpen) => setOpenSidebar(isOpen)}
-//         // />
-//       )} */}
-//       {checkComponentRender(
-//         warningAlert,
-//         <div className="alert-handler">
-//           <DangerAlert dismissHandler={() => setWarningAlert("")}>
-//             <div className="alert-box"> {warningAlert}</div>
-//           </DangerAlert>
-//         </div>
-//       )}
+      {checkComponentRender(
+        infoAlert,
+        <div className="alert-handler">
+          <InfoAlert dismissHandler={() => setInfoAlert("")}>
+            <div className="alert-box"> {infoAlert}</div>
+          </InfoAlert>
+        </div>
+      )}
 
-//       {checkComponentRender(
-//         infoAlert,
-//         <div className="alert-handler">
-//           <InfoAlert dismissHandler={() => setInfoAlert("")}>
-//             <div className="alert-box"> {infoAlert}</div>
-//           </InfoAlert>
-//         </div>
-//       )}
+      {checkComponentRender(
+        successAlert,
+        <div className="alert-handler">
+          <SuccessAlert dismissHandler={() => setSuccessAlert("")}>
+            <div className="alert-box"> {successAlert}</div>
+          </SuccessAlert>
+        </div>
+      )}
 
-//       {checkComponentRender(
-//         successAlert,
-//         <div className="alert-handler">
-//           <SuccessAlert dismissHandler={() => setSuccessAlert("")}>
-//             <div className="alert-box"> {successAlert}</div>
-//           </SuccessAlert>
-//         </div>
-//       )}
-
-//       {checkComponentRender(
-//         showConfirm,
-//         <Modal
-//           title={`Delete ${selectedAgents.length} agents`}
-//           isOpen={showConfirm}
-//           applyButtonLabel="Delete"
-//           contentTextAlign={Modal.CONTENT_TEXT_ALIGN.LEFT}
-//           onClose={() => {
-//             setShowConfirm(false);
-//           }}
-//           onAction={(data) => {
-//             data === "component-modal-apply-button" && deleteAgent();
-//           }}
-//         >
-//           {`Are you sure want to delete agent(s) ${selectedAgents.map(
-//             (items) => items.number
-//           )}?`}
-//         </Modal>
-//       )}
+      {checkComponentRender(
+        showConfirm,
+        <Modal
+          title={`Delete ${selectedAgents.length} agents`}
+          isOpen={showConfirm}
+          applyButtonLabel="Delete"
+          contentTextAlign={Modal.CONTENT_TEXT_ALIGN.LEFT}
+          onClose={() => {
+            setShowConfirm(false);
+          }}
+          onAction={(data) => {
+            data === "component-modal-apply-button" && deleteAgent();
+          }}
+        >
+          {`Are you sure want to delete agent(s) ${selectedAgents.map(
+            (items) => items.number
+          )}?`}
+        </Modal>
+      )}
 
 
-//       <div className="row">
-//         <div className="col-xl-12">
-//           <div className="section">
-//             <h2 style={{ fontWeight: "350" }}>Agents</h2>
-//           </div>
-//         </div>
-//       </div>
-//       <div className="filter-table">
-//         <FilterableTable
-//           loading={fetchingData}
-//           tools={[
-//             <Button
-//               key="ft-button2"
-//               className={filterRemove ? "hidden" : "button-css"}
-//               type={Button.TYPE.PRIMARY_GHOST}
-//               size={Button.SIZE.SMALL}
-//               onAction={removeFilter}
-//             >
-//               Remove Dashboard Filter{" "}
-//               <Icon
-//                 type={Icon.TYPE.CLOSE}
-//                 size={Icon.SIZE.XSMALL}
-//                 style={{ marginLeft: "5px" }}
-//               />
-//             </Button>,
-//             <Dropdown
-//               key={"dropdown-tool-key-2"}
-//               preferredPlacements={["bottom"]}
-//               type={Dropdown.TYPE.BUTTON}
-//               size={Button.SIZE.SMALL}
-//               label="Actions"
-//               theme={"btn--primary-ghost"}
-//               items={menuItems}
-//             />,
-//           ]}
-//           data={TableData}
-//           keyField="_id"
-//           itemKey="_id"
-//           id="_id"
-//           key={"agent_table"}
-//           columns={allColumns}
-//           selectable={true}
-//           onPageChange={(pageNumber) => {
-//             setCurrentPage(pageNumber + 1);
-//           }}
-//           onRowDoubleClick={handleViewAgent}
-//           onRowClick={handleSecondarySidebar}
-//           getSelected={(agentsData) => {
-//             console.table("getSelected args %O: ", agentsData);
-//             agentsData &&
-//               agentsData?.selections &&
-//               setSelectedAgents(agentsData.selections);
-//           }}
-//           total={parseInt(totalAgents)}
-//           showPageJump={true}
-//           onPageSizeChange={(data) => setPageSize(data)}
-//           pageSize={checkForTernary(pageSize, pageSize, 10)}
-//           NoDataComponent={NoDataConst}
-//         />
-//       </div>
-//     </div>
-//   );
-// }
+      <div className="row">
+        <div className="col-xl-12">
+          <div className="section">
+            <h2 style={{ fontWeight: "350" }}>Agents</h2>
+          </div>
+        </div>
+      </div>
+      <div className="filter-table">
+        <FilterableTable
+          loading={fetchingData}
+          tools={[
+            <Button
+              key="ft-button2"
+              className={filterRemove ? "hidden" : "button-css"}
+              type={Button.TYPE.PRIMARY_GHOST}
+              size={Button.SIZE.SMALL}
+              onAction={removeFilter}
+            >
+              Remove Dashboard Filter{" "}
+              <Icon
+                type={Icon.TYPE.CLOSE}
+                size={Icon.SIZE.XSMALL}
+                style={{ marginLeft: "5px" }}
+              />
+            </Button>,
+            <Dropdown
+              key={"dropdown-tool-key-2"}
+              preferredPlacements={["bottom"]}
+              type={Dropdown.TYPE.BUTTON}
+              size={Button.SIZE.SMALL}
+              label="Actions"
+              theme={"btn--primary-ghost"}
+              items={menuItems}
+            />,
+          ]}
+          data={TableData}
+          keyField="_id"
+          itemKey="_id"
+          id="_id"
+          key={"agent_table"}
+          columns={allColumns}
+          selectable={true}
+          onPageChange={(pageNumber) => {
+            setCurrentPage(pageNumber + 1);
+          }}
+          onRowDoubleClick={handleViewAgent}
+          onRowClick={handleSecondarySidebar}
+          getSelected={(agentsData) => {
+            console.table("getSelected args %O: ", agentsData);
+            agentsData &&
+              agentsData?.selections &&
+              setSelectedAgents(agentsData.selections);
+          }}
+          total={parseInt(totalAgents)}
+          showPageJump={true}
+          onPageSizeChange={(data) => setPageSize(data)}
+          pageSize={checkForTernary(pageSize, pageSize, 10)}
+        />
+      </div>
+    </div>
+  );
+}
 
-// export default AgentTable;
+export default AgentTable;
