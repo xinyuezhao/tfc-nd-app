@@ -106,6 +106,18 @@ spec:
    topicProperties:
     retention.ms: 86400
     segment.ms: 86400
+ - name: agent-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ - name: agent-manager-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
  acls:
  - name: node-topic-wr
    cn: cisco-argome
@@ -163,6 +175,22 @@ spec:
    cn: cisco-argome
    topic: organization-manager-topic
    op: Read
+ - name: agent-topic-wr
+   cn: cisco-argome
+   topic: agent-topic
+   op: Write
+ - name: agent-topic-rd
+   cn: cisco-argome
+   topic: agent-topic
+   op: Read
+ - name: agent-manager-topic-wr
+   cn: cisco-argome
+   topic: agent-manager-topic
+   op: Write
+ - name: agent-manager-topic-rd
+   cn: cisco-argome
+   topic: agent-manager-topic
+   op: Read
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -208,3 +236,11 @@ spec:
     authType: open
     listenPaths:
     - path: "/sedgeapi/v1/cisco-argome/organizationmgr"
+  - target: agentmgr
+    service:
+      scheme: http
+      name: agentmgr
+      port: 80
+    authType: open
+    listenPaths:
+    - path: "/sedgeapi/v1/cisco-argome/agentmgr"

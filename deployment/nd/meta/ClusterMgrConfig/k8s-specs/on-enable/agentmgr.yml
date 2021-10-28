@@ -1,0 +1,67 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: agentmgr
+  namespace: cisco-argome
+  labels:
+    service: agentmgr
+spec:
+  ports:
+  - name: agentmgr
+    port: 80
+    targetPort: 8089
+  selector:
+    service: agentmgr
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: agentmgr
+  namespace: cisco-argome
+  labels:
+    service: agentmgr
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service: agentmgr
+  template:
+    metadata:
+      labels:
+        service: agentmgr
+    spec:
+      restartPolicy: Always
+      volumes:
+      - name: kafka-certs
+        secret:
+          secretName: cisco-argome-certs
+          items:
+          - key: server.crt
+            path: client.cer.pem
+          - key: server.key
+            path: client.key.pem
+          - key: cacerts.crt
+            path: server.cer.pem
+      - name: mongo-certs
+        secret:
+          secretName: cisco-argome-certs
+          items:
+          - key: cacerts.crt
+            path: cacerts.crt
+      containers:
+      - name: agentmgr
+        image: agentmgr:v1
+        imagePullPolicy: IfNotPresent
+        volumeMounts:
+        - name: kafka-certs
+          mountPath: "/security"
+          readOnly: true
+        - name: mongo-certs
+          mountPath: "/certs"
+          readOnly: true
+        ports:
+        - containerPort: 8089
+        env:
+          - name: EXT_PLATFORM
+            value: "NexusDashboard"
