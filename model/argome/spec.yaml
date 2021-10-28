@@ -38,3 +38,17 @@ spec:
           endpoint: node-topic
         - managedResource: argome.argo.cisco.com/v1.Task
           endpoint: task-topic
+    - service: agent-manager
+      endpoint: agent-manager-topic
+      restPort: 0.0.0.0:8089
+      databaseName: agentmgr
+      managedResources:
+        - managedResource: argome.argo.cisco.com/v1.Agent
+          endpoint: agent-topic
+    - service: organization-manager
+      endpoint: organization-manager-topic
+      restPort: 0.0.0.0:8089
+      databaseName: organizationmgr
+      managedResources:
+        - managedResource: argome.argo.cisco.com/v1.Organization
+          endpoint: organizationt-topic
