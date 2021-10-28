@@ -33,6 +33,11 @@
                     "name": "argome.argo.cisco.com/v1.Organization",
                     "service": "organization-manager",
                     "endpoint": "organization-manager-topic"
+                },
+                {
+                    "name": "argome.argo.cisco.com/v1.Agent",
+                    "service": "agent-manager",
+                    "endpoint": "agent-manager-topic"
                 }
                 ],
                 "services": [
@@ -50,6 +55,11 @@
                     "name": "organization-manager",
                     "endpoint": "organization-manager-topic",
                     "database": "organizationmgr"
+                },
+                {
+                    "name": "agent-manager",
+                    "endpoint": "agent-manager-topic",
+                    "database": "agentmgr"
                 }
                 ]
             }

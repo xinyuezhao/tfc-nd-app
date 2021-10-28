@@ -1,0 +1,50 @@
+kind: Struct
+metadata:
+  name: AgentSpec
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: description
+      type: string
+    - prop: id
+      type: string
+    - prop: agentpool
+      type: string
+    - prop: agentpoolId
+      type: string
+    - prop: organization
+      type: string
+    - prop: name
+      type: string
+    - prop: token
+      type: string
+      userAccess: invisible
+---
+kind: Resource
+metadata:
+  name: Agent
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  spec:
+    type: v1.AgentSpec
+  pkey: spec.description
+  apimethods:
+    - apimethod: GET
+    - apimethod: POST
+    - apimethod: DELETE
+---
+kind: ResourceHandler
+metadata:
+  name: AgentHandler
+spec:
+  resource: argome.argo.cisco.com/v1.Agent
+  operations:
+    - CREATE
+    - DELETE
+  retryStrategy:
+    delay: 500
+  concurrencyKey: agent
+  function: golang.cisco.com/examples/argome/pkg/handlers.AgentHandler
+  specStatusDiscriminator: both
