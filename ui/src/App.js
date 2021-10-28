@@ -6,8 +6,7 @@ import { ScreenManager, ErrorBoundary } from "blueprint-react";
 import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";
 // import LoginPage from "./components/LoginPage";
-import Dashboard from "./components/Dashboard";
-import TestTable from "./components/TestTable";
+// import Dashboard from "./components/Dashboard";
 import "./App.css";
 // import { isUserLogin } from "./service/api_service";
 
@@ -64,12 +63,12 @@ function App(props) {
                         exact
                         path={pathPrefix + "/login"}
                         component={LoginPage}
-                      />*/}
+                      />
                       <Route
                         exact
                         path={pathPrefix + "/dashboard"}
                         component={Dashboard}
-                      />
+                      />*/}
                       <Route
                         exact
                         path={pathPrefix + "/home"}
@@ -77,13 +76,8 @@ function App(props) {
                       />
                       <Route
                         exact
-                        path={pathPrefix + "/testtable"}
-                        component={TestTable}
-                      />
-                      <Route
-                        exact
                         path={pathPrefix + "/"}
-                        component={TestTable}
+                        component={AgentTable}
                       />
                       <Redirect exact from="*" to={pathPrefix} />
                     </Switch>

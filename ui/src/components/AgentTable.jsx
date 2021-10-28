@@ -17,7 +17,7 @@ import {
   updateAgents,
   createAgents,
 } from "../service/api_service";
-import AddAgent from "./AddAgent";
+import Agent from "./CreateAgent";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import { pathPrefix } from "../App";
 
@@ -26,6 +26,17 @@ function AgentTable(props) {
     {
       id: "Agent Name",
       Header: "Agent Name",
+      sortable: true,
+      accessor: "assigned_to.display_value",
+      align: "center",
+      filter: {
+        type: "text",
+      },
+      tooltips: true,
+    },
+    {
+      id: "Description",
+      Header: "Description",
       sortable: true,
       accessor: "assigned_to.display_value",
       align: "center",
@@ -49,6 +60,17 @@ function AgentTable(props) {
       id: "Organization",
       Header: "Organization",
       accessor: "organization",
+      sortable: true,
+      align: "center",
+      filter: {
+        type: "text",
+      },
+      tooltips: true,
+    },
+    {
+      id: "Status",
+      Header: "Status",
+      accessor: "status",
       sortable: true,
       align: "center",
       filter: {
@@ -226,9 +248,9 @@ function AgentTable(props) {
   const handleOpenAgent = useCallback(
     (data) => {
       const title = `${data ? "Update" : "Create"} Agent`;
-      action.openScreen(AddAgent, {
+      action.openScreen(Agent, {
         title: title,
-        screenId: `AddAgent-${data && data.number}`,
+        screenId: `Agent-${data && data.number}`,
         agent: data,
         updateAgent: handleUpdateAgent,
         createAgent: handleCreateAgent,
@@ -244,7 +266,7 @@ function AgentTable(props) {
   const handleViewAgent = useCallback(
     (data) => {
       setViewAgent(data);
-      const title = `AddAgent ${data.number}`;
+      const title = `Agent ${data.number}`;
       action.openScreen(
         {
         title: title,

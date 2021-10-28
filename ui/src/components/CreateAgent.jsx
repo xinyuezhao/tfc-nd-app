@@ -4,12 +4,13 @@ import {
   Input,
   Card,
   ObjectPicker,
+  useScreenActions,
   LABELS,
 } from "blueprint-react";
 import _ from 'lodash';
 import {getPoolData, PoolDetailRenderer} from './AgentPoolUtils';
 import {getOrgData, OrgDetailRenderer} from './OrganizationUtils';
-import CreateNew from './CreateNew';
+import CreateAgentPool from './CreateNewAgentPool';
 import './CiscoObjectPicker.scss';
 
 function Agent(props) {
@@ -21,6 +22,12 @@ function Agent(props) {
     updateAgent,
     createAgent,
   } = props;
+
+  const action = useScreenActions();
+
+  const onCreate = () => {
+    action.openScreen(CreateAgentPool,{});
+  }
 
   const [agentName, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -159,7 +166,7 @@ function Agent(props) {
                   onSelect={handlePoolSelect}
                   detailItemRenderer={PoolDetailRenderer}
                   idBy='id'
-                  createItemRenderer={CreateNew}
+                  onCreate={onCreate}
                 />
               </div>
               {/* ========================================== */}
