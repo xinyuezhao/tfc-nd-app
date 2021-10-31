@@ -1,98 +1,106 @@
 {
-    "rest": {
-      "address": "0.0.0.0:8089"
-    },
-    "logger": {},
-    "app": {
-      "applications": [
-        {
-          "name": "se",
-          "prefix": "sedge",
-          "resources": [
-            {
-              "name": "book.aci.cisco.com/v1.Book",
-              "service": "node-manager",
-              "endpoint": "node-topic"
-            },
-            {
-              "name": "book.aci.cisco.com/v1.Publisher",
-              "service": "node-manager",
-              "endpoint": "node-topic"
-            },
-            {
-              "name": "argome.argo.cisco.com/v1.Node",
-              "service": "node-manager",
-              "endpoint": "node-topic"
-            },
-            {
-              "name": "argome.argo.cisco.com/v1.NodeOper",
-              "service": "node-manager",
-              "endpoint": "nodeoper-topic"
-            },
-            {
-              "name": "argome.argo.cisco.com/v1.Cluster",
-              "service": "clusterd",
-              "endpoint": "cluster-topic"
-            },
-            {
-              "name": "argome.argo.cisco.com/v1.ClusterMember",
-              "service": "clusterd",
-              "endpoint": "cluster-topic"
-            },
-            {
-              "name": "argome.argo.cisco.com/v1.Organization",
-              "service": "organization-manager",
-              "endpoint": "organization-manager-topic"
-            },
-            {
-              "name": "argome.argo.cisco.com/v1.Agent",
-              "service": "agent-manager",
-              "endpoint": "agent-manager-topic"
-            }
-          ],
-          "services": [
-            {
-              "name": "node-manager",
-              "endpoint": "node-manager-topic"
-            },
-            {
-              "name": "clusterd",
-              "endpoint": "clusterd-topic"
-            },
-            {
-              "name": "organization-manager",
-              "endpoint": "organization-manager-topic"
-            },
-            {
-                "name": "agent-manager",
-                "endpoint": "agent-manager-topic"
-              }
-          ]
-        }
-      ]
-    },
-    "transport": {
-      "type": "kafka",
-      "endpoint": "clusterd-topic"
-    },
-    "platform":{
-      "kafka":{
-          "brokerAddrs":[
-              "kafka.argo.svc:9092"
-          ],
-          "secure": false
-      },
-      "mongo":{
-        "duration": 120000,
-        "path": "mongodb-headless.argo.svc:27017",
-        "name": "argome"
+  "rest": {
+    "address": "0.0.0.0:8089"
+  },
+  "logger": {},
+  "app": {
+    "applications": [
+      {
+        "name": "se",
+        "prefix": "sedge",
+        "resources": [
+          {
+            "name": "book.aci.cisco.com/v1.Book",
+            "service": "node-manager",
+            "endpoint": "node-topic"
+          },
+          {
+            "name": "book.aci.cisco.com/v1.Publisher",
+            "service": "node-manager",
+            "endpoint": "node-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.Node",
+            "service": "node-manager",
+            "endpoint": "node-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.NodeOper",
+            "service": "node-manager",
+            "endpoint": "nodeoper-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.Cluster",
+            "service": "clusterd",
+            "endpoint": "cluster-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.ClusterMember",
+            "service": "clusterd",
+            "endpoint": "cluster-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.Organization",
+            "service": "organization-manager",
+            "endpoint": "organization-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.Agent",
+            "service": "agent-manager",
+            "endpoint": "agent-topic"
+          },
+          {
+            "name": "argome.argo.cisco.com/v1.Agentpool",
+            "service": "agentpool-manager",
+            "endpoint": "agentpool-topic"
+          }
+        ],
+        "services": [
+          {
+            "name": "node-manager",
+            "endpoint": "node-manager-topic"
+          },
+          {
+            "name": "clusterd",
+            "endpoint": "clusterd-topic"
+          },
+          {
+            "name": "organization-manager",
+            "endpoint": "organization-manager-topic"
+          },
+          {
+            "name": "agent-manager",
+            "endpoint": "agent-manager-topic"
+          },
+          {
+            "name": "agentpool-manager",
+            "endpoint": "agentpool-manager-topic"
+          }
+        ]
       }
+    ]
+  },
+  "transport": {
+    "type": "kafka",
+    "endpoint": "clusterd-topic"
+  },
+  "platform":{
+    "kafka":{
+        "brokerAddrs":[
+            "kafka.argo.svc:9092"
+        ],
+        "secure": false
     },
-    "db": {
-      "appname": "argome",
+    "mongo":{
+      "duration": 120000,
       "path": "mongodb-headless.argo.svc:27017",
-      "type": "mongodb",
-      "secure": false
+      "name": "argome"
     }
+  },
+  "db": {
+    "appname": "argome",
+    "path": "mongodb-headless.argo.svc:27017",
+    "type": "mongodb",
+    "secure": false
   }
-  
+}

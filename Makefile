@@ -39,18 +39,19 @@ clean:
 	rm -rf $(BINDIR)
 	rm -rf $(CURDIR)/gen
 	rm -f node
-	rm -f cluster 
+	rm -f cluster
 	rm -f organization
 	rm -f agent
-	rm -f testsuite 
+	rm -f agentpool
+	rm -f testsuite
 	rm -rf argo
-	rm -rf pkg/bundle 
+	rm -rf pkg/bundle
 	rm -f images.tar.gz
 	rm -rf .build
 	rm -f cisco-argome-v0.0.1.aci
 	rm -f polaris_image.tar.gz
 	rm -f rigel_image.tar.gz
-	rm -rf imported* 
+	rm -rf imported*
 	rm -rf deployment/intersight/onprem/argo-build
 	rm -rf deployment/docker/intersight/clustermgr/config.json
 	rm -rf deployment/docker/intersight/clustermgr/rigel
@@ -74,7 +75,7 @@ sanity: clean lint docker-images
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
-services: clusterd node organization agent
+services: clusterd node organization agent agentpool
 
 clusterd: generate
 	go build ./cmd/cluster
@@ -88,6 +89,9 @@ organization: generate
 agent: generate
 	go build ./cmd/agent
 
+agentpool: generate
+	go build ./cmd/agentpool
+
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
@@ -95,9 +99,10 @@ docker-images: bundle services
 	docker build --file deployment/docker/clustermgr/Dockerfile --tag clustermgr:v1 .
 	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v1 .
 	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v1 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v1 .
 
 docker-archive: docker-images
-	docker save nodemgr:v1 clustermgr:v1 organizationmgr:v1 agentmgr:v1 | gzip > images.tar.gz
+	docker save nodemgr:v1 clustermgr:v1 organizationmgr:v1 agentmgr:v1 agentpoolmgr:v1 | gzip > images.tar.gz
 
 intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris
