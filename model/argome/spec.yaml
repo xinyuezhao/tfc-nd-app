@@ -52,3 +52,12 @@ spec:
       managedResources:
         - managedResource: argome.argo.cisco.com/v1.Organization
           endpoint: organizationt-topic
+    - service: agentpool-manager
+      endpoint: agentpool-manager-topic
+      restPort: 0.0.0.0:8089
+      databaseName: agentpoolmgr
+      managedResources:
+        - managedResource: argome.argo.cisco.com/v1.Agentpool
+          endpoint: agentpool-topic
+        - managedResource: argome.argo.cisco.com/v1.AgentpoolList
+          endpoint: agentpool-topic

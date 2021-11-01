@@ -53,6 +53,11 @@
                     "name": "argome.argo.cisco.com/v1.Agentpool",
                     "service": "agentpool-manager",
                     "endpoint": "agentpool-topic"
+                },
+                {
+                    "name": "argome.argo.cisco.com/v1.AgentpoolList",
+                    "service": "agentpool-manager",
+                    "endpoint": "agentpool-topic"
                 }
                 ],
                 "services": [
