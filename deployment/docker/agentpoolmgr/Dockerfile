@@ -7,5 +7,5 @@ WORKDIR /bin/
 COPY ./agentpool .
 COPY cmd/agentpool/config.json .
 COPY cmd/agentpool/config_kind.json .
-COPY cmd/agentpool/config_sanity.json .
+COPY .bin/deployment-spec.argome.argo.cisco.com.v1.Argome.agentpool-manager-kind-config.json config_sanity.json
 CMD ./agentpool --config.file ./config.json

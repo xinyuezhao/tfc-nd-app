@@ -11,7 +11,6 @@ spec:
       type: string
     - prop: organization
       type: string
-
 ---
 kind: Resource
 metadata:
@@ -21,11 +20,26 @@ metadata:
 spec:
   spec:
     type: v1.AgentpoolSpec
-  pkey: spec.name
+  identity-rules:
+    - identity-rule: orgAgentpl
+      scope: org
+      prop-refs:
+        - prop-ref: spec.organization
+          alias: organization
+        - prop-ref: spec.name
+          alias: agentpool
+    - identity-rule: id
+      scope: org
+      prop-refs:
+        - prop-ref: spec.id
+          alias: id
   apimethods:
     - apimethod: GET
+      override: true
     - apimethod: POST
+      override: true
     - apimethod: DELETE
+      override: true
 ---
 kind: ResourceHandler
 metadata:
@@ -39,3 +53,41 @@ spec:
   concurrencyKey: Agentpool
   function: golang.cisco.com/examples/argome/pkg/handlers.AgentpoolHandler
   specStatusDiscriminator: both
+---
+kind: Resource
+metadata:
+  name: AgentpoolList
+  plural: agentpoolList
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  spec:
+    type: v1.AgentplListSpec
+  pkey: spec.organization
+  apimethods:
+    - apimethod: GET
+      override: true
+---
+kind: Struct
+metadata:
+  name: AgentplListSpec
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: organization
+      type: string
+    - prop: agentpools
+      type: []v1.AgentplSpec
+---
+kind: Struct
+metadata:
+  name: AgentplSpec
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: name
+      type: string
+    - prop: id
+      type: string
