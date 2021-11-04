@@ -9,7 +9,7 @@
     "contact-url": "https://mycase.cloudapps.cisco.com/case"
   },
   "iconfile": "icon.png",
-  "name": "Argome",
+  "name": "TerraformCloud Connect",
   "platforms": {
     "se": {
       "hostversion": "1.1.2"
@@ -19,7 +19,7 @@
   "signature": 666666,
   "vendor": "Cisco",
   "vendordomain": "Cisco",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "se-info": {
     "images-location": "Image",
     "specs-location": {
