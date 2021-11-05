@@ -26,13 +26,6 @@ function CreateAgentPool(props) {
   const [name, setName] = useState('');
   const [isOpen, setIsOpen] = useState(true);
 
-  // useObjectPickerSubmit(() => {
-  //   console.log("inside picker");
-  //     props.onSuccess({
-  //         name: name,
-  //         id: _.uniqueId()
-  //     });
-  // }, props.status)
   useEffect(() => {
     if (agentPoolName) {
       setName(agentPoolName.name);
@@ -79,9 +72,11 @@ function CreateAgentPool(props) {
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
         <Card className="col" style={{ width: "50%", paddingLeft: "30px", paddingTop: "0px", paddingBottom: "25px" }}>
             <div className="agent-container justify-content-center">
-              <div className="row">Agent Pool Name:</div>
+              <div className="row">Agent Pool Name
+                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              </div>
               <div className="row p-5" style={{ paddingTop: "10px" }}>
-                <Input
+                <Input required=""
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                 />

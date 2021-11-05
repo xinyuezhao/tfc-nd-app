@@ -18,6 +18,7 @@ import {
   createAgents,
 } from "../service/api_service";
 import Agent from "./CreateAgent";
+import AgentWoToken from "./CreateAgentWoToken";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import { pathPrefix } from "../App";
 
@@ -103,6 +104,7 @@ function AgentTable(props) {
     )
   );
   const [totalAgents, setTotalAgents] = useState(0);
+  const [agentToken, setAgentToken] = useState(true);
 
   const offset = useRef({ value: 0 });
   const limit = useRef({ value: 50 });
@@ -223,6 +225,7 @@ function AgentTable(props) {
   }, []);
 
   const handleCreateAgent = useCallback((payload) => {
+    console.log("start create agent");
     setInfoAlert("Creating Agent");
     createAgents(payload)
       .then((res) => {
@@ -247,24 +250,38 @@ function AgentTable(props) {
 
   const handleOpenAgent = useCallback(
     (data) => {
-      const title = `${data ? "Update" : "Create"} Agent`;
-      action.openScreen(Agent, {
-        title: title,
-        screenId: `Agent-${data && data.number}`,
-        agent: data,
-        updateAgent: handleUpdateAgent,
-        createAgent: handleCreateAgent,
-      });
+      console.log("handle open agent");
+      if(agentToken){
+        const title = `${data ? "Update" : "Create"} Agent`;
+        action.openScreen(Agent, {
+          title: title,
+          screenId: `Agent-${data && data.number}`,
+          agent: data,
+          updateAgent: handleUpdateAgent,
+          createAgent: handleCreateAgent,
+        });
+      } else {
+        const title = `${data ? "Update" : "Create"} Agent`;
+        action.openScreen(AgentWoToken, {
+          title: title,
+          screenId: `Agent-${data && data.number}`,
+          agent: data,
+          updateAgent: handleUpdateAgent,
+          createAgent: handleCreateAgent,
+        });
+      }
     },
     [
       action,
       handleUpdateAgent,
       handleCreateAgent,
+      agentToken,
     ]
   );
 
   const handleViewAgent = useCallback(
     (data) => {
+      console.log("handle view agent");
       setViewAgent(data);
       const title = `Agent ${data.number}`;
       action.openScreen(
@@ -345,6 +362,21 @@ function AgentTable(props) {
     agents,
     handleOrderBy(localStorage.getItem("sort_key_value"))
   ).map((item) => ({ ...item, _id: item.sys_id }));
+  console.log("table data = ", TableData);
+  if (TableData === []){
+    return (
+      <div class="card-initial tall">
+        <div>
+          <img class="illustration" src="static/firmwaresetup-37f69de36b7a81d9d8cbf2da0274305c.svg"></img>
+          <div class="card-initial-title">There are no Firmware Updates</div>
+          <div class="card-initial-content">Use the wizard to setup a firmware update.</div>
+          <div>
+            <button type="button" class="btn btn--primary btn--small card-btn">Setup Update</button>
+          </div>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="background-container">

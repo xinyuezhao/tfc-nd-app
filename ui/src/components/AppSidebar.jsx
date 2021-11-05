@@ -16,6 +16,12 @@ function AppSidebar() {
       title: "Agents",
       icon: IconConstants.PLUGIN,
     },
+    {
+      id: "Auth",
+      path: `${pathPrefix}/auth`,
+      title: "Auth",
+      icon: IconConstants.PLUGIN,
+    },
   ];
 
   return (

@@ -7,6 +7,7 @@ import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";
 // import LoginPage from "./components/LoginPage";
 // import Dashboard from "./components/Dashboard";
+import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
 // import { isUserLogin } from "./service/api_service";
 
@@ -78,6 +79,11 @@ function App(props) {
                         exact
                         path={pathPrefix + "/"}
                         component={AgentTable}
+                      />
+                      <Route
+                        exact
+                        path={pathPrefix + "/auth"}
+                        component={AuthenticationToken}
                       />
                       <Redirect exact from="*" to={pathPrefix} />
                     </Switch>

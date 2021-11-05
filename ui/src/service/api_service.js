@@ -1,16 +1,10 @@
 import axios from "axios";
 
-// axios.defaults.baseURL =
-//   window.location.protocol + "//" + window.location.hostname + ":7037";
-axios.defaults.baseURL =
-  window.location.protocol +
-  "//" +
-  window.location.hostname +
-  "/appcenter/cisco/servicenow/api/";
+axios.defaults.baseURL = "";
 axios.defaults.withCredentials = true;
 
 function fetchAgents(limit = 50, offset = 0, query = "", agent_id = "") {
-  return axios.get("/agents/", {
+  return axios.get("/sedgeapi/v1/cisco-argome/agentpoolmgr/api/argome.argo.cisco.com/v1/agents", {
     params: { limit, offset, query, agent_id },
   });
 }
