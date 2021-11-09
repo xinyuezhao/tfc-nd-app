@@ -19,7 +19,6 @@ spec:
       type: string
     - prop: token
       type: string
-      userAccess: invisible
 ---
 kind: Resource
 metadata:
@@ -32,6 +31,7 @@ spec:
   pkey: spec.description
   apimethods:
     - apimethod: GET
+      override: true
     - apimethod: POST
     - apimethod: DELETE
 ---
@@ -48,3 +48,39 @@ spec:
   concurrencyKey: agent
   function: golang.cisco.com/examples/argome/pkg/handlers.AgentHandler
   specStatusDiscriminator: both
+---
+kind: ValidationHandler
+metadata:
+  name: AgentValidator
+spec:
+  resource: argome.argo.cisco.com/v1.Agent
+  operations:
+    - CREATE
+    - DELETE
+  function: golang.cisco.com/examples/argome/pkg/handlers.AgentValidator
+---
+kind: Resource
+metadata:
+  name: TokenList
+  plural: tokenList
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  spec:
+    type: v1.TokenListSpec
+  pkey: spec.agentpool
+  apimethods:
+    - apimethod: GET
+      override: true
+---
+kind: Struct
+metadata:
+  name: TokenListSpec
+  group: argome.argo.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: agentpool
+      type: string
+    - prop: tokens
+      type: []string

@@ -2,11 +2,13 @@ package handlers
 
 import (
 	"context"
+	"errors"
 	"fmt"
 
 	tfe "github.com/hashicorp/go-tfe"
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
+	"golang.cisco.com/argo/pkg/model"
 	"golang.cisco.com/examples/argome/gen/argomev1"
 )
 
@@ -90,18 +92,15 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling Agent", "resource", event.Resource())
 	agent := event.Resource().(argomev1.Agent)
-	agent.SpecMutable().SetAgentpoolId("handler triggered")
-	log.Info("agent name given " + agent.Spec().Name())
 	agentPl := agent.Spec().Agentpool()
 	org := agent.Spec().Organization()
-	operation := string(event.Operation())
-	log.Info("operation is " + operation)
 	ctxTfe, client, err := configTFC()
 	if err != nil {
 		return err
 	}
-	if operation == "CREATE" {
-		log.Info("token is " + agent.Spec().Token())
+	if event.Operation() == model.CREATE {
+		// TODO: Add logic to set status. Currently set 'created' as default.
+		agent.SpecMutable().SetStatus("created")
 		if agent.Spec().Token() == "" {
 			log.Info("create agent without token")
 			agentToken, agentPlID, err := createAgentToken(ctxTfe, client, agentPl, org, agent.Spec().Description())
@@ -114,40 +113,34 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 				agent.SpecMutable().SetAgentpoolId(agentPlID)); err != nil {
 				return err
 			}
-			if err := event.Store().Record(ctx, agent); err != nil {
-				return err
-			}
-			if err := event.Store().Commit(ctx); err != nil {
-				core.LoggerFromContext(ctx).Error(err, "failed to commit Agent")
-				return err
-			}
 		}
-		log.Info("ID set " + agent.Spec().Id())
-		log.Info("Token set " + agent.Spec().Token())
+		if err := event.Store().Record(ctx, agent); err != nil {
+			return err
+		}
+		if err := event.Store().Commit(ctx); err != nil {
+			core.LoggerFromContext(ctx).Error(err, "failed to commit Agent")
+			return err
+		}
 	}
 
-	if operation == "DELETE" {
+	if event.Operation() == model.DELETE {
 		tokenID := agent.Spec().Id()
-		agentPools, _ := queryAgentPools(ctxTfe, client, org)
-		agentPool, queryErr := queryAgentPlByName(agentPools, agentPl)
-		if queryErr != nil {
-			return queryErr
-		}
 		removeErr := removeAgentToken(ctxTfe, client, tokenID)
 		if removeErr != nil {
 			return removeErr
 		}
-		// check whether the AgentPool is empty, delete the AgentPool if yes
-		tokensAfterDelete, err := queryAgentTokens(ctxTfe, client, agentPool.ID)
-		if err != nil {
-			return nil
-		}
-		if len(tokensAfterDelete) == 0 {
-			removeEr := removeAgentPool(ctxTfe, client, agentPool.ID)
-			if removeEr != nil {
-				return removeEr
-			}
-		}
+	}
+	return nil
+}
+
+func AgentValidator(ctx context.Context, event mo.Validation) error {
+	log := core.LoggerFromContext(ctx)
+	log.Info("validate Agent", "resource", event.Resource())
+	agent := event.Resource().(argomev1.Agent)
+	desc := agent.Spec().Description()
+	if desc == "" {
+		err := core.NewError(errors.New("agent description can't be blank"))
+		return err
 	}
 	return nil
 }
