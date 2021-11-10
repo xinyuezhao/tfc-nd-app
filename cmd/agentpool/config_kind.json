@@ -50,6 +50,11 @@
               "endpoint": "agent-topic"
             },
             {
+              "name": "argome.argo.cisco.com/v1.TokenList",
+              "service": "agent-manager",
+              "endpoint": "agent-topic"
+            },
+            {
               "name": "argome.argo.cisco.com/v1.Agentpool",
               "service": "agentpool-manager",
               "endpoint": "agentpool-topic"

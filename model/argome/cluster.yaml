@@ -9,6 +9,8 @@ spec:
       type: string
     - prop: description
       type: string
+    - prop: status
+      type: string
 ---
 kind: Struct
 metadata:
@@ -47,6 +49,8 @@ spec:
     - prop: name
       type: string
     - prop: cluster
+      type: string
+    - prop: status
       type: string
 ---
 kind: Resource

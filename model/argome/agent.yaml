@@ -19,6 +19,8 @@ spec:
       type: string
     - prop: token
       type: string
+    - prop: status
+      type: string
 ---
 kind: Resource
 metadata:
