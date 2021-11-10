@@ -45,6 +45,8 @@ spec:
       managedResources:
         - managedResource: argome.argo.cisco.com/v1.Agent
           endpoint: agent-topic
+        - managedResource: argome.argo.cisco.com/v1.TokenList
+          endpoint: agent-topic
     - service: organization-manager
       endpoint: organization-manager-topic
       restPort: 0.0.0.0:8089

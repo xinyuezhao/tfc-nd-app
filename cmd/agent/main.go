@@ -68,7 +68,7 @@ func GETAgentOverride(ctx context.Context, event *argomev1.AgentDbReadEvent) (ar
 		return nil, http.StatusInternalServerError, err
 	}
 	payloadObject := obj.(argomev1.Agent)
-	if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Example().SetToken("********")); err != nil {
+	if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Argome().SetToken("********")); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	return payloadObject, http.StatusOK, nil
@@ -79,7 +79,7 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]argomev1.A
 	result := make([]argomev1.Agent, 0)
 	for _, obj := range objs {
 		payloadObject := obj.(argomev1.Agent)
-		if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Example().SetToken("********")); err != nil {
+		if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Argome().SetToken("********")); err != nil {
 			return nil, http.StatusInternalServerError, err
 		}
 		result = append(result, payloadObject)
