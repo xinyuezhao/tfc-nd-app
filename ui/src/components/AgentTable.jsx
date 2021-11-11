@@ -28,7 +28,7 @@ function AgentTable(props) {
       id: "Agent Name",
       Header: "Agent Name",
       sortable: true,
-      accessor: "assigned_to.display_value",
+      accessor: "name",
       align: "center",
       filter: {
         type: "text",
@@ -39,7 +39,7 @@ function AgentTable(props) {
       id: "Description",
       Header: "Description",
       sortable: true,
-      accessor: "assigned_to.display_value",
+      accessor: "description",
       align: "center",
       filter: {
         type: "text",
@@ -49,7 +49,7 @@ function AgentTable(props) {
     {
       id: "Agent Pool",
       Header: "Agent pool",
-      accessor: "agentPool",
+      accessor: "agentpool",
       sortable: true,
       align: "center",
       filter: {
@@ -136,36 +136,23 @@ function AgentTable(props) {
         offset.current.value,
         queryParam
       )
-        .then((res) => {
-          if (res?.data?.status_code === 401) {
-            props.history.push({
-              pathname: pathPrefix + "/login",
-              state: { sessionExpired: true },
-            });
-          } else {
-            finalAgent.current.totalAgents = _.unionBy(
-              res.data.result,
-              finalAgent.current.totalAgents,
-              "sys_id"
-            );
-            setAgents(finalAgent.current.totalAgents);
-            setTotalAgents(res.data?.total_agent);
-          }
-
+      .then((res) => {
+        setAgents(res.data);
+        console.log("Response: ", res.data)
+        setFetchingData(false);
+      })
+      .catch((err) => {
+        if (err.response?.status === 401) {
+          props.history.push({
+            pathname: pathPrefix + "/login",
+            state: { sessionExpired: true },
+          });
+        } else {
+          err.response?.data?.detail?.message &&
+            setWarningAlert(err.response.data?.detail?.message);
           setFetchingData(false);
-        })
-        .catch((err) => {
-          if (err.response?.status === 401) {
-            props.history.push({
-              pathname: pathPrefix + "/login",
-              state: { sessionExpired: true },
-            });
-          } else {
-            err.response?.data?.detail?.message &&
-              setWarningAlert(err.response.data?.detail?.message);
-            setFetchingData(false);
-          }
-        });
+        }
+      });
     },
     [props.history]
   );
@@ -349,7 +336,7 @@ function AgentTable(props) {
   const handleOrderBy = (orderBy) => {
     const keyMap = {
       Number: "number",
-      "Organization": [(item) => item?.organization === "", "organization"],
+      "Organization": "organization",
       "Agent Name": [
         (item) => item?.assigned_to === "", "agentName"
       ],
@@ -361,8 +348,14 @@ function AgentTable(props) {
   const TableData = _.orderBy(
     agents,
     handleOrderBy(localStorage.getItem("sort_key_value"))
-  ).map((item) => ({ ...item, _id: item.sys_id }));
+  ).map((item) => (item.spec));
   console.log("table data = ", TableData);
+
+
+
+
+
+
   if (TableData === []){
     return (
       <div class="card-initial tall">
@@ -464,9 +457,9 @@ function AgentTable(props) {
             />,
           ]}
           data={TableData}
-          keyField="_id"
-          itemKey="_id"
-          id="_id"
+          keyField="id"
+          itemKey="id"
+          id="id"
           key={"agent_table"}
           columns={allColumns}
           selectable={true}
@@ -481,7 +474,7 @@ function AgentTable(props) {
               agentsData?.selections &&
               setSelectedAgents(agentsData.selections);
           }}
-          total={parseInt(totalAgents)}
+          total={parseInt(TableData.length)}
           showPageJump={true}
           onPageSizeChange={(data) => setPageSize(data)}
           pageSize={checkForTernary(pageSize, pageSize, 10)}

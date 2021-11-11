@@ -1,13 +1,14 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "";
+axios.defaults.baseURL = "/sedgeapi/v1/cisco-argome/agentmgr/api";
 axios.defaults.withCredentials = true;
 
 function fetchAgents(limit = 50, offset = 0, query = "", agent_id = "") {
-  return axios.get("/sedgeapi/v1/cisco-argome/agentpoolmgr/api/argome.argo.cisco.com/v1/agents", {
+  return axios.get("/argome.argo.cisco.com/v1/agents", {
     params: { limit, offset, query, agent_id },
   });
 }
+
 
 function fetchComments(payload) {
   return axios.get("/comments", { params: payload });
