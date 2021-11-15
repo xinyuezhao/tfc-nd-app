@@ -102,7 +102,7 @@ docker-images: bundle services
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v1 .
 
 docker-archive: docker-images
-	docker save nodemgr:v1 clustermgr:v1 organizationmgr:v1 agentmgr:v1 agentpoolmgr:v1 | gzip > images.tar.gz
+	docker save nodemgr:v1 clustermgr:v1 organizationmgr:v1 agentmgr:v1 agentpoolmgr:v1 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris
