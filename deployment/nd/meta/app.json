@@ -24,7 +24,8 @@
     "images-location": "Image",
     "specs-location": {
       "on-install": "ClusterMgrConfig/k8s-specs/on-install",
-      "on-enable": "ClusterMgrConfig/k8s-specs/on-enable"
+      "on-enable": "ClusterMgrConfig/k8s-specs/on-enable",
+      "on-feature-enable": "ClusterMgrConfig/k8s-specs/on-feature-enable"
     },
     "icon-location": "icon.png"
   }

@@ -1,0 +1,12 @@
+apiVersion: case.cncf.io/v1
+kind: Feature
+metadata:
+  name: tfc-agent-feature
+  namespace: cisco-argome
+spec:
+  configParameters:
+    token: ""
+    name: ""
+  resources:
+  - on-feature-enable/tfc-agent-deployment.yml
+  - on-feature-enable/tfc-agent-service.yml

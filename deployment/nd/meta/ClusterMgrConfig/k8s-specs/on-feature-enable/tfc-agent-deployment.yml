@@ -1,0 +1,28 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: feature-deployment-{{ getFeatureSuffix }}
+  namespace: cisco-argome
+  labels:
+    app: feature
+    {{ getFeatureLabel }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: feature
+  template:
+    metadata:
+      labels:
+        app: feature
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: tfc-agent
+        image: cisco-argome/hashicorp/tfc-agent:latest
+        imagePullPolicy: IfNotPresent
+        env:
+          - name: TFC_AGENT_TOKEN
+            value: {{getConfigParameter "token" }}
+          - name: TFC_AGENT_NAME
+            value: {{getConfigParameter "name" }}

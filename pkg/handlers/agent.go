@@ -114,6 +114,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 				return err
 			}
 		}
+		// call api to run agent
 		if err := event.Store().Record(ctx, agent); err != nil {
 			return err
 		}

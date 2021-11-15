@@ -71,6 +71,9 @@ func GETAgentOverride(ctx context.Context, event *argomev1.AgentDbReadEvent) (ar
 	if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Argome().SetToken("********")); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
+	// call feature api to get status
+	// localhost
+	// https://10.23.248.65/api/config/dn/appinstances/cisco-argome
 	return payloadObject, http.StatusOK, nil
 }
 
