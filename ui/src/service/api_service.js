@@ -1,130 +1,68 @@
 import axios from "axios";
 
-axios.defaults.baseURL = "/sedgeapi/v1/cisco-argome/agentmgr/api";
+axios.defaults.baseURL = "/sedgeapi/v1/cisco-argome";
 axios.defaults.withCredentials = true;
 
 function fetchAgents(limit = 50, offset = 0, query = "", agent_id = "") {
-  return axios.get("/argome.argo.cisco.com/v1/agents", {
+  return axios.get("/agentmgr/api/argome.argo.cisco.com/v1/agents", {
     params: { limit, offset, query, agent_id },
   });
 }
 
-
-function fetchComments(payload) {
-  return axios.get("/comments", { params: payload });
-}
-
 function createAgents(payload) {
-  return axios.post("/agents/", payload);
+  return axios.post("/agentmgr/api/argome.argo.cisco.com/v1/agents", payload);
 }
 
-function updateAgents(sys_id, payload) {
-  return axios.put("/agents/?sys_id=" + sys_id, payload);
+// function updateAgents(sys_id, payload) {
+//   return axios.put("/agents/?sys_id=" + sys_id, payload);
+// }
+
+function deleteAgents(description) {
+  console.log("description in api: ", description);
+  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/", { params: description })); //.../agents/?0=agent2
+  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/?description"+ description )); //agents/?descriptionagent2=
+  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/?"+ description )); ///?agent2=
+  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/", { params: {description},} )); //../agents/?description[]=test agent without token,agent3
+  return axios.delete("/agentmgr/api/argome.argo.cisco.com/v1/agents/"+ description );
 }
 
-function deleteAgents(sys_id) {
-  return axios.delete("/agents/?sys_id=" + sys_id);
+function fetchOrganizations() {
+  // console.log("API", axios.get("/argome.argo.cisco.com/v1/organizations"))
+  return axios.get("/organizationmgr/api/argome.argo.cisco.com/v1/organizations");
 }
 
-function getAccessToken(payload) {
-  return axios.post("/gettoken", payload);
+function fetchAgentPools(organization) {
+  // console.log("API", axios.get("/argome.argo.cisco.com/v1/organizations"))
+  // return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/" +organization); //actual way of implementation
+  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/cisco-dcn-ecosystem");
 }
 
-function refreshAccessToken(payload) {
-  return axios.post("/refreshtoken", payload);
-}
+// function getAccessToken(payload) {
+//   return axios.post("/gettoken", payload);
+// }
 
-function getAccessTokenPKCE(payload) {
-  return axios.post("/auth/generate_token_pkce", payload);
-}
+// function refreshAccessToken(payload) {
+//   return axios.post("/refreshtoken", payload);
+// }
 
-function getAccessTokenPassword(payload) {
-  return axios.post("/auth/generate_token_password_flow", payload);
-}
 
-function isUserLogin(payload) {
-  return axios.post("/auth/is_current_user", payload);
-}
+// function isUserLogin(payload) {
+//   return axios.post("/auth/is_current_user", payload);
+// }
 
-function getMetaData(force = false) {
-  const isForceSync = force ? "?expiry=1" : "";
-  return axios.get("/metadata/" + isForceSync);
-}
-
-function getUsersData() {
-  return axios.get("/metadata/users");
-}
-
-function deleteAgentsInBulk(payload) {
-  return axios.delete("/agents/multiple_agents", { data: payload });
-}
-
-function getGroups() {
-  return axios.get("/metadata/groups");
-}
-
-function getGroupMembers(group_id) {
-  return axios.get("/metadata/groupmembers?group_id=" + group_id);
-}
-
-function assignAgentsInBulk(payload) {
-  return axios.put("/agents/update_assigned_to", payload);
-}
-
-function getServices() {
-  return axios.get("/metadata/services");
-}
-
-function getServiceOffering() {
-  return axios.get("/metadata/service_offering");
-}
-
-function getConfigurationItem() {
-  return axios.get("/metadata/configuration_items");
-}
-
-function getPriorityStats(fromDate, toDate) {
-  return axios.get("/agents/category", {
-    params: { start_date: fromDate, end_date: toDate },
-  });
-}
-
-function getStateWiseStats(fromDate, toDate) {
-  return axios.get("/agents/state", {
-    params: { start_date: fromDate, end_date: toDate },
-  });
-}
-
-function getWorkNoteOfAgent(sys_id) {
-  return axios.get("/agents/activities?agent_id=" + sys_id);
-}
-
-function logout() {
-  return axios.get("/auth/logout");
-}
+// function logout() {
+//   return axios.get("/auth/logout");
+// }
 
 export {
   fetchAgents,
-  fetchComments,
-  updateAgents,
-  deleteAgents,
-  getAccessToken,
-  refreshAccessToken,
-  getAccessTokenPKCE,
-  getAccessTokenPassword,
   createAgents,
-  getMetaData,
-  getUsersData,
-  deleteAgentsInBulk,
-  getGroups,
-  getGroupMembers,
-  assignAgentsInBulk,
-  isUserLogin,
-  getServices,
-  getServiceOffering,
-  getConfigurationItem,
-  getPriorityStats,
-  getStateWiseStats,
-  getWorkNoteOfAgent,
-  logout,
+  // updateAgents,
+  deleteAgents,
+  fetchOrganizations,
+  fetchAgentPools,
+  // getAccessToken,
+  // refreshAccessToken,
+  // isUserLogin,
+  // logout,
 };

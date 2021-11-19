@@ -5,6 +5,9 @@ import {
   CardHeader,
   CardBody
 } from "blueprint-react";
+import {
+  fetchOrganizations,
+} from "../service/api_service";
 
 const getOrgData = (page, pageSize, max) => {
   const start = page * pageSize;
