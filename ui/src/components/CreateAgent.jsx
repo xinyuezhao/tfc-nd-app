@@ -8,10 +8,14 @@ import {
   LABELS,
 } from "blueprint-react";
 import _ from 'lodash';
-import {getPoolData, PoolDetailRenderer} from './AgentPoolUtils';
-import {getOrgData, OrgDetailRenderer} from './OrganizationUtils';
+import {PoolDetailRenderer} from './AgentPoolRenderer';
+import {OrgDetailRenderer} from './OrganizationRenderer';
 import CreateAgentPool from './CreateNewAgentPool';
 import './CiscoObjectPicker.scss';
+import {
+  fetchOrganizations,
+  fetchAgentPools,
+} from "../service/api_service";
 
 function Agent(props) {
   const {
@@ -35,8 +39,8 @@ function Agent(props) {
   const [organization, setOrganization] = useState("");
   const [isOpen, setIsOpen] = useState(true);
 
-  const [orgData] = useState(getOrgData(0, 10, 10));
-  const [poolData, setPoolData] = useState(getPoolData(0, 10, 10));
+  const [organizations, setOrganizations] = useState([]);
+  const [agentPools, setAgentPools] = useState([]);
 
 
   useEffect(() => {
@@ -98,22 +102,117 @@ function Agent(props) {
   };
 
   const handleOrgSelect = useCallback((item)=> {
+    console.log("handleOrgSelect ", setOrganization(item));
     setOrganization(item);
   }, []);
 
-  const handlePoolSelect = useCallback((item, isNew)=> {
-    let newData = poolData;
-    if(isNew) {
-      newData = [item, ...poolData];
-    }
+  const handlePoolSelect = useCallback((item)=> {
     setAgentPool(item);
-    setPoolData(newData);
-  }, [poolData]);
+  }, []);
+
+
+  // const handlePoolSelect = useCallback((item, isNew)=> {
+  //   let newData = poolData;
+  //   if(isNew) {
+  //     newData = [item, ...poolData];
+  //   }
+  //   setAgentPool(item);
+  //   setPoolData(newData);
+  // }, [poolData]);
 
   const checkOrg = () => {
     return false;
   };
-//  Name is not required, description is.
+
+
+
+  // const getOrganizations = () => {
+  //   fetchOrganizations()
+  //     .then((res) => {
+  //       const orgResult = res.data;
+  //       const OrganizationData =  _.orderBy(orgResult).map((item) => (item.spec));
+  //       setOrganizations(OrganizationData);
+  //     })
+  //     .catch(error => {
+  //       console.error('There was an error!', error);
+  //   });
+  // }
+  // useEffect(getOrganizations, [getOrganizations]);
+
+  // const formatOrganizationData = (organizations) => {
+  //   const formatedData = organizations.map((organizations) => ({
+  //     name: organizations.Name,
+  //     id: organizations.ExternalID}));
+  //   return formatedData;
+  // }
+
+  // const formatedOrganizationData = formatOrganizationData(organizations);
+
+
+  // const getAgentPools = () => {
+  //   fetchAgentPools()
+  //     .then((res) => {
+  //       const agentPoolResult = res.data.spec.agentpools;
+  //       const agentPoolsData =  _.orderBy(agentPoolResult);
+  //       setAgentPools(agentPoolsData);
+  //     })
+  //     .catch(error => {
+  //       console.error('There was an error!', error);
+  //   });
+  // }
+  // useEffect(getAgentPools, [getAgentPools]);
+
+  // const formatAgentPoolData = (agentPools) => {
+  //   console.log("JUst PRINT", agentPools )
+  //   const formatedData = agentPools.map((agentPools) => ({
+  //     name: agentPools.name,
+  //     id: agentPools.id}));
+  //   return formatedData;
+  // }
+
+  // const formatedAgentPoolData = formatAgentPoolData(agentPools);
+
+  useEffect(() => {
+    fetchOrganizations()
+      .then((res) => {
+        const orgResult = res.data;
+        const OrganizationData =  _.orderBy(orgResult).map((item) => (item.spec));
+        setOrganizations(OrganizationData);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+    });
+    fetchAgentPools()
+      .then((res) => {
+        const agentPoolResult = res.data.spec.agentpools;
+        const agentPoolsData =  _.orderBy(agentPoolResult);
+        console.log("My response is = ", agentPoolsData)
+        setAgentPools(agentPoolsData);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+    });
+  }, []);
+
+  const formatOrganizationData = (organizations) => {
+    const formatedData = organizations.map((organizations) => ({
+      name: organizations.Name,
+      id: organizations.ExternalID}));
+    return formatedData;
+  }
+
+  const formatedOrganizationData = formatOrganizationData(organizations);
+
+  const formatAgentPoolData = (agentPools) => {
+    console.log("JUst PRINT", agentPools )
+    const formatedData = agentPools.map((agentPools) => ({
+      name: agentPools.name,
+      id: agentPools.id}));
+    return formatedData;
+  }
+
+  const formatedAgentPoolData = formatAgentPoolData(agentPools);
+
   return (
     <DetailScreen
       title={title}
@@ -149,10 +248,10 @@ function Agent(props) {
               </div>
               <div className="row p-5">
                 <ObjectPicker required
-                  data={orgData}
+                  data={formatedOrganizationData}
                   multiSelect={false}
                   filterBy={(item, str) => item.name.indexOf(str) !== -1}
-                  labelSuffix={'Organization'}
+                  labelSuffix={'Organizations'}
                   value={organization}
                   onSelect={handleOrgSelect}
                   detailItemRenderer={OrgDetailRenderer}
@@ -160,12 +259,12 @@ function Agent(props) {
                 />
               </div>
               {/* ========================================== */}
-              <div className="row" style={{ paddingTop: "30px" }}  disabled={checkOrg}>Agent Pool
+              <div className="row" style={{ paddingTop: "30px" }}>Agent Pool
                 <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5" style={{ paddingBottom: "30px" }}>
                 <ObjectPicker required
-                  data={poolData}
+                  data={formatedAgentPoolData}
                   multiSelect={false}
                   filterBy={(item, str) => item.name.indexOf(str) !== -1}
                   labelSuffix={'Agent Pool'}
@@ -173,7 +272,7 @@ function Agent(props) {
                   onSelect={handlePoolSelect}
                   detailItemRenderer={PoolDetailRenderer}
                   idBy='id'
-                  onCreate={onCreate}
+                  // onCreate={onCreate}
                 />
               </div>
               {/* ========================================== */}
@@ -183,5 +282,5 @@ function Agent(props) {
     </DetailScreen>
   );
 }
-
+// disabled={checkOrg}
 export default Agent;
