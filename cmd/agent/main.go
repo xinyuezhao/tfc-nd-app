@@ -62,8 +62,8 @@ func GETOverride(ctx context.Context, event *argomev1.TokenListDbReadEvent) (arg
 }
 
 func GETAgentOverride(ctx context.Context, event *argomev1.AgentDbReadEvent) (argomev1.Agent, int, error) {
-	desc := event.Resource().(argomev1.Agent).Spec().Description()
-	obj, err := event.Store().ResolveByName(ctx, argomev1.AgentDNForDefault(desc))
+	name := event.Resource().(argomev1.Agent).Spec().Name()
+	obj, err := event.Store().ResolveByName(ctx, argomev1.AgentDNForDefault(name))
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -101,7 +101,8 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 func main() {
 	handlerReg := []interface{}{
 		handlers.AgentHandler,
-		handlers.AgentValidator,
+		handlers.AgentDescValidator,
+		handlers.AgentNameValidator,
 	}
 
 	argomev1.TokenListMeta().RegisterAPIMethodGET(GETOverride)
