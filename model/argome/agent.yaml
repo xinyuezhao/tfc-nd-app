@@ -30,7 +30,7 @@ metadata:
 spec:
   spec:
     type: v1.AgentSpec
-  pkey: spec.description
+  pkey: spec.name
   apimethods:
     - apimethod: GET
       override: true

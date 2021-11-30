@@ -99,7 +99,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		return err
 	}
 	if event.Operation() == model.CREATE {
-		// TODO: Add logic to set status. Currently set 'created' as default.
+		// TODO: set 'created' as default. set status when querying tfc-agent feature operState
 		agent.SpecMutable().SetStatus("created")
 		if agent.Spec().Token() == "" {
 			log.Info("create agent without token")
@@ -115,6 +115,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 			}
 		}
 		// call api to run agent
+
 		if err := event.Store().Record(ctx, agent); err != nil {
 			return err
 		}
@@ -134,13 +135,25 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 	return nil
 }
 
-func AgentValidator(ctx context.Context, event mo.Validation) error {
+func AgentDescValidator(ctx context.Context, event mo.Validation) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("validate Agent", "resource", event.Resource())
 	agent := event.Resource().(argomev1.Agent)
 	desc := agent.Spec().Description()
 	if desc == "" {
 		err := core.NewError(errors.New("agent description can't be blank"))
+		return err
+	}
+	return nil
+}
+
+func AgentNameValidator(ctx context.Context, event mo.Validation) error {
+	log := core.LoggerFromContext(ctx)
+	log.Info("validate Agent", "resource", event.Resource())
+	agent := event.Resource().(argomev1.Agent)
+	name := agent.Spec().Name()
+	if name == "" {
+		err := core.NewError(errors.New("agent name can't be blank"))
 		return err
 	}
 	return nil
