@@ -7,7 +7,7 @@ spec:
   props:
     - prop: description
       type: string
-    - prop: id
+    - prop: tokenId
       type: string
     - prop: agentpool
       type: string
@@ -20,6 +20,8 @@ spec:
     - prop: token
       type: string
     - prop: status
+      type: string
+    - prop: agentId
       type: string
 ---
 kind: Resource
@@ -46,7 +48,7 @@ spec:
     - CREATE
     - DELETE
   retryStrategy:
-    delay: 500
+    delay: 0
   concurrencyKey: agent
   function: golang.cisco.com/examples/argome/pkg/handlers.AgentHandler
   specStatusDiscriminator: both
