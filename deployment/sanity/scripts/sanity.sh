@@ -25,8 +25,8 @@ deploy() {
     DEPLOYED="false"
     for i in {1..16}
         do
-            CLUST=$(kubectl get pods --selector=service=clustermgr -n cisco-argome  -o jsonpath="{.items[*].status.phase}")
-            NODEM=$(kubectl get pods --selector=service=nodemgr -n cisco-argome  -o jsonpath="{.items[*].status.phase}")
+            CLUST=$(kubectl get pods --selector=service=clustermgr -n cisco-terraform  -o jsonpath="{.items[*].status.phase}")
+            NODEM=$(kubectl get pods --selector=service=nodemgr -n cisco-terraform  -o jsonpath="{.items[*].status.phase}")
             ZOOKR=$(kubectl get pods --selector=argo.deploy=zoo -n argo-infra -o jsonpath="{.items[*].status.phase}")
             KAFKA=$(kubectl get pods --selector=argo.deploy=kafka -n argo-infra -o jsonpath="{.items[*].status.phase}")
             MONGO=$(kubectl get pods --selector=argo.deploy=mongo -n argo-infra -o jsonpath="{.items[*].status.phase}")
@@ -40,12 +40,12 @@ deploy() {
                 else
                     echo "Argome platform booting..."
                     kubectl get pods -n argo-infra
-                    kubectl get pods -n cisco-argome
+                    kubectl get pods -n cisco-terraform
                 fi
             else
                 echo "### Platform not running ###"
                 kubectl get pods -n argo-infra
-                kubectl get pods -n cisco-argome
+                kubectl get pods -n cisco-terraform
             fi
             sleep 20
         done
@@ -53,7 +53,7 @@ deploy() {
     then
         sleep 20
         kubectl get pods -n argo-infra
-        kubectl get pods -n cisco-argome
+        kubectl get pods -n cisco-terraform
         echo $(timestamp) "Deployment complete"
         return 1
     else
@@ -69,9 +69,9 @@ if kubectl cluster-info --context kind-argome-sanity-cluster; then
     kubectl delete --ignore-not-found deployment kafka -n argo-infra 
     kubectl delete --ignore-not-found deployment mongo -n argo-infra 
     kubectl delete --ignore-not-found deployment zookeeper -n argo-infra 
-    kubectl delete --ignore-not-found deployment nodemgr -n cisco-argome
-    kubectl delete --ignore-not-found deployment clustermgr -n cisco-argome 
-    kubectl delete --ignore-not-found job argometester -n cisco-argome
+    kubectl delete --ignore-not-found deployment nodemgr -n cisco-terraform
+    kubectl delete --ignore-not-found deployment clustermgr -n cisco-terraform 
+    kubectl delete --ignore-not-found job argometester -n cisco-terraform
 else
     echo "No existing cluster. Creating a new cluster"
     kind create cluster --config deployment/sanity/cluster.yaml --name argome-sanity-cluster
@@ -83,7 +83,7 @@ fi
 
 # Deploy the tester job 
 echo "### Deploying argome tester job ###"
-kubectl delete --ignore-not-found -n cisco-argome job argometester
+kubectl delete --ignore-not-found -n cisco-terraform job argometester
 kind load docker-image argome-testsuite:v1 --name argome-sanity-cluster
 kubectl apply -f deployment/sanity/sanity.yaml
 
@@ -92,7 +92,7 @@ echo "Waiting for tester to setup..."
 sleep 10
 for i in {1..10}
     do
-        TNAME=$(kubectl get pods --selector=argo.job=argometester -n cisco-argome -o jsonpath="{.items[*].metadata.name}")
+        TNAME=$(kubectl get pods --selector=argo.job=argometester -n cisco-terraform -o jsonpath="{.items[*].metadata.name}")
         if [ -n $TNAME ]
         then
             break
@@ -109,7 +109,7 @@ fi
 
 # Setup a logfile to caputer the tester container logs
 LOGFILE=$(mktemp -t argometester.log)
-kubectl logs -f $TNAME -n cisco-argome | tee -a $LOGFILE
+kubectl logs -f $TNAME -n cisco-terraform | tee -a $LOGFILE
 ln -sf $LOGFILE $TMPDIR/argometester-latest.log
 
 # Monitor the status of the tester job
@@ -118,7 +118,7 @@ for i in {1..16}
         ZOOKR=$(kubectl get pods --selector=argo.deploy=zoo -n argo-infra -o jsonpath="{.items[*].status.phase}")
         KAFKA=$(kubectl get pods --selector=argo.deploy=kafka -n argo-infra -o jsonpath="{.items[*].status.phase}")
         MONGO=$(kubectl get pods --selector=argo.deploy=mongo -n argo-infra -o jsonpath="{.items[*].status.phase}")
-        TESTR=$(kubectl get pods --selector=argo.job=argometester -n cisco-argome -o jsonpath="{.items[*].status.phase}") 
+        TESTR=$(kubectl get pods --selector=argo.job=argometester -n cisco-terraform -o jsonpath="{.items[*].status.phase}") 
         if [[ -n $MONGO && -n $ZOOKR && -n $KAFKA ]]
         then
             if [[ $MONGO == "Running" && $ZOOKR == "Running"  && $KAFKA == "Running" && $TESTR == "Running" ]]
@@ -139,7 +139,7 @@ for i in {1..16}
 
 # Dump the final state of the containers in all the namespaces
 kubectl get pods -n argo-infra
-kubectl get pods -n cisco-argome
+kubectl get pods -n cisco-terraform
 
 # Show where the logfile is situated
 echo "Logs stored under $LOGFILE"

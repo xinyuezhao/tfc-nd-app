@@ -1,7 +1,7 @@
 apiVersion: case.cncf.io/v1
 kind: App
 metadata:
-  name: cisco-argome
+  name: cisco-terraform
 spec:
   vendor: cisco
   app: argome
@@ -38,13 +38,13 @@ spec:
 apiVersion: case.cncf.io/v1
 kind: Certificate
 metadata:
-  name: cisco-argome
-  namespace: cisco-argome
+  name: cisco-terraform
+  namespace: cisco-terraform
 spec:
   services:
-  - name: cisco-argome-certs
+  - name: cisco-terraform-certs
     cn:
-      name: cisco-argome
+      name: cisco-terraform
       addNamespace: false
       addDomain: false
     sans:
@@ -61,7 +61,7 @@ apiVersion: case.cncf.io/v1
 kind: Kafka
 metadata:
   name: kafka-topics
-  namespace: cisco-argome
+  namespace: cisco-terraform
 spec:
  topics:
  - name: node-topic
@@ -132,91 +132,91 @@ spec:
     segment.ms: 86400
  acls:
  - name: node-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: node-topic
    op: Write
  - name: node-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: node-topic
    op: Read
  - name: nodeoper-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: nodeoper-topic
    op: Write
  - name: nodeoper-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: nodeoper-topic
    op: Read
  - name: node-manager-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: node-manager-topic
    op: Write
  - name: node-manager-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: node-manager-topic
    op: Read
  - name: cluster-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: cluster-topic
    op: Write
  - name: cluster-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: cluster-topic
    op: Read
  - name: clusterd-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: clusterd-topic
    op: Write
  - name: clusterd-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: clusterd-topic
    op: Read
  - name: organization-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: organization-topic
    op: Write
  - name: organization-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: organization-topic
    op: Read
  - name: organization-manager-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: organization-manager-topic
    op: Write
  - name: organization-manager-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: organization-manager-topic
    op: Read
  - name: agent-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agent-topic
    op: Write
  - name: agent-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agent-topic
    op: Read
  - name: agent-manager-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agent-manager-topic
    op: Write
  - name: agent-manager-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agent-manager-topic
    op: Read
  - name: agentpool-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agentpool-topic
    op: Write
  - name: agentpool-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agentpool-topic
    op: Read
  - name: agentpool-manager-topic-wr
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agentpool-manager-topic
    op: Write
  - name: agentpool-manager-topic-rd
-   cn: cisco-argome
+   cn: cisco-terraform
    topic: agentpool-manager-topic
    op: Read
 ---
@@ -224,7 +224,7 @@ kind: PersistentVolumeClaim
 apiVersion: v1
 metadata:
   name: kms
-  namespace: cisco-argome
+  namespace: cisco-terraform
 spec:
   accessModes:
   - ReadOnlyMany
@@ -236,8 +236,8 @@ spec:
 apiVersion: case.cncf.io/v1
 kind: APIGW
 metadata:
-  name: cisco-argome
-  namespace: cisco-argome
+  name: cisco-terraform
+  namespace: cisco-terraform
 spec:
   apiEndpoints:
   - target: nodemgr
@@ -247,7 +247,7 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-argome/nodemgr"
+    - path: "/sedgeapi/v1/cisco-terraform/nodemgr"
   - target: clustermgr
     service:
       scheme: http
@@ -255,7 +255,7 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-argome/clustermgr"
+    - path: "/sedgeapi/v1/cisco-terraform/clustermgr"
   - target: organizationmgr
     service:
       scheme: http
@@ -263,7 +263,7 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-argome/organizationmgr"
+    - path: "/sedgeapi/v1/cisco-terraform/organizationmgr"
   - target: agentmgr
     service:
       scheme: http
@@ -271,7 +271,7 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-argome/agentmgr"
+    - path: "/sedgeapi/v1/cisco-terraform/agentmgr"
   - target: agentpoolmgr
     service:
       scheme: http
@@ -279,4 +279,4 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-argome/agentpoolmgr"
+    - path: "/sedgeapi/v1/cisco-terraform/agentpoolmgr"

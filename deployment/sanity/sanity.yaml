@@ -2,7 +2,7 @@ apiVersion: batch/v1
 kind: Job 
 metadata:
   name: argometester
-  namespace: cisco-argome
+  namespace: cisco-terraform
   labels:
     argo.job: argometester 
 spec:

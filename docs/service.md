@@ -40,7 +40,7 @@ index ca88447..07dfd7e 100644
 @@ -172,3 +172,11 @@ spec:
      authType: open
      listenPaths:
-     - path: "/sedgeapi/v1/cisco-argome/clustermgr"
+     - path: "/sedgeapi/v1/cisco-terraform/clustermgr"
 +  - target: inventory
 +    service:
 +      scheme: http
@@ -48,7 +48,7 @@ index ca88447..07dfd7e 100644
 +      port: 80
 +    authType: open
 +    listenPaths:
-+    - path: "/sedgeapi/v1/cisco-argome/inventory"
++    - path: "/sedgeapi/v1/cisco-terraform/inventory"
 ```
 
 ### Create a new deployment and service specification for the new service.
