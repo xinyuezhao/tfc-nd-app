@@ -3,11 +3,11 @@ apiVersion: v1
 kind: Service
 metadata:
   name: feature-service-{{ getFeatureSuffix }}
-  namespace: cisco-argome
+  namespace: cisco-terraform
   labels:
-    app: cisco-argome-svc
+    app: cisco-terraform-svc
     {{ getFeatureLabel }}
 spec:
   clusterIP: None
   selector:
-    app: cisco-argome
+    app: cisco-terraform

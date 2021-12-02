@@ -1,13 +1,13 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: cisco-argome
+  name: cisco-terraform
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: clustermgr
-  namespace: cisco-argome
+  namespace: cisco-terraform
   labels:
     service: clustermgr
 spec:
@@ -22,7 +22,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: clustermgr
-  namespace: cisco-argome
+  namespace: cisco-terraform
   labels:
     service: clustermgr
 spec:
@@ -54,7 +54,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: nodemgr
-  namespace: cisco-argome
+  namespace: cisco-terraform
   labels:
     service: nodemgr
 spec:
@@ -69,7 +69,7 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: nodemgr
-  namespace: cisco-argome
+  namespace: cisco-terraform
   labels:
     service: nodemgr
 spec:

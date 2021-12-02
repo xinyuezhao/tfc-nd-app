@@ -48,7 +48,7 @@ clean:
 	rm -rf pkg/bundle
 	rm -f images.tar.gz
 	rm -rf .build
-	rm -f cisco-argome-v*.aci
+	rm -f cisco-terraform-v*.aci
 	rm -f polaris_image.tar.gz
 	rm -f rigel_image.tar.gz
 	rm -rf imported*

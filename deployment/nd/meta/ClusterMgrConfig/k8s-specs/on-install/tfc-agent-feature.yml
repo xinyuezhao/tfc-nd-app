@@ -2,7 +2,7 @@ apiVersion: case.cncf.io/v1
 kind: Feature
 metadata:
   name: tfc-agent-feature
-  namespace: cisco-argome
+  namespace: cisco-terraform
 spec:
   configParameters:
     token: ""

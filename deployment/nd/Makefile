@@ -9,13 +9,13 @@ all: package
 .PHONY: package
 .ONESHELL:
 package:
-	rm -f cisco-argome-${VERSION}.aci
+	rm -f cisco-terraform-${VERSION}.aci
 	mkdir -p ${BUILD_DIR}/argome/Image
 	cp -a ${DEPL_DIR}/meta/* ${BUILD_DIR}/argome/
 	cp ${REPO_DIR}/images.tar.gz ${BUILD_DIR}/argome/Image
-	cd ${BUILD_DIR} && zip -r ../cisco-argome-${VERSION}.aci argome
+	cd ${BUILD_DIR} && zip -r ../cisco-terraform-${VERSION}.aci argome
 
 clean:
 	-stacker clean --all
 	-rm -rf ${BUILD_DIR}
-	-rm -f cisco-argome-*.aci
+	-rm -f cisco-terraform-*.aci

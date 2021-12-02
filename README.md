@@ -15,7 +15,7 @@ make docker-images
 make -C deployment/nd
 ```
 
-This should generate a `cisco-argome-v0.0.1.aci` file in the top-level directory. Take this application bundle and install it using the Nexus Dashboard UI (under Service Catalog).
+This should generate a `cisco-terraform-v0.0.1.aci` file in the top-level directory. Take this application bundle and install it using the Nexus Dashboard UI (under Service Catalog).
 
 There is a helper script that will do the above for you at the top-level directory - build-nd.sh
 
@@ -30,25 +30,25 @@ $ echo '{"userName": "admin", "userPasswd": "ins3965!", "domain": "DefaultAuth"}
 You can query nodes from nodemgr using the following request.
 
 ```
-$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/nodemgr/api/argome.argo.cisco.com/v1/nodes
+$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/argome.argo.cisco.com/v1/nodes
 ```
 
 You can query clusters from clustermgr using the following request.
 
 ```
-$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/clustermgr/api/argome.argo.cisco.com/v1/clusters
+$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/clustermgr/api/argome.argo.cisco.com/v1/clusters
 ```
 
 A node can be posted as follows.
 
 ```
-$ echo '{"inbandIP": "192.168.1.102", "name": "node2", "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"}' | http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/nodemgr/api/argome.argo.cisco.com/v1/nodes
+$ echo '{"inbandIP": "192.168.1.102", "name": "node2", "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"}' | http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/argome.argo.cisco.com/v1/nodes
 ```
 
 Once the node is created, clustermgr gets notified and it admits the node. Query the nodeopers resource to verify that. You should see the `status` field in the node resource to say `admitted`.
 
 ```
-$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-argome/nodemgr/api/argome.argo.cisco.com/v1/nodeopers
+$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/argome.argo.cisco.com/v1/nodeopers
 HTTP/1.1 200 OK
 Content-Length: 312
 Content-Type: application/json
@@ -149,7 +149,7 @@ Use `kubectl port-forward` to setup port forwarding from your kind cluster onto
 your localhost.
 
 ```
-kubectl -n cisco-argome port-forward service/nodemgr 3080:80
+kubectl -n cisco-terraform port-forward service/nodemgr 3080:80
 ```
 
 Create a new node resource.
