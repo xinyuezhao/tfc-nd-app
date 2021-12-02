@@ -10,13 +10,17 @@ import {
 } from 'blueprint-react';
 import _ from 'lodash';
 import './CiscoObjectPicker.scss';
+import {
+  createAgentPool,
+} from "../service/api_service";
+
 
 // /**
 //  * A sample of create new renderer funciton component that is passed as createItemRenderer.
 //  * Please see the use of useObjectPickerSubmit to get the click event on Modal create button
 //  */
 
-function CreateAgentPool(props) {
+function CreateNewAgentPool(props) {
   const {
     agentPoolName,
     agentPoolId,
@@ -34,19 +38,26 @@ function CreateAgentPool(props) {
 
 
   const handleOnNameChange = useEffect((evt) => {
-    //   // set agent pool name and unique ID here
-  }, []);
+    console.log("handleOnNameChange = ", name)
+  }, [name]);
 
-  const checkBeforeSubmit = useCallback(() => {
-    return true;
-  },);
+  // const checkBeforeSubmit = useCallback(() => {
+  //   return true;
+  // },);
 
   const onAction = useCallback(() => {
-    const result = checkBeforeSubmit();
-    if (result) {
-      handleOnNameChange();
-    }
-  }, [checkBeforeSubmit, handleOnNameChange]);
+      let payload = {
+        "spec": {
+          organization: "cisco-cn-ecosystem-02",
+          name: name,
+        }
+      }
+      console.log("inside on action payload = ", payload)
+      createAgentPool(payload)
+      console.log("inside on action = ", name)
+
+
+  }, []);
 
 
   const onClose = () => {
@@ -91,4 +102,4 @@ function CreateAgentPool(props) {
 }
 
 
-export default CreateAgentPool;
+export default CreateNewAgentPool;

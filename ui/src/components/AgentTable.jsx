@@ -67,11 +67,11 @@ function AgentTable(props) {
   const [showConfirm, setShowConfirm] = useState(false);
   // const [fetchingData, setFetchingData] = useState(false);
   const [agents, setAgents] = useState([]);
-  const [viewAgent, setViewAgent] = useState({});
+  // const [viewAgent, setViewAgent] = useState({});
   const [warningAlert, setWarningAlert] = useState("");
   const [infoAlert, setInfoAlert] = useState("");
   const [successAlert, setSuccessAlert] = useState("");
-  const [openSidebar, setOpenSidebar] = useState(false);
+  // const [openSidebar, setOpenSidebar] = useState(false);
   // const [filterRemove, setfilterRemove] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(
@@ -108,6 +108,7 @@ function AgentTable(props) {
 
       // setfilterRemove(!!!queryParam);
       // setFetchingData(setLoading === false ? false : true);
+      console.log("INSIDE GET AGENTSSS.....")
       fetchAgents(
         pageSizeLimit ? pageSizeLimit : limit.current.value,
         offset.current.value,
@@ -115,7 +116,7 @@ function AgentTable(props) {
       )
       .then((res) => {
         setAgents(res.data);
-        console.log("Response: ", res.data)
+        console.log("GET agents API Response: ", res.data)
         // setFetchingData(false);
       })
       .catch((err) => {
@@ -149,6 +150,7 @@ function AgentTable(props) {
     deleteAgents(description)
       .then(() => {
         setSuccessAlert("Deleted Agents Successfully");
+        getAgents();
       })
       .catch((error) => {
         console.log(error);
@@ -164,8 +166,9 @@ function AgentTable(props) {
       .then((res) => {
         setInfoAlert("");
         setSuccessAlert("Created Agent Successfully");
-        finalAgent.current.totalAgents.push(res.data.result);
-        setAgents(finalAgent.current.totalAgents);
+        console.log("agent data = ", agents )
+        console.log("Agent creation DONE. data = ", res.data )
+        getAgents();
       })
       .catch((error) => {
         console.log(error);
@@ -184,7 +187,7 @@ function AgentTable(props) {
         const title = `${data ? "Update" : "Create"} Agent`;
         action.openScreen(Agent, {
           title: title,
-          screenId: `Agent-${data && data.number}`,
+          screenId: "create-agent-modal",
           agent: data,
           createAgent: handleCreateAgent,
         });
@@ -192,7 +195,7 @@ function AgentTable(props) {
         const title = `${data ? "Update" : "Create"} Agent`;
         action.openScreen(AgentWoToken, {
           title: title,
-          screenId: `Agent-${data && data.number}`,
+          screenId: "create-agent-modal",
           agent: data,
           createAgent: handleCreateAgent,
         });
@@ -244,8 +247,7 @@ function AgentTable(props) {
   const TableData = _.orderBy(
     agents
   ).map((item) => (item.spec));
-  console.log("table data = ", TableData);
-  console.log("FIRST: ", agents.map((item) => (item.spec)));
+  console.log("TableData = ", TableData);
 
 
   return (

@@ -34,9 +34,12 @@ function fetchOrganizations() {
 function fetchAgentPools(organization) {
   // console.log("API", axios.get("/argome.argo.cisco.com/v1/organizations"))
   // return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/" +organization); //actual way of implementation
-  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/cisco-dcn-ecosystem");
+  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/cisco-cn-ecosystem-02");
 }
 
+function createAgentPool(payload) {
+  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpools", payload);
+}
 // function getAccessToken(payload) {
 //   return axios.post("/gettoken", payload);
 // }
@@ -61,6 +64,7 @@ export {
   deleteAgents,
   fetchOrganizations,
   fetchAgentPools,
+  createAgentPool,
   // getAccessToken,
   // refreshAccessToken,
   // isUserLogin,
