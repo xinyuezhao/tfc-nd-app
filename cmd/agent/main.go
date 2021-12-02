@@ -4,48 +4,25 @@ import (
 	"context"
 	"net/http"
 
-	"github.com/hashicorp/go-tfe"
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
 
 	"golang.cisco.com/examples/argome/gen/argomev1"
 	"golang.cisco.com/examples/argome/gen/schema"
+	"golang.cisco.com/examples/argome/pkg/conf"
 	"golang.cisco.com/examples/argome/pkg/handlers"
 	"golang.cisco.com/examples/argome/pkg/platform"
 )
 
-func configTFC() (context.Context, *tfe.Client, error) {
-	config := &tfe.Config{
-		Token: "ai1yMKOzv3Mptg.atlasv1.lOseEHJzlB49Vz0fXTlFUFRGGTuugiP3040sr1MGGOkHgRqzQ9FrpiUJzyTH1DzzFTM",
-	}
-	client, err := tfe.NewClient(config)
-	if err != nil {
-		return nil, nil, err
-	}
-	// Create a context
-	ctxTfe := context.Background()
-	return ctxTfe, client, nil
-}
-
-// Query AgentTokens in an agentPool
-func queryAgentTokens(ctx context.Context, client *tfe.Client, agentPlID string) ([]*tfe.AgentToken, error) {
-	agentTokens, err := client.AgentTokens.List(ctx, agentPlID)
-	if err != nil {
-		return nil, err
-	}
-	res := agentTokens.Items
-	return res, nil
-}
-
 func GETOverride(ctx context.Context, event *argomev1.TokenListDbReadEvent) (argomev1.TokenList, int, error) {
 	payloadObject := event.Resource().(argomev1.TokenList)
 	agentPlId := payloadObject.Spec().Agentpool()
-	ctxTfe, client, err := configTFC()
+	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	tokens, err := queryAgentTokens(ctxTfe, client, agentPlId)
+	tokens, err := conf.QueryAgentTokens(ctxTfe, client, agentPlId)
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -62,28 +39,102 @@ func GETOverride(ctx context.Context, event *argomev1.TokenListDbReadEvent) (arg
 }
 
 func GETAgentOverride(ctx context.Context, event *argomev1.AgentDbReadEvent) (argomev1.Agent, int, error) {
+	log := core.LoggerFromContext(ctx)
 	name := event.Resource().(argomev1.Agent).Spec().Name()
 	obj, err := event.Store().ResolveByName(ctx, argomev1.AgentDNForDefault(name))
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	payloadObject := obj.(argomev1.Agent)
-	if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Argome().SetToken("********")); err != nil {
+	if err := core.NewError(payloadObject.SpecMutable().SetToken("********")); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	// call feature api to get status
-	// localhost
-	// https://10.23.248.65/api/config/dn/appinstances/cisco-argome
+	// get agentPoolId
+	agentPlId := payloadObject.Spec().AgentpoolId()
+	TLSclient := conf.ConfigTLSClient(ctx)
+	_, TFEclient, err := conf.ConfigTFC()
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	// get agentId by agentPoolId & agentName
+	agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	agentId := conf.QueryAgentId(ctx, agents, name)
+	// call feature api to get feature instance status
+	// whether query feature instance operstate right after it was created?
+	features, err := conf.QueryFeatures(ctx, TLSclient)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	for _, feature := range features.Instances[0].Features {
+		if feature.Instance == name {
+			payloadObject.SpecMutable().SetStatus(feature.OperState)
+		}
+	}
+	// query status
+	status := payloadObject.Spec().Status()
+	if status == "Running" {
+		if agentId != "" {
+			log.Info("id used to query status " + agentId)
+			status, err := conf.QueryAgentStatus(ctx, agentId)
+			if err != nil {
+				return nil, http.StatusInternalServerError, err
+			}
+			if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+				return nil, http.StatusInternalServerError, err
+			}
+		}
+	}
 	return payloadObject, http.StatusOK, nil
 }
 
 func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]argomev1.Agent, int, error) {
+	log := core.LoggerFromContext(ctx)
 	objs := event.Resolver.ResolveByKind(ctx, argomev1.AgentMeta().MetaKey())
 	result := make([]argomev1.Agent, 0)
+	TLSclient := conf.ConfigTLSClient(ctx)
+	_, TFEclient, err := conf.ConfigTFC()
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	features, err := conf.QueryFeatures(ctx, TLSclient)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
 	for _, obj := range objs {
 		payloadObject := obj.(argomev1.Agent)
-		if err := core.NewError(payloadObject.Spec().MutableAgentSpecV1Argome().SetToken("********")); err != nil {
+		if err := core.NewError(payloadObject.SpecMutable().SetToken("********")); err != nil {
 			return nil, http.StatusInternalServerError, err
+		}
+		// get agentPoolId
+		agentPlId := payloadObject.Spec().AgentpoolId()
+		// get agentId by agentPoolId & agentName
+		agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
+		if err != nil {
+			return nil, http.StatusInternalServerError, err
+		}
+		name := payloadObject.Spec().Name()
+		agentId := conf.QueryAgentId(ctx, agents, name)
+		for _, feature := range features.Instances[0].Features {
+			if feature.Instance == name {
+				payloadObject.SpecMutable().SetStatus(feature.OperState)
+			}
+		}
+		status := payloadObject.Spec().Status()
+		log.Info("status before query status by id " + status)
+		if status == "Running" {
+			if agentId != "" {
+				log.Info("query agents' status " + agentId)
+				status, err := conf.QueryAgentStatus(ctx, agentId)
+				if err != nil {
+					return nil, http.StatusInternalServerError, err
+				}
+				if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+					return nil, http.StatusInternalServerError, err
+				}
+			}
 		}
 		result = append(result, payloadObject)
 	}
@@ -101,8 +152,7 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 func main() {
 	handlerReg := []interface{}{
 		handlers.AgentHandler,
-		handlers.AgentDescValidator,
-		handlers.AgentNameValidator,
+		handlers.AgentValidator,
 	}
 
 	argomev1.TokenListMeta().RegisterAPIMethodGET(GETOverride)
