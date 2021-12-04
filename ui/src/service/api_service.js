@@ -27,18 +27,15 @@ function deleteAgents(description) {
 }
 
 function fetchOrganizations() {
-  // console.log("API", axios.get("/argome.argo.cisco.com/v1/organizations"))
   return axios.get("/organizationmgr/api/argome.argo.cisco.com/v1/organizations");
 }
 
 function fetchAgentPools(organization) {
-  // console.log("API", axios.get("/argome.argo.cisco.com/v1/organizations"))
-  // return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/" +organization); //actual way of implementation
-  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/cisco-cn-ecosystem-02");
+  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpoolList/" +organization);
 }
 
 function createAgentPool(payload) {
-  return axios.get("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpools", payload);
+  return axios.post("/agentpoolmgr/api/argome.argo.cisco.com/v1/agentpools", payload);
 }
 // function getAccessToken(payload) {
 //   return axios.post("/gettoken", payload);

@@ -15,6 +15,7 @@ import './CiscoObjectPicker.scss';
 import {
   fetchOrganizations,
   fetchAgentPools,
+  createAgentPool
 } from "../service/api_service";
 
 function Agent(props) {
@@ -28,10 +29,6 @@ function Agent(props) {
   } = props;
 
   const action = useScreenActions();
-
-  const onCreate = () => {
-    action.openScreen(CreateNewAgentPool,{});
-  }
 
   const [agentName, setName] = useState("");
   const [description, setDescription] = useState("");
@@ -88,17 +85,42 @@ function Agent(props) {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
-      screenActions.closeScreen(screenId);
+      console.log("screen action ID = ", screenId)
+      screenActions.closeScreen("create-agent-modal"); // screenId
     }
   };
-
 
   const onClose = () => {
     setIsOpen(false);
   };
 
+  const getAgentPools = () => {
+    fetchAgentPools(organization.name)
+        .then((res) => {
+          const agentPoolResult = res.data.spec.agentpools;
+          const agentPoolsData =  _.orderBy(agentPoolResult);
+          setAgentPools(agentPoolsData);
+        })
+        .catch(error => {
+          console.error('There was an error!', error);
+      });
+  };
+
   const handleOrgSelect = useCallback((item)=> {
     setOrganization(item);
+    console.log("handleOrgSelect", organization)
+    if(organization) {
+      getAgentPools();
+      // fetchAgentPools(organization.name)
+      //   .then((res) => {
+      //     const agentPoolResult = res.data.spec.agentpools;
+      //     const agentPoolsData =  _.orderBy(agentPoolResult);
+      //     setAgentPools(agentPoolsData);
+      //   })
+      //   .catch(error => {
+      //     console.error('There was an error!', error);
+      // });
+    }
     setPoolDisplay(false);
   }, []);
 
@@ -112,15 +134,6 @@ function Agent(props) {
         const orgResult = res.data;
         const OrganizationData =  _.orderBy(orgResult).map((item) => (item.spec));
         setOrganizations(OrganizationData);
-      })
-      .catch(error => {
-        console.error('There was an error!', error);
-    });
-    fetchAgentPools()
-      .then((res) => {
-        const agentPoolResult = res.data.spec.agentpools;
-        const agentPoolsData =  _.orderBy(agentPoolResult);
-        setAgentPools(agentPoolsData);
       })
       .catch(error => {
         console.error('There was an error!', error);
@@ -144,6 +157,39 @@ function Agent(props) {
   }
 
   const formatedAgentPoolData = formatAgentPoolData(agentPools);
+
+  // const createNewAgentPool = useCallback((payload) => {
+  //   console.log(" create new agent pool in create agent");
+  //   // setInfoAlert("Creating Agent Pool");
+  //   createAgentPool(payload)
+  //     .then((res) => {
+  //       console.log("Agent POOL creation data = ", res.data )
+  //       // getAgents();
+  //     })
+  //     .catch((error) => {
+  //       console.log(error);;
+  //     });
+  // }, []);
+
+  const onCreate = () => {
+    action.openScreen(CreateNewAgentPool,{
+      screenId: "create-agent-pool-modal",
+    });
+    console.log("getAgentPools();", getAgentPools())
+    getAgentPools();
+  }
+  // const onCreate = useCallback(
+  //   () => {
+  //     action.openScreen(CreateNewAgentPool, {
+  //       screenId: "create-agent-pool-modal",
+  //       newAgentPool: createNewAgentPool,
+  //     });
+  //   },
+  //   [
+  //     action,
+  //     createNewAgentPool,
+  //   ]
+  // );
 
   return (
     <DetailScreen

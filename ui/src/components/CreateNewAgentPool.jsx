@@ -22,42 +22,32 @@ import {
 
 function CreateNewAgentPool(props) {
   const {
-    agentPoolName,
-    agentPoolId,
+    screenId,
+    newAgentPool,
     screenActions,
   } = props;
 
-  const [name, setName] = useState('');
+  const [poolName, setName] = useState("");
   const [isOpen, setIsOpen] = useState(true);
 
-  useEffect(() => {
-    if (agentPoolName) {
-      setName(agentPoolName.name);
-    }
-  }, [agentPoolName]);
-
-
-  const handleOnNameChange = useEffect((evt) => {
-    console.log("handleOnNameChange = ", name)
-  }, [name]);
-
-  // const checkBeforeSubmit = useCallback(() => {
-  //   return true;
-  // },);
-
-  const onAction = useCallback(() => {
-      let payload = {
-        "spec": {
-          organization: "cisco-cn-ecosystem-02",
-          name: name,
-        }
+  const onAction = () => {
+    let payload = {
+      "spec": {
+        organization: "cisco-cn-ecosystem-03",
+        name: poolName,
       }
-      console.log("inside on action payload = ", payload)
-      createAgentPool(payload)
-      console.log("inside on action = ", name)
-
-
-  }, []);
+    }
+    console.log("inside on action = ", poolName)
+    console.log("inside on action payload = ", payload)
+    createAgentPool(payload)
+    .then((res) => {
+      console.log("Agent POOL creation data = ", res.data )
+    })
+    .catch((error) => {
+      console.log(error);;
+    });
+    screenActions.closeScreen("create-agent-pool-modal"); // screenId
+  };
 
 
   const onClose = () => {
@@ -74,7 +64,7 @@ function CreateNewAgentPool(props) {
       onClose={onClose}
       onMinimize={onMinimize}
       title={"Create Agent Pool"}
-      createItemRenderer={handleOnNameChange}
+      // createItemRenderer={handleOnNameChange}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Create and Save"}
       isOpen={isOpen}
@@ -88,7 +78,7 @@ function CreateNewAgentPool(props) {
               </div>
               <div className="row p-5" style={{ paddingTop: "10px" }}>
                 <Input required=""
-                  value={name}
+                  value={poolName}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
