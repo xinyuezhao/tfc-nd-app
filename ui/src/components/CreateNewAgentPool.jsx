@@ -1,7 +1,6 @@
-import React,{useState, useEffect,useCallback} from 'react';
+import React,{useState} from 'react';
 
 import {
-  useObjectPickerSubmit,
   DetailScreen,
   Input,
   useScreenActions,
@@ -23,8 +22,10 @@ import {
 function CreateNewAgentPool(props) {
   const {
     screenId,
-    newAgentPool,
     screenActions,
+    organization,
+    getAgentPools,
+    setAgentPool,
   } = props;
 
   const [poolName, setName] = useState("");
@@ -33,20 +34,20 @@ function CreateNewAgentPool(props) {
   const onAction = () => {
     let payload = {
       "spec": {
-        organization: "cisco-cn-ecosystem-03",
+        organization: organization.name,
         name: poolName,
       }
     }
-    console.log("inside on action = ", poolName)
-    console.log("inside on action payload = ", payload)
     createAgentPool(payload)
     .then((res) => {
-      console.log("Agent POOL creation data = ", res.data )
+      getAgentPools(organization);
+      setAgentPool(res.data.spec);
+      console.log("screen ID = ", screenId)
+      screenActions.closeScreen("create-agent-pool-modal"); // screenId
     })
     .catch((error) => {
       console.log(error);;
     });
-    screenActions.closeScreen("create-agent-pool-modal"); // screenId
   };
 
 
@@ -64,7 +65,6 @@ function CreateNewAgentPool(props) {
       onClose={onClose}
       onMinimize={onMinimize}
       title={"Create Agent Pool"}
-      // createItemRenderer={handleOnNameChange}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Create and Save"}
       isOpen={isOpen}

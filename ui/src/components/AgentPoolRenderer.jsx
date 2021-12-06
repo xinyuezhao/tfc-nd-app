@@ -28,6 +28,6 @@ const PoolDetailRenderer = (props) => {
 }
 
 export {
-  PoolDetailRenderer,
+  PoolDetailRenderer
 }
 

@@ -15,7 +15,6 @@ import './CiscoObjectPicker.scss';
 import {
   fetchOrganizations,
   fetchAgentPools,
-  createAgentPool
 } from "../service/api_service";
 
 function Agent(props) {
@@ -32,10 +31,9 @@ function Agent(props) {
 
   const [agentName, setName] = useState("");
   const [description, setDescription] = useState("");
-  const [agentPool, setAgentPool] = useState("");
-  const [organization, setOrganization] = useState("");
+  const [agentPool, setAgentPool] = useState({});
+  const [organization, setOrganization] = useState({});
   const [isOpen, setIsOpen] = useState(true);
-  const [poolDisplay, setPoolDisplay] = useState(true);
 
   const [organizations, setOrganizations] = useState([]);
   const [agentPools, setAgentPools] = useState([]);
@@ -48,7 +46,6 @@ function Agent(props) {
       setAgentPool(agent.agentPool);
       setOrganization(agent.organization);
     }
-    console.log("Inside create agent");
   }, [agent]);
 
   const updateDetails = useCallback(() => {
@@ -60,7 +57,6 @@ function Agent(props) {
         organization: organization.name,
       }
     }
-    console.log("payloadddd = ", payload)
 
     if (agent) {
       updateAgent(agent?.sys_id, payload);
@@ -94,34 +90,24 @@ function Agent(props) {
     setIsOpen(false);
   };
 
-  const getAgentPools = () => {
-    fetchAgentPools(organization.name)
-        .then((res) => {
-          const agentPoolResult = res.data.spec.agentpools;
-          const agentPoolsData =  _.orderBy(agentPoolResult);
-          setAgentPools(agentPoolsData);
-        })
-        .catch(error => {
-          console.error('There was an error!', error);
-      });
+  const getAgentPools = (org) => {
+    fetchAgentPools(org.name)
+      .then((res) => {
+        const agentPoolResult = res.data.spec.agentpools;
+        const agentPoolsData =  _.orderBy(agentPoolResult);
+        setAgentPools(agentPoolsData);
+      })
+      .catch(error => {
+        console.error('There was an error!', error);
+    });
   };
 
   const handleOrgSelect = useCallback((item)=> {
     setOrganization(item);
-    console.log("handleOrgSelect", organization)
-    if(organization) {
-      getAgentPools();
-      // fetchAgentPools(organization.name)
-      //   .then((res) => {
-      //     const agentPoolResult = res.data.spec.agentpools;
-      //     const agentPoolsData =  _.orderBy(agentPoolResult);
-      //     setAgentPools(agentPoolsData);
-      //   })
-      //   .catch(error => {
-      //     console.error('There was an error!', error);
-      // });
+    setAgentPool({});
+    if(item) {
+      getAgentPools(item);
     }
-    setPoolDisplay(false);
   }, []);
 
   const handlePoolSelect = useCallback((item)=> {
@@ -140,10 +126,10 @@ function Agent(props) {
     });
   }, []);
 
-  const formatOrganizationData = (organizations) => {
-    const formatedData = organizations.map((organizations) => ({
-      name: organizations.Name,
-      id: organizations.ExternalID}));
+  const formatOrganizationData = (orgs) => {
+    const formatedData = orgs.map((org) => ({
+      name: org.Name,
+      id: org.ExternalID}));
     return formatedData;
   }
 
@@ -158,38 +144,15 @@ function Agent(props) {
 
   const formatedAgentPoolData = formatAgentPoolData(agentPools);
 
-  // const createNewAgentPool = useCallback((payload) => {
-  //   console.log(" create new agent pool in create agent");
-  //   // setInfoAlert("Creating Agent Pool");
-  //   createAgentPool(payload)
-  //     .then((res) => {
-  //       console.log("Agent POOL creation data = ", res.data )
-  //       // getAgents();
-  //     })
-  //     .catch((error) => {
-  //       console.log(error);;
-  //     });
-  // }, []);
-
-  const onCreate = () => {
+  const onCreateObjectPickerNewAgentPool = useCallback(() => {
     action.openScreen(CreateNewAgentPool,{
       screenId: "create-agent-pool-modal",
+      organization: organization,
+      getAgentPools: getAgentPools,
+      setAgentPool: setAgentPool,
     });
-    console.log("getAgentPools();", getAgentPools())
-    getAgentPools();
-  }
-  // const onCreate = useCallback(
-  //   () => {
-  //     action.openScreen(CreateNewAgentPool, {
-  //       screenId: "create-agent-pool-modal",
-  //       newAgentPool: createNewAgentPool,
-  //     });
-  //   },
-  //   [
-  //     action,
-  //     createNewAgentPool,
-  //   ]
-  // );
+  }, [organization, action]);
+
 
   return (
     <DetailScreen
@@ -203,7 +166,9 @@ function Agent(props) {
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
         <Card className="col" style={{ width: "90%", paddingLeft: "30px", paddingTop: "0px" }}>
             <div className="agent-container justify-content-center">
-              <div className="row">Agent Name</div>
+              <div className="row">Agent Name
+                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              </div>
               <div className="row p-5">
                 <Input required=""
                   value={agentName}
@@ -241,7 +206,7 @@ function Agent(props) {
                 <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5" style={{ paddingBottom: "30px" }}>
-                <ObjectPicker required disabled={poolDisplay}
+                <ObjectPicker required disabled={!(organization !== null && Object.keys(organization).length !== 0)}
                   data={formatedAgentPoolData}
                   multiSelect={false}
                   filterBy={(item, str) => item.name.indexOf(str) !== -1}
@@ -250,7 +215,7 @@ function Agent(props) {
                   onSelect={handlePoolSelect}
                   detailItemRenderer={PoolDetailRenderer}
                   idBy='id'
-                  onCreate={onCreate}
+                  onCreate={onCreateObjectPickerNewAgentPool}
                 />
               </div>
               {/* ========================================== */}
