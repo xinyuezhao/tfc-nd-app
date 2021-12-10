@@ -6,20 +6,20 @@ timestamp() {
 
 deploy() {
     echo "Deploying ARGO infrastructure services..."
-    kind load docker-image mongo:4.4.4 --name argome-sanity-cluster
-    kind load docker-image bitnami/kafka:2.7.0  --name argome-sanity-cluster
-    kind load docker-image bitnami/zookeeper:3.7.0  --name argome-sanity-cluster
+    kind load docker-image mongo:4.4.4 --name terraform-sanity-cluster
+    kind load docker-image bitnami/kafka:2.7.0  --name terraform-sanity-cluster
+    kind load docker-image bitnami/zookeeper:3.7.0  --name terraform-sanity-cluster
     kubectl apply -f deployment/sanity/infra.yaml
 
     echo "Waiting 10 seconds for initial infra setup..."
     sleep 10
 
-    echo $(timestamp) "Deploying Argome..."
-    kind load docker-image nodemgr:v1 --name argome-sanity-cluster
-    kind load docker-image clustermgr:v1 --name argome-sanity-cluster
-    kubectl apply -f deployment/sanity/argome.yaml
+    echo $(timestamp) "Deploying terraform..."
+    kind load docker-image nodemgr:v1 --name terraform-sanity-cluster
+    kind load docker-image clustermgr:v1 --name terraform-sanity-cluster
+    kubectl apply -f deployment/sanity/terraform.yaml
 
-    echo "Waiting 10 seconds for argome setup..."
+    echo "Waiting 10 seconds for terraform setup..."
     sleep 10
 
     DEPLOYED="false"
@@ -34,11 +34,11 @@ deploy() {
             then
                 if [[ $MONGO == "Running" && $ZOOKR == "Running"  && $KAFKA == "Running" && $CLUST == "Running" && $NODEM == "Running" ]]
                 then
-                    echo "Argome deployed"
+                    echo "terraform deployed"
                     DEPLOYED="true"
                     break
                 else
-                    echo "Argome platform booting..."
+                    echo "terraform platform booting..."
                     kubectl get pods -n argo-infra
                     kubectl get pods -n cisco-terraform
                 fi
@@ -62,19 +62,19 @@ deploy() {
     fi
 }
 
-# Redeploy Argome
-echo "Deploying argome ###"
-if kubectl cluster-info --context kind-argome-sanity-cluster; then
-    echo "Cluster exists. Redeploying argome afresh"
+# Redeploy terraform
+echo "Deploying terraform ###"
+if kubectl cluster-info --context kind-terraform-sanity-cluster; then
+    echo "Cluster exists. Redeploying terraform afresh"
     kubectl delete --ignore-not-found deployment kafka -n argo-infra 
     kubectl delete --ignore-not-found deployment mongo -n argo-infra 
     kubectl delete --ignore-not-found deployment zookeeper -n argo-infra 
     kubectl delete --ignore-not-found deployment nodemgr -n cisco-terraform
     kubectl delete --ignore-not-found deployment clustermgr -n cisco-terraform 
-    kubectl delete --ignore-not-found job argometester -n cisco-terraform
+    kubectl delete --ignore-not-found job terraformtester -n cisco-terraform
 else
     echo "No existing cluster. Creating a new cluster"
-    kind create cluster --config deployment/sanity/cluster.yaml --name argome-sanity-cluster
+    kind create cluster --config deployment/sanity/cluster.yaml --name terraform-sanity-cluster
 fi
 
 if deploy; then 
@@ -82,9 +82,9 @@ if deploy; then
 fi
 
 # Deploy the tester job 
-echo "### Deploying argome tester job ###"
-kubectl delete --ignore-not-found -n cisco-terraform job argometester
-kind load docker-image argome-testsuite:v1 --name argome-sanity-cluster
+echo "### Deploying terraform tester job ###"
+kubectl delete --ignore-not-found -n cisco-terraform job terraformtester
+kind load docker-image terraform-testsuite:v1 --name terraform-sanity-cluster
 kubectl apply -f deployment/sanity/sanity.yaml
 
 # Wait for the tester job to be up and running
@@ -92,7 +92,7 @@ echo "Waiting for tester to setup..."
 sleep 10
 for i in {1..10}
     do
-        TNAME=$(kubectl get pods --selector=argo.job=argometester -n cisco-terraform -o jsonpath="{.items[*].metadata.name}")
+        TNAME=$(kubectl get pods --selector=argo.job=terraformtester -n cisco-terraform -o jsonpath="{.items[*].metadata.name}")
         if [ -n $TNAME ]
         then
             break
@@ -103,14 +103,14 @@ for i in {1..10}
 # Exit if you cannot find the tester job pod after all this wait
 if [ -z $TNAME ]
 then
-    echo "Error finding argometester job pod"
+    echo "Error finding terraformtester job pod"
     exit 1
 fi
 
 # Setup a logfile to caputer the tester container logs
-LOGFILE=$(mktemp -t argometester.log)
+LOGFILE=$(mktemp -t terraformtester.log)
 kubectl logs -f $TNAME -n cisco-terraform | tee -a $LOGFILE
-ln -sf $LOGFILE $TMPDIR/argometester-latest.log
+ln -sf $LOGFILE $TMPDIR/terraformtester-latest.log
 
 # Monitor the status of the tester job
 for i in {1..16}
@@ -118,18 +118,18 @@ for i in {1..16}
         ZOOKR=$(kubectl get pods --selector=argo.deploy=zoo -n argo-infra -o jsonpath="{.items[*].status.phase}")
         KAFKA=$(kubectl get pods --selector=argo.deploy=kafka -n argo-infra -o jsonpath="{.items[*].status.phase}")
         MONGO=$(kubectl get pods --selector=argo.deploy=mongo -n argo-infra -o jsonpath="{.items[*].status.phase}")
-        TESTR=$(kubectl get pods --selector=argo.job=argometester -n cisco-terraform -o jsonpath="{.items[*].status.phase}") 
+        TESTR=$(kubectl get pods --selector=argo.job=terraformtester -n cisco-terraform -o jsonpath="{.items[*].status.phase}") 
         if [[ -n $MONGO && -n $ZOOKR && -n $KAFKA ]]
         then
             if [[ $MONGO == "Running" && $ZOOKR == "Running"  && $KAFKA == "Running" && $TESTR == "Running" ]]
             then
-                echo "Argome test is running"
+                echo "terraform test is running"
             else
                 if [[ $TESTR == "Succeeded" ]]
                 then
-                    echo "Argome test succeeded"
+                    echo "terraform test succeeded"
                 else
-                    echo "Argome tester exited with " $TESTR
+                    echo "terraform tester exited with " $TESTR
                 fi
                 break
             fi

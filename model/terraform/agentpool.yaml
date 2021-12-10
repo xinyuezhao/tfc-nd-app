@@ -1,7 +1,7 @@
 kind: Struct
 metadata:
   name: AgentpoolSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -15,7 +15,7 @@ spec:
 kind: Resource
 metadata:
   name: Agentpool
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -45,20 +45,20 @@ kind: ResourceHandler
 metadata:
   name: AgentpoolHandler
 spec:
-  resource: argome.argo.cisco.com/v1.Agentpool
+  resource: terraform.argo.cisco.com/v1.Agentpool
   operations:
     - CREATE
   retryStrategy:
     delay: 500
   concurrencyKey: Agentpool
-  function: golang.cisco.com/examples/argome/pkg/handlers.AgentpoolHandler
+  function: golang.cisco.com/examples/terraform/pkg/handlers.AgentpoolHandler
   specStatusDiscriminator: both
 ---
 kind: Resource
 metadata:
   name: AgentpoolList
   plural: agentpoolList
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -71,7 +71,7 @@ spec:
 kind: Struct
 metadata:
   name: AgentplListSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -83,7 +83,7 @@ spec:
 kind: Struct
 metadata:
   name: AgentplSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:

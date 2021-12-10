@@ -1,22 +1,22 @@
 apiVersion: batch/v1
 kind: Job 
 metadata:
-  name: argometester
+  name: terraformtester
   namespace: cisco-terraform
   labels:
-    argo.job: argometester 
+    argo.job: terraformtester 
 spec:
   template:
     metadata:
       labels:
-        argo.job: argometester 
+        argo.job: terraformtester 
       creationTimestamp: null
     spec:
       containers:
       - env:
-        image: argome-testsuite:v1
+        image: terraform-testsuite:v1
         imagePullPolicy: ""
-        name: argometester
+        name: terraformtester
         resources: {}
       restartPolicy: Never 
   backoffLimit: 0

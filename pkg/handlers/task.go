@@ -7,7 +7,7 @@ import (
 	"golang.cisco.com/argo/pkg/lockable"
 	"golang.cisco.com/argo/pkg/mo"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
 )
 
 const (
@@ -33,9 +33,9 @@ func TaskHandler(ctx context.Context, event mo.Event) error {
 
 	nodesFetcher := func(r mo.Resolver) (string, []mo.Object, error) {
 		core.LoggerFromContext(ctx).Info("finding all nodes")
-		objs := r.ResolveByKind(ctx, argomev1.NodeMeta().MetaKey())
+		objs := r.ResolveByKind(ctx, terraformv1.NodeMeta().MetaKey())
 		if len(objs) > 0 {
-			return argomev1.NodeMeta().MetaKey(), objs, nil
+			return terraformv1.NodeMeta().MetaKey(), objs, nil
 		}
 
 		return "", nil, nil
@@ -58,11 +58,11 @@ func TaskHandler(ctx context.Context, event mo.Event) error {
 						"resourceVersion",
 						Task.Meta().ResourceVersion(),
 					)
-				case argomev1.NodeMeta().MetaKey():
+				case terraformv1.NodeMeta().MetaKey():
 					objs := event.Objects
-					nodes := make([]argomev1.NodeStatus, 0)
+					nodes := make([]terraformv1.NodeStatus, 0)
 					for _, o := range objs {
-						nodes = append(nodes, o.(argomev1.Node).Status())
+						nodes = append(nodes, o.(terraformv1.Node).Status())
 					}
 
 					Task, err := le.Store().ResolveByID(ctx, le.Resource().Meta().ID())
@@ -70,10 +70,10 @@ func TaskHandler(ctx context.Context, event mo.Event) error {
 						logger.Error(err, "failed to lookup locked resource")
 					}
 
-					if err = Task.(argomev1.TaskMutable).StatusMutable().SetNodeList(nodes); err != nil {
+					if err = Task.(terraformv1.TaskMutable).StatusMutable().SetNodeList(nodes); err != nil {
 						logger.Error(err, "failed to set status")
 					}
-					if err = Task.(argomev1.TaskMutable).StatusMutable().SetStatus(true); err != nil {
+					if err = Task.(terraformv1.TaskMutable).StatusMutable().SetStatus(true); err != nil {
 						logger.Error(err, "failed to set status")
 					}
 

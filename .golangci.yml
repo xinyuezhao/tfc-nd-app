@@ -36,7 +36,7 @@ linters-settings:
   gocyclo:
     min-complexity: 20
   goimports:
-    local-prefixes: golang.cisco.com/examples/argome
+    local-prefixes: golang.cisco.com/examples/terraform
   golint:
     min-confidence: 0
   gomnd:

@@ -1,4 +1,4 @@
-# argome - A multi-service application demo using argo
+# terraform - A multi-service application demo using argo
 
 ## Deploying on Nexus Dashboard
 
@@ -30,25 +30,25 @@ $ echo '{"userName": "admin", "userPasswd": "ins3965!", "domain": "DefaultAuth"}
 You can query nodes from nodemgr using the following request.
 
 ```
-$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/argome.argo.cisco.com/v1/nodes
+$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.argo.cisco.com/v1/nodes
 ```
 
 You can query clusters from clustermgr using the following request.
 
 ```
-$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/clustermgr/api/argome.argo.cisco.com/v1/clusters
+$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/clustermgr/api/terraform.argo.cisco.com/v1/clusters
 ```
 
 A node can be posted as follows.
 
 ```
-$ echo '{"inbandIP": "192.168.1.102", "name": "node2", "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"}' | http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/argome.argo.cisco.com/v1/nodes
+$ echo '{"inbandIP": "192.168.1.102", "name": "node2", "cluster": "/terraform.argo.cisco.com/v1/clusters/cluster-1"}' | http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.argo.cisco.com/v1/nodes
 ```
 
 Once the node is created, clustermgr gets notified and it admits the node. Query the nodeopers resource to verify that. You should see the `status` field in the node resource to say `admitted`.
 
 ```
-$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/argome.argo.cisco.com/v1/nodeopers
+$ http --verify=no --session=nd https://10.195.219.173/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.argo.cisco.com/v1/nodeopers
 HTTP/1.1 200 OK
 Content-Length: 312
 Content-Type: application/json
@@ -72,7 +72,7 @@ X-Xss-Protection: 1; mode=block
             "finalizers": {},
             "group": "",
             "id": "9bf78c21-ba62-4809-8707-3d8a4cb5e16f",
-            "key": "argome.argo.cisco.com/v1.NodeOper",
+            "key": "terraform.argo.cisco.com/v1.NodeOper",
             "labels": {},
             "namespace": "",
             "org": "",
@@ -90,7 +90,7 @@ TBD
 
 ## Deploying on kind
 
-You can deploy argome on a local kind cluster by using the `deploy-on-kind` make
+You can deploy terraform on a local kind cluster by using the `deploy-on-kind` make
 target. If you haven't configured the kind cluster yet, refer to the next
 section on how to setup a kind cluster.
 
@@ -155,13 +155,13 @@ kubectl -n cisco-terraform port-forward service/nodemgr 3080:80
 Create a new node resource.
 
 ```
-echo '{"spec":{"inbandIP": "192.168.1.105", "name": "node5", "cluster": "/argome.argo.cisco.com/v1/clusters/cluster-1"}}' | http :3080/api/argome.argo.cisco.com/v1/nodes
+echo '{"spec":{"inbandIP": "192.168.1.105", "name": "node5", "cluster": "/terraform.argo.cisco.com/v1/clusters/cluster-1"}}' | http :3080/api/terraform.argo.cisco.com/v1/nodes
 ```
 
 Get the list of nodes to see that the new node is now admitted.
 
 ```
-http :3080/api/argome.argo.cisco.com/v1/nodes
+http :3080/api/terraform.argo.cisco.com/v1/nodes
 HTTP/1.1 200 OK
 Content-Length: 532
 Content-Type: application/json
@@ -177,7 +177,7 @@ X-Request-Id: c84071f1-3f11-4f43-a77d-bb4c0e98e989
             "domain": "",
             "finalizers": {},
             "id": "55c01217-994a-4dd9-9883-5f17c096067f",
-            "key": "argome.argo.cisco.com/v1.Node",
+            "key": "terraform.argo.cisco.com/v1.Node",
             "labels": {},
             "namespace": "",
             "org": "ARGO-FW-TENANT",

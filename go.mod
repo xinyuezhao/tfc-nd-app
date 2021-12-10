@@ -1,4 +1,4 @@
-module golang.cisco.com/examples/argome
+module golang.cisco.com/examples/terraform
 
 go 1.15
 

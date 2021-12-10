@@ -51,7 +51,7 @@ spec:
             path: cacerts.crt
       containers:
       - name: nodemgr
-        image: nodemgr:v1
+        image: nodemgr:v11
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: kafka-certs

@@ -11,7 +11,7 @@ import (
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
 )
 
 var checkTaskStatus = func() bool {
@@ -26,7 +26,7 @@ var checkTaskStatus = func() bool {
 	if len(objs) != 1 {
 		return false
 	}
-	task, ok := objs[0].(argomev1.Task)
+	task, ok := objs[0].(terraformv1.Task)
 	So(ok, ShouldBeTrue)
 	if task.Status().Status() == false {
 		return false
@@ -39,7 +39,7 @@ var checkTaskStatus = func() bool {
 
 func testLockable(t *testing.T) {
 	Convey("Create a background task", t, func() {
-		task := argomev1.TaskFactory()
+		task := terraformv1.TaskFactory()
 		err := task.SpecMutable().SetName("cluster-1")
 		So(err, ShouldBeNil)
 
@@ -54,7 +54,7 @@ func testLockable(t *testing.T) {
 	})
 
 	Convey("Creating background task again should fail", t, func() {
-		task := argomev1.TaskFactory()
+		task := terraformv1.TaskFactory()
 		err := task.SpecMutable().SetName("cluster-1")
 		So(err, ShouldBeNil)
 
@@ -67,7 +67,7 @@ func testLockable(t *testing.T) {
 	})
 
 	Convey("Check if Task status has been updated", t, func() {
-		node := argomev1.NodeFactory()
+		node := terraformv1.NodeFactory()
 		So(core.NewError(node.SpecMutable().SetInbandIP("10.1.1.2"),
 			node.SpecMutable().SetCluster("cluster-1"),
 			node.SpecMutable().SetName("node-456")), ShouldBeNil)
@@ -102,7 +102,7 @@ func testLockable(t *testing.T) {
 	})
 
 	Convey("I should be able to create a new task again", t, func() {
-		task := argomev1.TaskFactory()
+		task := terraformv1.TaskFactory()
 		err := task.SpecMutable().SetName("cluster-1")
 		So(err, ShouldBeNil)
 

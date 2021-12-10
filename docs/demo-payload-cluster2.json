@@ -7,7 +7,7 @@
     "finalizers": {},
     "domain": "",
     "namespace": "",
-    "key": "argome.argo.cisco.com/v1.Node"
+    "key": "terraform.argo.cisco.com/v1.Node"
   },
   "spec": {
     "inbandIP": "10.10.10.1",

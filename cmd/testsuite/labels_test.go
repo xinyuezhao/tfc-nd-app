@@ -10,8 +10,8 @@ import (
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 
-	"golang.cisco.com/examples/argome/gen/bookv1"
-	"golang.cisco.com/examples/argome/gen/fridgeappv1"
+	"golang.cisco.com/examples/terraform/gen/bookv1"
+	"golang.cisco.com/examples/terraform/gen/fridgeappv1"
 
 	. "github.com/smartystreets/goconvey/convey"
 )

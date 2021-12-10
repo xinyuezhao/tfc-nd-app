@@ -7,9 +7,9 @@ import (
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
 
-	"golang.cisco.com/examples/argome/gen/schema"
-	"golang.cisco.com/examples/argome/pkg/handlers"
-	"golang.cisco.com/examples/argome/pkg/platform"
+	"golang.cisco.com/examples/terraform/gen/schema"
+	"golang.cisco.com/examples/terraform/pkg/handlers"
+	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
 func onStart(ctx context.Context, changer mo.Changer) error {

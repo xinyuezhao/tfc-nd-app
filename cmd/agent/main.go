@@ -2,31 +2,34 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
-	"golang.cisco.com/examples/argome/gen/schema"
-	"golang.cisco.com/examples/argome/pkg/conf"
-	"golang.cisco.com/examples/argome/pkg/handlers"
-	"golang.cisco.com/examples/argome/pkg/platform"
+	"golang.cisco.com/examples/terraform/gen/schema"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
+	"golang.cisco.com/examples/terraform/pkg/conf"
+	"golang.cisco.com/examples/terraform/pkg/handlers"
+	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
-func GETOverride(ctx context.Context, event *argomev1.TokenListDbReadEvent) (argomev1.TokenList, int, error) {
-	payloadObject := event.Resource().(argomev1.TokenList)
+func GETOverride(ctx context.Context, event *terraformv1.TokenListDbReadEvent) (terraformv1.TokenList, int, error) {
+	payloadObject := event.Resource().(terraformv1.TokenList)
 	agentPlId := payloadObject.Spec().Agentpool()
 	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error from configTFC")
+		return nil, http.StatusInternalServerError, core.NewError(err, er)
 	}
 	tokens, err := conf.QueryAgentTokens(ctxTfe, client, agentPlId)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error from QueryAgentTokens")
+		return nil, http.StatusInternalServerError, core.NewError(err, er)
 	}
-	result := argomev1.TokenListFactory()
+	result := terraformv1.TokenListFactory()
 	errs := make([]error, 0)
 	for _, token := range tokens {
 		errs = append(errs, result.SpecMutable().TokensAppendEl(token.ID))
@@ -38,101 +41,120 @@ func GETOverride(ctx context.Context, event *argomev1.TokenListDbReadEvent) (arg
 	return result, http.StatusOK, nil
 }
 
-func GETAgentOverride(ctx context.Context, event *argomev1.AgentDbReadEvent) (argomev1.Agent, int, error) {
+func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) (terraformv1.Agent, int, error) {
 	log := core.LoggerFromContext(ctx)
-	name := event.Resource().(argomev1.Agent).Spec().Name()
-	obj, err := event.Store().ResolveByName(ctx, argomev1.AgentDNForDefault(name))
+	name := event.Resource().(terraformv1.Agent).Spec().Name()
+	obj, err := event.Store().ResolveByName(ctx, terraformv1.AgentDNForDefault(name))
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error from resolveByName()")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	payloadObject := obj.(argomev1.Agent)
+	payloadObject := obj.(terraformv1.Agent)
 	if err := core.NewError(payloadObject.SpecMutable().SetToken("********")); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	// get agentPoolId
-	agentPlId := payloadObject.Spec().AgentpoolId()
-	TLSclient := conf.ConfigTLSClient(ctx)
-	_, TFEclient, err := conf.ConfigTFC()
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-	// get agentId by agentPoolId & agentName
-	agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
-	agentId := conf.QueryAgentId(ctx, agents, name)
+	TLSclient := conf.ConfigTLSClient()
 	// call feature api to get feature instance status
 	// whether query feature instance operstate right after it was created?
 	features, err := conf.QueryFeatures(ctx, TLSclient)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error from queryFeatures")
+		return nil, http.StatusInternalServerError, core.NewError(err, er)
 	}
 	for _, feature := range features.Instances[0].Features {
 		if feature.Instance == name {
 			payloadObject.SpecMutable().SetStatus(feature.OperState)
 		}
 	}
-	// query status
-	status := payloadObject.Spec().Status()
-	if status == "Running" {
-		if agentId != "" {
-			log.Info("id used to query status " + agentId)
-			status, err := conf.QueryAgentStatus(ctx, agentId)
-			if err != nil {
-				return nil, http.StatusInternalServerError, err
-			}
-			if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
-				return nil, http.StatusInternalServerError, err
+	// get agentPoolId != "" when agentToken was created automatically
+	agentPlId := payloadObject.Spec().AgentpoolId()
+	if agentPlId != "" {
+		_, TFEclient, err := conf.ConfigTFC()
+		if err != nil {
+			er := fmt.Errorf("error from configTFC")
+			return nil, http.StatusInternalServerError, core.NewError(err, er)
+		}
+		// get agentId by agentPoolId & agentName when agentToken was created automatically
+		agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
+		if err != nil {
+			er := fmt.Errorf("error from queryAgents")
+			return nil, http.StatusInternalServerError, core.NewError(er, err)
+		}
+		agentId := conf.QueryAgentId(ctx, agents, name)
+
+		// query status
+		status := payloadObject.Spec().Status()
+		if status == "Running" {
+			if agentId != "" {
+				log.Info("id used to query status " + agentId)
+				status, err := conf.QueryAgentStatus(ctx, agentId)
+				if err != nil {
+					er := fmt.Errorf("error from queryAgentStatus")
+					return nil, http.StatusInternalServerError, core.NewError(er, err)
+				}
+				if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+					return nil, http.StatusInternalServerError, err
+				}
 			}
 		}
 	}
 	return payloadObject, http.StatusOK, nil
 }
 
-func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]argomev1.Agent, int, error) {
+func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv1.Agent, int, error) {
 	log := core.LoggerFromContext(ctx)
-	objs := event.Resolver.ResolveByKind(ctx, argomev1.AgentMeta().MetaKey())
-	result := make([]argomev1.Agent, 0)
-	TLSclient := conf.ConfigTLSClient(ctx)
-	_, TFEclient, err := conf.ConfigTFC()
-	if err != nil {
-		return nil, http.StatusInternalServerError, err
-	}
+	objs := event.Resolver.ResolveByKind(ctx, terraformv1.AgentMeta().MetaKey())
+	result := make([]terraformv1.Agent, 0)
+	TLSclient := conf.ConfigTLSClient()
 	features, err := conf.QueryFeatures(ctx, TLSclient)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error during querying features")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	for _, obj := range objs {
-		payloadObject := obj.(argomev1.Agent)
+		payloadObject := obj.(terraformv1.Agent)
 		if err := core.NewError(payloadObject.SpecMutable().SetToken("********")); err != nil {
-			return nil, http.StatusInternalServerError, err
-		}
-		// get agentPoolId
-		agentPlId := payloadObject.Spec().AgentpoolId()
-		// get agentId by agentPoolId & agentName
-		agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
-		if err != nil {
-			return nil, http.StatusInternalServerError, err
+			er := fmt.Errorf("error during set token")
+			return nil, http.StatusInternalServerError, core.NewError(er, err)
 		}
 		name := payloadObject.Spec().Name()
-		agentId := conf.QueryAgentId(ctx, agents, name)
 		for _, feature := range features.Instances[0].Features {
 			if feature.Instance == name {
 				payloadObject.SpecMutable().SetStatus(feature.OperState)
 			}
 		}
-		status := payloadObject.Spec().Status()
-		log.Info("status before query status by id " + status)
-		if status == "Running" {
-			if agentId != "" {
-				log.Info("query agents' status " + agentId)
-				status, err := conf.QueryAgentStatus(ctx, agentId)
-				if err != nil {
-					return nil, http.StatusInternalServerError, err
-				}
-				if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
-					return nil, http.StatusInternalServerError, err
+		// get agentPoolId
+		agentPlId := payloadObject.Spec().AgentpoolId()
+		// query agent status only when agentToken was created by backend
+		if agentPlId != "" {
+			_, TFEclient, err := conf.ConfigTFC()
+			if err != nil {
+				er := fmt.Errorf("error during config TFC")
+				return nil, http.StatusInternalServerError, core.NewError(er, err)
+			}
+			// get agentId by agentPoolId & agentName
+			agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
+			if err != nil {
+				er := fmt.Errorf("error during querying agents")
+				return nil, http.StatusInternalServerError, core.NewError(er, err)
+			}
+
+			agentId := conf.QueryAgentId(ctx, agents, name)
+
+			status := payloadObject.Spec().Status()
+			log.Info("status before query status by id " + status)
+			if status == "Running" {
+				if agentId != "" {
+					log.Info("query agents' status " + agentId)
+					status, err := conf.QueryAgentStatus(ctx, agentId)
+					if err != nil {
+						er := fmt.Errorf("error during querying agent status")
+						return nil, http.StatusInternalServerError, core.NewError(er, err)
+					}
+					if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+						er := fmt.Errorf("error during set status")
+						return nil, http.StatusInternalServerError, core.NewError(er, err)
+					}
 				}
 			}
 		}
@@ -155,9 +177,9 @@ func main() {
 		handlers.AgentValidator,
 	}
 
-	argomev1.TokenListMeta().RegisterAPIMethodGET(GETOverride)
-	argomev1.AgentMeta().RegisterAPIMethodGET(GETAgentOverride)
-	argomev1.AgentMeta().RegisterAPIMethodList(ListOverride)
+	terraformv1.TokenListMeta().RegisterAPIMethodGET(GETOverride)
+	terraformv1.AgentMeta().RegisterAPIMethodGET(GETAgentOverride)
+	terraformv1.AgentMeta().RegisterAPIMethodList(ListOverride)
 
 	var apx service.Service
 	var opts service.Options

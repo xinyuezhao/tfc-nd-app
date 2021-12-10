@@ -11,7 +11,7 @@ $(1): export GOOS=linux
 $(1): export GOARCH=amd64
 endef
 
-all: lint argome
+all: lint terraform
 
 check: lint
 
@@ -30,7 +30,7 @@ cache:
 
 # TODO: Fix the hardcoding of argo ddN path.
 generate: | $(GENERATOR)
-	$(GENERATOR) run -r ./model/remote.yaml -m ./model/argome -g ./gen -d $(DEPLOYMENT_SPEC_PATH_PREFIX)
+	$(GENERATOR) run -r ./model/remote.yaml -m ./model/terraform -g ./gen -d $(DEPLOYMENT_SPEC_PATH_PREFIX)
 
 lint: | $(LINTER) generate
 	$(LINTER) run ./...
@@ -71,7 +71,7 @@ bundle:
 $(eval $(call build-for-linux,sanity))
 sanity: clean lint docker-images
 	go test -c ./cmd/testsuite
-	docker build --file deployment/docker/testsuite/Dockerfile --tag argome-testsuite:v1 .
+	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v1 .
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
@@ -95,14 +95,14 @@ agentpool: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/nodemgr/Dockerfile --tag nodemgr:v1 .
-	docker build --file deployment/docker/clustermgr/Dockerfile --tag clustermgr:v1 .
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v1 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v1 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v1 .
+	docker build --file deployment/docker/nodemgr/Dockerfile --tag nodemgr:v11 .
+	docker build --file deployment/docker/clustermgr/Dockerfile --tag clustermgr:v11 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v11 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v11 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v11 .
 
 docker-archive: docker-images
-	docker save nodemgr:v1 clustermgr:v1 organizationmgr:v1 agentmgr:v1 agentpoolmgr:v1 hashicorp/tfc-agent:latest | gzip > images.tar.gz
+	docker save nodemgr:v11 clustermgr:v11 organizationmgr:v11 agentmgr:v11 agentpoolmgr:v11 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris
@@ -127,9 +127,9 @@ deploy-on-kind: docker-images
 spartan: clean bundle generate
 	GOOS=linux GOARCH=amd64 go build ./cmd/cluster
 	GOOS=linux GOARCH=amd64 go build ./cmd/node
-	docker build --file deployment/spartan/node/Dockerfile --tag argome-spartan-node:v1 .
-	docker build --file deployment/spartan/clusterd/Dockerfile --tag argome-spartan-cluster:v1 .
+	docker build --file deployment/spartan/node/Dockerfile --tag terraform-spartan-node:v1 .
+	docker build --file deployment/spartan/clusterd/Dockerfile --tag terraform-spartan-cluster:v1 .
 	rm node
 	rm cluster
 
-.PHONY: generate lint test argome services
+.PHONY: generate lint test terraform services

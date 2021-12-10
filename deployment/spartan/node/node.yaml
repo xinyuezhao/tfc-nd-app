@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Namespace
 metadata:
-  name: argome-ns
+  name: terraform-ns
   labels:
-    name: argome-ns
+    name: terraform-ns
 ---
 apiVersion: v1
 kind: Service
 metadata:
   name: mongo-svc
-  namespace: argome-ns
+  namespace: terraform-ns
 spec:
   type: ExternalName
   externalName: mongo-svc.argo-infra.svc.cluster.local
@@ -20,7 +20,7 @@ apiVersion: v1
 kind: Service
 metadata:
   name: kafka-svc
-  namespace: argome-ns
+  namespace: terraform-ns
 spec:
   type: ExternalName
   externalName: kafka-svc.argo-infra.svc.cluster.local
@@ -31,22 +31,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: node
-  namespace: argome-ns 
+  namespace: terraform-ns 
   labels:
-    argo.deploy: argome-node 
+    argo.deploy: terraform-node 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      argo.deploy: argome-node 
+      argo.deploy: terraform-node 
   template:
     metadata:
       labels:
-        argo.deploy: argome-node 
+        argo.deploy: terraform-node 
       creationTimestamp: null
     spec:
       containers:
-      - image: argome-spartan-node:v1
+      - image: terraform-spartan-node:v1
         imagePullPolicy: ""
         name: node-manager
         env:

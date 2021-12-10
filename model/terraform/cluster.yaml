@@ -1,7 +1,7 @@
 kind: Struct
 metadata:
   name: ClusterSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -15,7 +15,7 @@ spec:
 kind: Struct
 metadata:
   name: ClusterStatus
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -25,7 +25,7 @@ spec:
 kind: Resource
 metadata:
   name: Cluster
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -42,7 +42,7 @@ spec:
 kind: Struct
 metadata:
   name: ClusterMemberSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -56,7 +56,7 @@ spec:
 kind: Resource
 metadata:
   name: ClusterMember
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -71,7 +71,7 @@ kind: ResourceHandler
 metadata:
   name: ClusterHandler
 spec:
-  resource: argome.argo.cisco.com/v1.Cluster
+  resource: terraform.argo.cisco.com/v1.Cluster
   operations:
     - CREATE
     - UPDATE
@@ -79,13 +79,13 @@ spec:
   retryStrategy:
     delay: 500
   concurrencyKey: cluster
-  function: golang.cisco.com/examples/argome/pkg/handlers.ClusterHandler
+  function: golang.cisco.com/examples/terraform/pkg/handlers.ClusterHandler
 ---
 kind: ResourceHandler
 metadata:
   name: ClusterNodeHandler
 spec:
-  resource: argome.argo.cisco.com/v1.Node
+  resource: terraform.argo.cisco.com/v1.Node
   operations:
     - CREATE
     - UPDATE
@@ -93,4 +93,4 @@ spec:
   retryStrategy:
     delay: 500
   concurrencyKey: clusternode
-  function: golang.cisco.com/examples/argome/pkg/handlers.ClusterNodeHandler
+  function: golang.cisco.com/examples/terraform/pkg/handlers.ClusterNodeHandler

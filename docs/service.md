@@ -79,5 +79,5 @@ deployment/nd/meta/ClusterMgrConfig/k8s-specs/on-enable/nodemgr.yml
 ./build-nd.sh
 ```
 
-The resulting ".aci" file will contain your new service as part of the "argome" application deployment
+The resulting ".aci" file will contain your new service as part of the "terraform" application deployment
 

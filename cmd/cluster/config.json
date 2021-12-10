@@ -20,47 +20,47 @@
                     "endpoint": "node-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.Node",
+                    "name": "terraform.argo.cisco.com/v1.Node",
                     "service": "node-manager",
                     "endpoint": "node-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.NodeOper",
+                    "name": "terraform.argo.cisco.com/v1.NodeOper",
                     "service": "node-manager",
                     "endpoint": "nodeoper-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.Cluster",
+                    "name": "terraform.argo.cisco.com/v1.Cluster",
                     "service": "clusterd",
                     "endpoint": "cluster-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.ClusterMember",
+                    "name": "terraform.argo.cisco.com/v1.ClusterMember",
                     "service": "clusterd",
                     "endpoint": "cluster-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.Organization",
+                    "name": "terraform.argo.cisco.com/v1.Organization",
                     "service": "organization-manager",
                     "endpoint": "organization-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.Agent",
+                    "name": "terraform.argo.cisco.com/v1.Agent",
                     "service": "agent-manager",
                     "endpoint": "agent-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.TokenList",
+                    "name": "terraform.argo.cisco.com/v1.TokenList",
                     "service": "agent-manager",
                     "endpoint": "agent-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.Agentpool",
+                    "name": "terraform.argo.cisco.com/v1.Agentpool",
                     "service": "agentpool-manager",
                     "endpoint": "agentpool-topic"
                 },
                 {
-                    "name": "argome.argo.cisco.com/v1.AgentpoolList",
+                    "name": "terraform.argo.cisco.com/v1.AgentpoolList",
                     "service": "agentpool-manager",
                     "endpoint": "agentpool-topic"
                 }
@@ -109,11 +109,11 @@
             "duration": 120000,
             "path": "mongodb.mongodb.svc:27017",
             "secure": "true",
-            "name": "argome"
+            "name": "terraform"
         }
     },
     "db":{
-        "appname": "argome",
+        "appname": "terraform",
         "path": "mongodb.mongodb.svc:27017",
         "type":"mongodb",
         "secure": true

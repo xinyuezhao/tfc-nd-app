@@ -1,7 +1,7 @@
 kind: Struct
 metadata:
   name: AgentSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -27,7 +27,7 @@ spec:
 kind: Resource
 metadata:
   name: Agent
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -43,31 +43,31 @@ kind: ResourceHandler
 metadata:
   name: AgentHandler
 spec:
-  resource: argome.argo.cisco.com/v1.Agent
+  resource: terraform.argo.cisco.com/v1.Agent
   operations:
     - CREATE
     - DELETE
   retryStrategy:
     delay: 0
   concurrencyKey: agent
-  function: golang.cisco.com/examples/argome/pkg/handlers.AgentHandler
+  function: golang.cisco.com/examples/terraform/pkg/handlers.AgentHandler
   specStatusDiscriminator: both
 ---
 kind: ValidationHandler
 metadata:
   name: AgentValidator
 spec:
-  resource: argome.argo.cisco.com/v1.Agent
+  resource: terraform.argo.cisco.com/v1.Agent
   operations:
     - CREATE
     - DELETE
-  function: golang.cisco.com/examples/argome/pkg/handlers.AgentValidator
+  function: golang.cisco.com/examples/terraform/pkg/handlers.AgentValidator
 ---
 kind: Resource
 metadata:
   name: TokenList
   plural: tokenList
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -80,7 +80,7 @@ spec:
 kind: Struct
 metadata:
   name: TokenListSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:

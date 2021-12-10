@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
 	tfe "github.com/hashicorp/go-tfe"
@@ -11,10 +12,11 @@ import (
 	"golang.cisco.com/argo/pkg/service"
 	"golang.cisco.com/argo/pkg/utils"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
-	"golang.cisco.com/examples/argome/gen/schema"
-	"golang.cisco.com/examples/argome/pkg/handlers"
-	"golang.cisco.com/examples/argome/pkg/platform"
+	"golang.cisco.com/examples/terraform/gen/schema"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
+	"golang.cisco.com/examples/terraform/pkg/conf"
+	"golang.cisco.com/examples/terraform/pkg/handlers"
+	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
 func queryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization, error) {
@@ -36,20 +38,7 @@ func queryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization,
 	return res, nil
 }
 
-func configTFC() (context.Context, *tfe.Client, error) {
-	config := &tfe.Config{
-		Token: "ai1yMKOzv3Mptg.atlasv1.lOseEHJzlB49Vz0fXTlFUFRGGTuugiP3040sr1MGGOkHgRqzQ9FrpiUJzyTH1DzzFTM",
-	}
-	client, err := tfe.NewClient(config)
-	if err != nil {
-		return nil, nil, err
-	}
-	// Create a context
-	ctxTfe := context.Background()
-	return ctxTfe, client, nil
-}
-
-func newOrganization(org *tfe.Organization, newOrg argomev1.Organization) error {
+func newOrganization(org *tfe.Organization, newOrg terraformv1.Organization) error {
 	errs := make([]error, 0)
 	errs = append(errs, newOrg.SpecMutable().SetName(org.Name),
 		newOrg.SpecMutable().SetEmail(org.Email),
@@ -63,22 +52,22 @@ func newOrganization(org *tfe.Organization, newOrg argomev1.Organization) error 
 		newOrg.SpecMutable().SetSessionTimeout(org.SessionTimeout),
 		newOrg.SpecMutable().SetTrialExpiresAt(org.TrialExpiresAt.String()),
 		newOrg.SpecMutable().SetTwoFactorConformant(org.TwoFactorConformant),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().SetCanCreateTeam(org.Permissions.CanCreateTeam),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().SetCanCreateTeam(org.Permissions.CanCreateTeam),
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanCreateWorkspace(org.Permissions.CanCreateWorkspace),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanCreateWorkspaceMigration(org.Permissions.CanCreateWorkspaceMigration),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanDestroy(org.Permissions.CanDestroy),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanTraverse(org.Permissions.CanTraverse),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdate(org.Permissions.CanUpdate),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateAPIToken(org.Permissions.CanUpdateAPIToken),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateOAuth(org.Permissions.CanUpdateOAuth),
-		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Argome().
+		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateSentinel(org.Permissions.CanUpdateSentinel))
 	if err := core.NewError(errs...); err != nil {
 		return err
@@ -86,43 +75,48 @@ func newOrganization(org *tfe.Organization, newOrg argomev1.Organization) error 
 	return nil
 }
 
-func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]argomev1.Organization, int, error) {
-	ctxTfe, client, err := configTFC()
+func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv1.Organization, int, error) {
+	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error from configTFC")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	// Query all organizations and filter orgs by entitlement
 	orgs, err := queryAllOrgs(ctxTfe, client)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error from queryAllOrgs")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	res := make([]argomev1.Organization, 0)
+	res := make([]terraformv1.Organization, 0)
 	for _, org := range orgs {
-		newOrg := argomev1.OrganizationFactory()
+		newOrg := terraformv1.OrganizationFactory()
 		err := newOrganization(org, newOrg)
 		if err != nil {
-			return nil, http.StatusInternalServerError, err
+			er := fmt.Errorf("error from newOrganizaton")
+			return nil, http.StatusInternalServerError, core.NewError(er, err)
 		}
 		res = append(res, newOrg)
 	}
 	return res, http.StatusOK, nil
 }
 
-func GETOverride(ctx context.Context, event *argomev1.OrganizationDbReadEvent) (argomev1.Organization, int, error) {
-	payloadObject := event.Resource().(argomev1.Organization)
+func GETOverride(ctx context.Context, event *terraformv1.OrganizationDbReadEvent) (terraformv1.Organization, int, error) {
+	payloadObject := event.Resource().(terraformv1.Organization)
 	name := payloadObject.Spec().Name()
-	ctxTfe, client, err := configTFC()
+	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error form configTFC")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	orgs, err := queryAllOrgs(ctxTfe, client)
 	if err != nil {
-		return nil, http.StatusInternalServerError, err
+		er := fmt.Errorf("error form queryAllOrgs")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 
 	for _, org := range orgs {
 		if org.Name == name {
-			newOrg := argomev1.OrganizationFactory()
+			newOrg := terraformv1.OrganizationFactory()
 			err := newOrganization(org, newOrg)
 			if err == nil {
 				return newOrg, http.StatusOK, nil
@@ -145,8 +139,8 @@ func main() {
 		handlers.OrganizationHandler,
 	}
 
-	argomev1.OrganizationMeta().RegisterAPIMethodList(ListOverride)
-	argomev1.OrganizationMeta().RegisterAPIMethodGET(GETOverride)
+	terraformv1.OrganizationMeta().RegisterAPIMethodList(ListOverride)
+	terraformv1.OrganizationMeta().RegisterAPIMethodGET(GETOverride)
 
 	var apx service.Service
 	var opts service.Options
