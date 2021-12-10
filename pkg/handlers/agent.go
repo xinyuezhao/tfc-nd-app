@@ -12,25 +12,25 @@ import (
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/model"
-	"golang.cisco.com/examples/argome/gen/argomev1"
-	"golang.cisco.com/examples/argome/pkg/conf"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
+	"golang.cisco.com/examples/terraform/pkg/conf"
 )
 
 func AgentHandler(ctx context.Context, event mo.Event) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling Agent", "resource", event.Resource())
-	agent := event.Resource().(argomev1.Agent)
+	agent := event.Resource().(terraformv1.Agent)
 	agentPl := agent.Spec().Agentpool()
 	org := agent.Spec().Organization()
 	name := agent.Spec().Name()
-	ctxTfe, client, err := conf.ConfigTFC()
-	if err != nil {
-		return err
-	}
 	if event.Operation() == model.CREATE {
 		// TODO: Add logic to set status. Currently set 'created' as default.
 		if agent.Spec().Token() == "" {
-			log.Info("create agent without token")
+			log.Info("create agent without agent token")
+			ctxTfe, client, err := conf.ConfigTFC()
+			if err != nil {
+				return err
+			}
 			agentToken, agentPlID, err := conf.CreateAgentToken(ctxTfe, client, agentPl, org, agent.Spec().Description())
 			if err != nil {
 				return err
@@ -43,22 +43,22 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 			}
 		}
 		token := agent.Spec().Token()
-		if agent.Spec().AgentpoolId() == "" {
-			agentpools, err := conf.QueryAgentPools(ctxTfe, client, org)
-			if err != nil {
-				return err
-			}
-			agentpool, err := conf.QueryAgentPlByName(agentpools, agentPl)
-			if err != nil {
-				return err
-			}
-			if err := core.NewError(agent.SpecMutable().SetAgentpoolId(agentpool.ID)); err != nil {
-				return err
-			}
-		}
+		// if agent.Spec().AgentpoolId() == "" {
+		// 	agentpools, err := conf.QueryAgentPools(ctxTfe, client, org)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	agentpool, err := conf.QueryAgentPlByName(agentpools, agentPl)
+		// 	if err != nil {
+		// 		return err
+		// 	}
+		// 	if err := core.NewError(agent.SpecMutable().SetAgentpoolId(agentpool.ID)); err != nil {
+		// 		return err
+		// 	}
+		// }
 		agent.SpecMutable().SetStatus("created")
 		// api call creating feature instance to deploy agent
-		TLSclient := conf.ConfigTLSClient(ctx)
+		TLSclient := conf.ConfigTLSClient()
 		param := map[string]string{"token": token, "name": name}
 		body := map[string]interface{}{
 			"vendor":           conf.Vendor,
@@ -72,7 +72,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		payloadBuf := new(bytes.Buffer)
 		json.NewEncoder(payloadBuf).Encode(body)
 		// req, e := http.NewRequest(http.MethodPost, "https://10.23.248.65/api/config/createfeatureinstance", payloadBuf)
-		req, e := http.NewRequest(http.MethodPost, "http://localhost:9090/api/config/createfeatureinstance", payloadBuf)
+		req, e := http.NewRequest(http.MethodPost, "https://resourcemgr.kubese.svc/api/config/createfeatureinstance", payloadBuf)
 		if e != nil {
 			return e
 		}
@@ -112,7 +112,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 	if event.Operation() == model.DELETE {
 		tokenID := agent.Spec().TokenId()
 		// delete feature instance to stop the agent
-		TLSclient := conf.ConfigTLSClient(ctx)
+		TLSclient := conf.ConfigTLSClient()
 		log.Info("before delete agent feature instance")
 		err := conf.DelFeatureInstance(ctx, TLSclient, name)
 		if err != nil {
@@ -121,10 +121,17 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		log.Info("after deleting feature instance")
 		log.Info("remove agentToken")
 		time.Sleep(10 * time.Second)
-		removeErr := conf.RemoveAgentToken(ctxTfe, client, tokenID)
-		if removeErr != nil {
-			return removeErr
+		if tokenID != "" {
+			ctxTfe, client, err := conf.ConfigTFC()
+			if err != nil {
+				return err
+			}
+			removeErr := conf.RemoveAgentToken(ctxTfe, client, tokenID)
+			if removeErr != nil {
+				return removeErr
+			}
 		}
+
 		log.Info("after removing agentToken")
 	}
 	return nil
@@ -134,7 +141,7 @@ func AgentValidator(ctx context.Context, event mo.Validation) error {
 	log := core.LoggerFromContext(ctx)
 	// event.Operation() description requied if agent without token
 	log.Info("validate Agent", "resource", event.Resource())
-	agent := event.Resource().(argomev1.Agent)
+	agent := event.Resource().(terraformv1.Agent)
 	desc := agent.Spec().Description()
 	name := agent.Spec().Name()
 	empty := ""

@@ -4,8 +4,8 @@ metadata:
   name: cisco-terraform
 spec:
   vendor: cisco
-  app: argome
-  uiEntrypoint: /appcenter/cisco/argome/ui
+  app: terraform
+  uiEntrypoint: /appcenter/cisco/terraform/ui
   security:
     infraAccess:
       enabled: true
@@ -19,12 +19,12 @@ spec:
       diskType: Any
     cpu:
       target:
-      - resourceLabel: cpu-argome
+      - resourceLabel: cpu-terraform
         request: "1"
         limit: "2"
     memory:
       target:
-      - resourceLabel: memory-argome
+      - resourceLabel: memory-terraform
         request: 2Gi
         limit: 3Gi
   defaultFlavors:

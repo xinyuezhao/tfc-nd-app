@@ -11,7 +11,7 @@ import (
 
 	"golang.cisco.com/argo/pkg/mo"
 
-	"golang.cisco.com/examples/argome/gen/schema"
+	"golang.cisco.com/examples/terraform/gen/schema"
 )
 
 var testCtx = context.Background()

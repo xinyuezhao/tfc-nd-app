@@ -3,22 +3,22 @@ package main
 import (
 	"context"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
 
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
 	"golang.cisco.com/argo/pkg/utils"
 
-	"golang.cisco.com/examples/argome/gen/schema"
-	"golang.cisco.com/examples/argome/pkg/handlers"
-	"golang.cisco.com/examples/argome/pkg/platform"
+	"golang.cisco.com/examples/terraform/gen/schema"
+	"golang.cisco.com/examples/terraform/pkg/handlers"
+	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
 func onStart(ctx context.Context, changer mo.Changer) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("configuring some objects during app start")
-	cluster := argomev1.ClusterFactory()
+	cluster := terraformv1.ClusterFactory()
 	if err := cluster.SpecMutable().SetName("cluster-1"); err != nil {
 		return err
 	}

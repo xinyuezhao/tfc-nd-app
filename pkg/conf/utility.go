@@ -31,6 +31,10 @@ func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client
 	if err != nil {
 		return nil, err
 	}
+	tokenExist, Usertoken, err := CheckUserTokenExist()
+	if !tokenExist || err != nil {
+		return nil, err
+	}
 	auth := fmt.Sprintf("Bearer %s", Usertoken)
 	req.Header.Set("Authorization", auth)
 	resp, e := client.Do(req)
@@ -71,7 +75,7 @@ func QueryAgentId(ctx context.Context, agents []Agent, name string) string {
 func QueryFeatures(ctx context.Context, client *http.Client) (Feature, error) {
 	log := core.LoggerFromContext(ctx)
 	result := Feature{}
-	req, err := http.NewRequest(http.MethodGet, "http://localhost:9090/api/config/dn/appinstances/cisco-terraform", nil)
+	req, err := http.NewRequest(http.MethodGet, "https://resourcemgr.kubese.svc/api/config/dn/appinstances/cisco-terraform", nil)
 	// req, err := http.NewRequest(http.MethodGet, "https://10.23.248.65/api/config/dn/appinstances/cisco-terraform", nil)
 	// req.Header.Set("Cookie", Cookie)
 	if err != nil {
@@ -109,8 +113,13 @@ func QueryFeatures(ctx context.Context, client *http.Client) (Feature, error) {
 }
 
 func ConfigTFC() (context.Context, *tfe.Client, error) {
+	tokenExist, Usertoken, err := CheckUserTokenExist()
+	if !tokenExist || err != nil {
+		er := core.NewError(err, fmt.Errorf("not able to get userToken"))
+		return nil, nil, core.NewError(er, err)
+	}
 	config := &tfe.Config{
-		Token: "ai1yMKOzv3Mptg.atlasv1.lOseEHJzlB49Vz0fXTlFUFRGGTuugiP3040sr1MGGOkHgRqzQ9FrpiUJzyTH1DzzFTM",
+		Token: Usertoken,
 	}
 	client, err := tfe.NewClient(config)
 	if err != nil {
@@ -121,9 +130,7 @@ func ConfigTFC() (context.Context, *tfe.Client, error) {
 	return ctxTfe, client, nil
 }
 
-func ConfigTLSClient(ctx context.Context) *http.Client {
-	log := core.LoggerFromContext(ctx)
-	log.Info("config TLS client")
+func ConfigTLSClient() *http.Client {
 	tr := &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
@@ -187,7 +194,7 @@ func DelFeatureInstance(ctx context.Context, client *http.Client, name string) e
 	}
 	payloadBuf := new(bytes.Buffer)
 	json.NewEncoder(payloadBuf).Encode(payload)
-	req, err := http.NewRequest(http.MethodPost, "http://localhost:9090/api/config/delfeatureinstance", payloadBuf)
+	req, err := http.NewRequest(http.MethodPost, "https://resourcemgr.kubese.svc/api/config/delfeatureinstance", payloadBuf)
 	// req, err := http.NewRequest(http.MethodPost, "https://10.23.248.65/api/config/delfeatureinstance", payloadBuf)
 	// req.Header.Set("Cookie", Cookie)
 	if err != nil {
@@ -213,7 +220,7 @@ func DelFeatureInstance(ctx context.Context, client *http.Client, name string) e
 
 func QueryAgentStatus(ctx context.Context, agentId string) (string, error) {
 	log := core.LoggerFromContext(ctx)
-	client := ConfigTLSClient(ctx)
+	client := ConfigTLSClient()
 	// query agents inside given agentpool
 	log.Info("agent Id given " + agentId)
 	url := fmt.Sprintf("https://app.terraform.io/api/v2/agents/%s", agentId)
@@ -222,8 +229,13 @@ func QueryAgentStatus(ctx context.Context, agentId string) (string, error) {
 	if err != nil {
 		return "", err
 	}
+	tokenExist, Usertoken, err := CheckUserTokenExist()
+	if !tokenExist || err != nil {
+		return "", err
+	}
 	// use user token to access terraform cloud API
-	req.Header.Set("Authorization", "Bearer ZCUWZISXNFtWIg.atlasv1.vty2xgI8e0zuvzwgM9INeLvus2WYZPz5uziE1YU0UB27RiIDNunkXjFYxjlm7fDZxMc")
+	auth := fmt.Sprintf("Bearer %s", Usertoken)
+	req.Header.Set("Authorization", auth)
 	resp, e := client.Do(req)
 	if e != nil {
 		return "", err
@@ -258,4 +270,56 @@ func RemoveAgentPool(ctx context.Context, client *tfe.Client, agentPlID string) 
 		return err
 	}
 	return nil
+}
+
+// Query credentials
+func QueryCredentials() (string, error) {
+	client := ConfigTLSClient()
+	var jsonData = []byte(`{"components": {"terraform":{}}}`)
+	// req, err := http.NewRequest(http.MethodPost, "https://10.23.248.67/api/config/getcredentials", bytes.NewBuffer(jsonData))
+	// req.Header.Set("Cookie", Cookie)
+	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", bytes.NewBuffer(jsonData))
+	if err != nil {
+		er := fmt.Errorf("error while building request")
+		return "", core.NewError(er, err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		er := fmt.Errorf("error after querying credentials")
+		return "", core.NewError(er, err)
+	}
+	b, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		er := fmt.Errorf("error while dumping response")
+		return "", core.NewError(er, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		err := fmt.Errorf("error! Response content: %s", string(b))
+		return "", err
+	}
+	credential := Credential{}
+	err = json.NewDecoder(resp.Body).Decode(&credential)
+	if err != nil {
+		er := fmt.Errorf("error while decoding credential response")
+		return "", core.NewError(err, er)
+	}
+	token := credential.Response[0].Components.Terraform.Credentials.Token
+	return token, nil
+}
+
+func CheckUserTokenExist() (bool, string, error) {
+	exist, err := QueryCredentials()
+	if err != nil {
+		e := fmt.Errorf("credential from querycredential " + exist)
+		er := fmt.Errorf("error from queryCredentials")
+		return false, "", core.NewError(err, er, e)
+	}
+	if exist != "" {
+		return true, exist, nil
+	} else {
+		err := fmt.Errorf("user Token required")
+		return false, "", err
+	}
 }

@@ -98,7 +98,7 @@ spec:
 kind: Resource
 metadata:
   name: Node
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -115,7 +115,7 @@ spec:
 kind: Struct
 metadata:
   name: NodeSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -129,7 +129,7 @@ spec:
 kind: Struct
 metadata:
   name: NodeStatus
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -277,14 +277,14 @@ kind: ResourceHandler
 metadata:
   name: NodeHandler
 spec:
-  resource: argome.argo.cisco.com/v1.Node
+  resource: terraform.argo.cisco.com/v1.Node
   operations:
     - CREATE
     - UPDATE
   retryStrategy:
     delay: 500
   concurrencyKey: node
-  function: golang.cisco.com/examples/argome/pkg/handlers.NodeHandler
+  function: golang.cisco.com/examples/terraform/pkg/handlers.NodeHandler
 ```
 ---
 ![bg](https://cdn.pixabay.com/photo/2021/02/22/19/47/backdrop-6041422_960_720.jpg)

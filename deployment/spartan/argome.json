@@ -20,27 +20,27 @@
 			},
 			{
 				"endpoint": "node-topic",
-				"name": "argome.argo.cisco.com/v1.Node",
+				"name": "terraform.argo.cisco.com/v1.Node",
 				"service": "node-manager",
-				"url": "/api/argome.argo.cisco.com/v1/nodes"
+				"url": "/api/terraform.argo.cisco.com/v1/nodes"
 			},
 			{
 				"endpoint": "nodeoper-topic",
-				"name": "argome.argo.cisco.com/v1.NodeOper",
+				"name": "terraform.argo.cisco.com/v1.NodeOper",
 				"service": "node-manager",
-				"url": "/api/argome.argo.cisco.com/v1/nodeopers"
+				"url": "/api/terraform.argo.cisco.com/v1/nodeopers"
 			},
 			{
 				"endpoint": "cluster-topic",
-				"name": "argome.argo.cisco.com/v1.Cluster",
+				"name": "terraform.argo.cisco.com/v1.Cluster",
 				"service": "clusterd",
-				"url": "/api/argome.argo.cisco.com/v1/clusters"
+				"url": "/api/terraform.argo.cisco.com/v1/clusters"
 			},
 			{
 				"endpoint": "cluster-topic",
-				"name": "argome.argo.cisco.com/v1.ClusterMember",
+				"name": "terraform.argo.cisco.com/v1.ClusterMember",
 				"service": "clusterd",
-				"url": "/api/argome.argo.cisco.com/v1/clustermembers"
+				"url": "/api/terraform.argo.cisco.com/v1/clustermembers"
 			}
 		],
 		"services": [

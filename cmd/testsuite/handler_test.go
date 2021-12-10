@@ -7,7 +7,7 @@ import (
 	"testing"
 	"time"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
 
 	. "github.com/smartystreets/goconvey/convey"
 )
@@ -41,7 +41,7 @@ func testNodeManager(t *testing.T) {
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
 			So(len(objs), ShouldEqual, 1)
-			nodeObj, ok := objs[0].(argomev1.Node)
+			nodeObj, ok := objs[0].(terraformv1.Node)
 			So(ok, ShouldBeTrue)
 			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
 			resp.Body.Close()
@@ -51,7 +51,7 @@ func testNodeManager(t *testing.T) {
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
 			So(len(objs), ShouldEqual, 1)
-			nodeObj, ok = objs[0].(argomev1.Node)
+			nodeObj, ok = objs[0].(terraformv1.Node)
 			So(ok, ShouldBeTrue)
 			So(nodeObj.Spec().InbandIP(), ShouldEqual, "10.1.1.1")
 			time.Sleep(time.Second * 2)
@@ -71,7 +71,7 @@ func testNodeManager(t *testing.T) {
 				if len(objs) != 1 {
 					return false
 				}
-				nodeOperObj, ok := objs[0].(argomev1.Node)
+				nodeOperObj, ok := objs[0].(terraformv1.Node)
 				if !ok {
 					return false
 				}
@@ -89,7 +89,7 @@ func testNodeManager(t *testing.T) {
 			objs, err := readResponse(resp)
 			So(err, ShouldBeNil)
 			So(len(objs), ShouldEqual, 1)
-			nodeOperObj, ok := objs[0].(argomev1.Node)
+			nodeOperObj, ok := objs[0].(terraformv1.Node)
 			So(ok, ShouldBeTrue)
 			So(nodeOperObj.Status().InbandIP(), ShouldEqual, "10.1.1.1")
 			So(nodeOperObj.Status().Status(), ShouldEqual, "admitted")
@@ -99,7 +99,7 @@ func testNodeManager(t *testing.T) {
 			objs, err = readResponse(resp)
 			So(err, ShouldBeNil)
 			So(len(objs), ShouldEqual, 1)
-			cmObj, ok := objs[0].(argomev1.ClusterMember)
+			cmObj, ok := objs[0].(terraformv1.ClusterMember)
 			So(ok, ShouldBeTrue)
 			So(cmObj, ShouldNotBeNil)
 		})

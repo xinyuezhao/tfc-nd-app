@@ -3,7 +3,7 @@ package specs
 import (
 	"golang.cisco.com/argo/pkg/fw"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
 )
 
 const (
@@ -18,11 +18,11 @@ func GenerateSESpec() (name string, ts []string, data []byte) {
 	nodeServiceTopic := nodeManagerTopic
 	clusterService := "clusterd"
 	clusterServiceTopic := "clusterd-topic"
-	node := argomev1.NodeFactory().Meta().Key()
+	node := terraformv1.NodeFactory().Meta().Key()
 	nodeTopic := "node-topic"
-	cluster := argomev1.ClusterFactory().Meta().Key()
+	cluster := terraformv1.ClusterFactory().Meta().Key()
 	clusterTopic := "cluster-topic"
-	clusterMember := argomev1.ClusterMemberFactory().Meta().Key()
+	clusterMember := terraformv1.ClusterMemberFactory().Meta().Key()
 	topics := []string{nodeServiceTopic, clusterServiceTopic, nodeTopic, clusterTopic}
 	appDoc := `{
 		"name": "` + appName + `",

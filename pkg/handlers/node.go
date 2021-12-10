@@ -7,12 +7,12 @@ import (
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/model"
 
-	"golang.cisco.com/examples/argome/gen/argomev1"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
 )
 
 // NodeHandler handler the node object
 func NodeHandler(ctx context.Context, event mo.Event) error {
-	node := event.Resource().(argomev1.Node)
+	node := event.Resource().(terraformv1.Node)
 
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling node resource", "node", node)
@@ -27,7 +27,7 @@ func NodeHandler(ctx context.Context, event mo.Event) error {
 
 	if node.Spec().ClusterPtr() != nil {
 		// get the cluster and set status to adding to cluster
-		clusterKey := argomev1.ClusterDNForDefault(node.Spec().Cluster())
+		clusterKey := terraformv1.ClusterDNForDefault(node.Spec().Cluster())
 		if node.Spec().Cluster() == "" {
 			clusterKey = ""
 		}
@@ -65,7 +65,7 @@ func NodeHandler(ctx context.Context, event mo.Event) error {
 
 // NodeClusterMemberHandler handles the ClusterNode object
 func NodeClusterMemberHandler(ctx context.Context, event mo.Event) error {
-	clusterMember := event.Resource().(argomev1.ClusterMember)
+	clusterMember := event.Resource().(terraformv1.ClusterMember)
 
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling ClusterMember", "clusterMember", clusterMember)
@@ -76,7 +76,7 @@ func NodeClusterMemberHandler(ctx context.Context, event mo.Event) error {
 		log.Info("Did not find node object", "name", clusterMember.Spec().Name())
 		return nil
 	}
-	node := obj.(argomev1.Node)
+	node := obj.(terraformv1.Node)
 
 	// Check if you can read the other services DB
 	obj, err = event.Store().ResolveByName(ctx, clusterMember.Spec().Cluster())
@@ -85,7 +85,7 @@ func NodeClusterMemberHandler(ctx context.Context, event mo.Event) error {
 		log.Error(err, "could not resolve the cluster object")
 		return nil
 	}
-	cluster := obj.(argomev1.Cluster)
+	cluster := obj.(terraformv1.Cluster)
 	log.Info("Found cluster object", "name", cluster.Spec().Name())
 
 	if event.Operation() == model.DELETE {

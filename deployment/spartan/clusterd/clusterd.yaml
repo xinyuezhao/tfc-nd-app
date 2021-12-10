@@ -2,22 +2,22 @@ apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: clusterd
-  namespace: argome-ns 
+  namespace: terraform-ns 
   labels:
-    argo.deploy: argome-clusterd 
+    argo.deploy: terraform-clusterd 
 spec:
   replicas: 1
   selector:
     matchLabels:
-      argo.deploy: argome-clusterd 
+      argo.deploy: terraform-clusterd 
   template:
     metadata:
       labels:
-        argo.deploy: argome-clusterd 
+        argo.deploy: terraform-clusterd 
       creationTimestamp: null
     spec:
       containers:
-      - image: argome-spartan-cluster:v1
+      - image: terraform-spartan-cluster:v1
         imagePullPolicy: ""
         name: clusterd
         env:

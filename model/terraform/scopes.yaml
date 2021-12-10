@@ -9,7 +9,7 @@ metadata:
   extends:
     - base
 spec:
-  local-import-prefix: golang.cisco.com/examples/argome/gen
+  local-import-prefix: golang.cisco.com/examples/terraform/gen
   external-packages:
     - alias: mo
       target-import: golang.cisco.com/argo/pkg/mo

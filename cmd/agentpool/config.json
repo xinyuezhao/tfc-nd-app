@@ -22,11 +22,11 @@
             "duration": 120000,
             "path": "mongodb.mongodb.svc:27017",
             "secure": "true",
-            "name": "argome"
+            "name": "terraform"
         }
     },
     "db":{
-        "appname": "argome",
+        "appname": "terraform",
         "path": "mongodb.mongodb.svc:27017",
         "type":"mongodb",
         "secure": true

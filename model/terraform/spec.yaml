@@ -1,7 +1,7 @@
 kind: Application
 metadata:
-  name: Argome
-  group: argome.argo.cisco.com
+  name: Terraform
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   platforms:
@@ -21,45 +21,45 @@ spec:
       endpoint: clusterd-topic
       databaseName: clusterd
       managedResources:
-        - managedResource: argome.argo.cisco.com/v1.Cluster
+        - managedResource: terraform.argo.cisco.com/v1.Cluster
           endpoint: cluster-topic
-        - managedResource: argome.argo.cisco.com/v1.ClusterMember
+        - managedResource: terraform.argo.cisco.com/v1.ClusterMember
           endpoint: cluster-topic
     - service: node-manager
       endpoint: node-manager-topic
       restPort: 0.0.0.0:8089
       databaseName: nodemgr
       managedResources:
-        - managedResource: argome.argo.cisco.com/v1.Node
+        - managedResource: terraform.argo.cisco.com/v1.Node
           endpoint: node-topic
         - managedResource: book.aci.cisco.com/v1.Book
           endpoint: node-topic
         - managedResource: book.aci.cisco.com/v1.Publisher
           endpoint: node-topic
-        - managedResource: argome.argo.cisco.com/v1.Task
+        - managedResource: terraform.argo.cisco.com/v1.Task
           endpoint: task-topic
     - service: agent-manager
       endpoint: agent-manager-topic
       restPort: 0.0.0.0:8089
       databaseName: agentmgr
       managedResources:
-        - managedResource: argome.argo.cisco.com/v1.Agent
+        - managedResource: terraform.argo.cisco.com/v1.Agent
           endpoint: agent-topic
-        - managedResource: argome.argo.cisco.com/v1.TokenList
+        - managedResource: terraform.argo.cisco.com/v1.TokenList
           endpoint: agent-topic
     - service: organization-manager
       endpoint: organization-manager-topic
       restPort: 0.0.0.0:8089
       databaseName: organizationmgr
       managedResources:
-        - managedResource: argome.argo.cisco.com/v1.Organization
+        - managedResource: terraform.argo.cisco.com/v1.Organization
           endpoint: organizationt-topic
     - service: agentpool-manager
       endpoint: agentpool-manager-topic
       restPort: 0.0.0.0:8089
       databaseName: agentpoolmgr
       managedResources:
-        - managedResource: argome.argo.cisco.com/v1.Agentpool
+        - managedResource: terraform.argo.cisco.com/v1.Agentpool
           endpoint: agentpool-topic
-        - managedResource: argome.argo.cisco.com/v1.AgentpoolList
+        - managedResource: terraform.argo.cisco.com/v1.AgentpoolList
           endpoint: agentpool-topic

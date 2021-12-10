@@ -1,7 +1,7 @@
 kind: Struct
 metadata:
   name: OrganizationSpec
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -35,7 +35,7 @@ spec:
 kind: Struct
 metadata:
   name: OrganizationPermissions
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   props:
@@ -61,7 +61,7 @@ spec:
 kind: Resource
 metadata:
   name: Organization
-  group: argome.argo.cisco.com
+  group: terraform.argo.cisco.com
   version: v1
 spec:
   spec:
@@ -75,11 +75,11 @@ kind: ResourceHandler
 metadata:
   name: OrganizationHandler
 spec:
-  resource: argome.argo.cisco.com/v1.Organization
+  resource: terraform.argo.cisco.com/v1.Organization
   operations:
     - CREATE
   retryStrategy:
     delay: 500
   concurrencyKey: organization
-  function: golang.cisco.com/examples/argome/pkg/handlers.OrganizationHandler
+  function: golang.cisco.com/examples/terraform/pkg/handlers.OrganizationHandler
   specStatusDiscriminator: both
