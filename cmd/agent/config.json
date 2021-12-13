@@ -32,7 +32,7 @@
         "secure": true
     },
     "directory":{
-        "service": "clusterd",
+        "service": "organization-manager",
         "type": "mongodb",
         "skipDefault": true,
         "database": {

@@ -64,36 +64,6 @@ metadata:
   namespace: cisco-terraform
 spec:
  topics:
- - name: node-topic
-   partitions: 6
-   replicas: 1
-   topicProperties:
-    retention.ms: 86400
-    segment.ms: 86400
- - name: nodeoper-topic
-   partitions: 6
-   replicas: 1
-   topicProperties:
-    retention.ms: 86400
-    segment.ms: 86400
- - name: node-manager-topic
-   partitions: 6
-   replicas: 1
-   topicProperties:
-    retention.ms: 86400
-    segment.ms: 86400
- - name: cluster-topic
-   partitions: 6
-   replicas: 1
-   topicProperties:
-    retention.ms: 86400
-    segment.ms: 86400
- - name: clusterd-topic
-   partitions: 6
-   replicas: 1
-   topicProperties:
-    retention.ms: 86400
-    segment.ms: 86400
  - name: organization-topic
    partitions: 6
    replicas: 1
@@ -131,46 +101,6 @@ spec:
     retention.ms: 86400
     segment.ms: 86400
  acls:
- - name: node-topic-wr
-   cn: cisco-terraform
-   topic: node-topic
-   op: Write
- - name: node-topic-rd
-   cn: cisco-terraform
-   topic: node-topic
-   op: Read
- - name: nodeoper-topic-wr
-   cn: cisco-terraform
-   topic: nodeoper-topic
-   op: Write
- - name: nodeoper-topic-rd
-   cn: cisco-terraform
-   topic: nodeoper-topic
-   op: Read
- - name: node-manager-topic-wr
-   cn: cisco-terraform
-   topic: node-manager-topic
-   op: Write
- - name: node-manager-topic-rd
-   cn: cisco-terraform
-   topic: node-manager-topic
-   op: Read
- - name: cluster-topic-wr
-   cn: cisco-terraform
-   topic: cluster-topic
-   op: Write
- - name: cluster-topic-rd
-   cn: cisco-terraform
-   topic: cluster-topic
-   op: Read
- - name: clusterd-topic-wr
-   cn: cisco-terraform
-   topic: clusterd-topic
-   op: Write
- - name: clusterd-topic-rd
-   cn: cisco-terraform
-   topic: clusterd-topic
-   op: Read
  - name: organization-topic-wr
    cn: cisco-terraform
    topic: organization-topic
@@ -240,22 +170,6 @@ metadata:
   namespace: cisco-terraform
 spec:
   apiEndpoints:
-  - target: nodemgr
-    service:
-      scheme: http
-      name: nodemgr
-      port: 80
-    authType: open
-    listenPaths:
-    - path: "/sedgeapi/v1/cisco-terraform/nodemgr"
-  - target: clustermgr
-    service:
-      scheme: http
-      name: clustermgr
-      port: 80
-    authType: open
-    listenPaths:
-    - path: "/sedgeapi/v1/cisco-terraform/clustermgr"
   - target: organizationmgr
     service:
       scheme: http

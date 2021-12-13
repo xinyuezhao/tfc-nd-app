@@ -9,7 +9,7 @@
     "contact-url": "https://mycase.cloudapps.cisco.com/case"
   },
   "iconfile": "icon.png",
-  "name": "TerraformCloud Connect",
+  "name": "Nexus Dashboard Connector for HashiCorp Terraform",
   "platforms": {
     "se": {
       "hostversion": "1.1.2"
