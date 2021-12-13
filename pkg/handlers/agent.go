@@ -24,16 +24,17 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 	org := agent.Spec().Organization()
 	name := agent.Spec().Name()
 	if event.Operation() == model.CREATE {
-		// TODO: Add logic to set status. Currently set 'created' as default.
 		if agent.Spec().Token() == "" {
 			log.Info("create agent without agent token")
 			ctxTfe, client, err := conf.ConfigTFC()
 			if err != nil {
-				return err
+				er := fmt.Errorf("error from ConfigTFC when creating agent")
+				return core.NewError(er, err)
 			}
 			agentToken, agentPlID, err := conf.CreateAgentToken(ctxTfe, client, agentPl, org, agent.Spec().Description())
 			if err != nil {
-				return err
+				er := fmt.Errorf("error from CreateAgentToken")
+				return core.NewError(er, err)
 			}
 
 			if err := core.NewError(agent.SpecMutable().SetToken(agentToken.Token),
@@ -43,19 +44,6 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 			}
 		}
 		token := agent.Spec().Token()
-		// if agent.Spec().AgentpoolId() == "" {
-		// 	agentpools, err := conf.QueryAgentPools(ctxTfe, client, org)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	agentpool, err := conf.QueryAgentPlByName(agentpools, agentPl)
-		// 	if err != nil {
-		// 		return err
-		// 	}
-		// 	if err := core.NewError(agent.SpecMutable().SetAgentpoolId(agentpool.ID)); err != nil {
-		// 		return err
-		// 	}
-		// }
 		agent.SpecMutable().SetStatus("created")
 		// api call creating feature instance to deploy agent
 		TLSclient := conf.ConfigTLSClient()
@@ -71,18 +59,18 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 
 		payloadBuf := new(bytes.Buffer)
 		json.NewEncoder(payloadBuf).Encode(body)
-		// req, e := http.NewRequest(http.MethodPost, "https://10.23.248.65/api/config/createfeatureinstance", payloadBuf)
 		req, e := http.NewRequest(http.MethodPost, "https://resourcemgr.kubese.svc/api/config/createfeatureinstance", payloadBuf)
 		if e != nil {
-			return e
+			er := fmt.Errorf("error while building createfeatureinstance request")
+			return core.NewError(er, e)
 		}
 		req.Header.Set("Content-Type", "application/json")
-		// req.Header.Set("Cookie", conf.Cookie)
 		log.Info("before request post")
 		resp, e := TLSclient.Do(req)
 		log.Info("after request post")
 		if e != nil {
-			return e
+			er := fmt.Errorf("error while making request to create feature instance")
+			return core.NewError(er, e)
 		}
 		log.Info("err after request post")
 		defer resp.Body.Close()
@@ -90,17 +78,19 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		b, err := httputil.DumpResponse(resp, true)
 		log.Info("parsing response data")
 		if err != nil {
-			return err
+			er := fmt.Errorf("error while dumping response data")
+			return core.NewError(er, err)
 		}
 		log.Info("after parse response data")
 		log.Info("response " + string(b))
 		log.Info("respose status " + resp.Status)
 		if resp.StatusCode != 200 {
-			err := core.NewError(fmt.Errorf("there is an error. Response content: %s", string(b)))
+			err := core.NewError(fmt.Errorf("error while creating feature instance. Response content: %s", string(b)))
 			return err
 		}
 
 		if err := event.Store().Record(ctx, agent); err != nil {
+			core.LoggerFromContext(ctx).Error(err, "failed to record Agent")
 			return err
 		}
 		if err := event.Store().Commit(ctx); err != nil {
@@ -116,7 +106,8 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		log.Info("before delete agent feature instance")
 		err := conf.DelFeatureInstance(ctx, TLSclient, name)
 		if err != nil {
-			return err
+			er := fmt.Errorf("error from DelFeatureInstance")
+			return core.NewError(er, err)
 		}
 		log.Info("after deleting feature instance")
 		log.Info("remove agentToken")
@@ -124,14 +115,15 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		if tokenID != "" {
 			ctxTfe, client, err := conf.ConfigTFC()
 			if err != nil {
-				return err
+				er := fmt.Errorf("error from ConfigTFC while deleting agent")
+				return core.NewError(er, err)
 			}
 			removeErr := conf.RemoveAgentToken(ctxTfe, client, tokenID)
 			if removeErr != nil {
-				return removeErr
+				er := fmt.Errorf("error from RemoveAgentToken")
+				return core.NewError(er, removeErr)
 			}
 		}
-
 		log.Info("after removing agentToken")
 	}
 	return nil
@@ -139,7 +131,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 
 func AgentValidator(ctx context.Context, event mo.Validation) error {
 	log := core.LoggerFromContext(ctx)
-	// event.Operation() description requied if agent without token
+	// TODO:event.Operation() description requied only if agent without token
 	log.Info("validate Agent", "resource", event.Resource())
 	agent := event.Resource().(terraformv1.Agent)
 	desc := agent.Spec().Description()

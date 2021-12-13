@@ -17,52 +17,6 @@ import (
 	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
-// Create a new agentPool for an organization
-func createAgentPool(ctx context.Context, client *tfe.Client, orgName, agentPlName string) (*tfe.AgentPool, error) {
-	createOptions := tfe.AgentPoolCreateOptions{Name: &agentPlName}
-	agentPl, err := client.AgentPools.Create(ctx, orgName, createOptions)
-	if err != nil {
-		return nil, err
-	}
-	return agentPl, nil
-}
-
-// Query all agentPools for an organization
-func queryAgentPools(ctx context.Context, client *tfe.Client, name string) ([]*tfe.AgentPool, error) {
-	agentPools, err := client.AgentPools.List(ctx, name, tfe.AgentPoolListOptions{})
-	if err != nil {
-		return nil, err
-	}
-	res := agentPools.Items
-	return res, nil
-}
-
-// Query agentPool by the name
-func queryAgentPlByName(agentPools []*tfe.AgentPool, name string) (*tfe.AgentPool, error) {
-	for _, agentPl := range agentPools {
-		if agentPl.Name == name {
-			return agentPl, nil
-		}
-	}
-	return nil, fmt.Errorf(fmt.Sprintf("There is no agentPool named %v", name))
-}
-
-func queryAgentPlByID(ctx context.Context, client *tfe.Client, agentID string) (*tfe.AgentPool, error) {
-	agentPool, err := client.AgentPools.Read(ctx, agentID)
-	if err != nil {
-		return nil, err
-	}
-	return agentPool, nil
-}
-
-func deleteAgentPool(ctx context.Context, client *tfe.Client, agentID string) error {
-	err := client.AgentPools.Delete(ctx, agentID)
-	if err != nil {
-		return err
-	}
-	return nil
-}
-
 func GETOverride(ctx context.Context, event *terraformv1.AgentpoolDbReadEvent) (terraformv1.Agentpool, int, error) {
 	log := core.LoggerFromContext(ctx)
 
@@ -81,12 +35,12 @@ func GETOverride(ctx context.Context, event *terraformv1.AgentpoolDbReadEvent) (
 	var queryErr error
 	if payloadObject.Spec().Id() != "" && payloadObject.Spec().IdPtr() != nil {
 		agentID := payloadObject.Spec().Id()
-		agentPl, queryErr = queryAgentPlByID(ctxTfe, client, agentID)
+		agentPl, queryErr = conf.QueryAgentPlByID(ctxTfe, client, agentID)
 	}
 	if payloadObject.Spec().Organization() != "" && payloadObject.Spec().OrganizationPtr() != nil &&
 		payloadObject.Spec().Name() != "" && payloadObject.Spec().NamePtr() != nil {
-		agentPools, _ := queryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
-		agentPl, queryErr = queryAgentPlByName(agentPools, payloadObject.Spec().Name())
+		agentPools, _ := conf.QueryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
+		agentPl, queryErr = conf.QueryAgentPlByName(agentPools, payloadObject.Spec().Name())
 	}
 
 	if queryErr != nil {
@@ -119,7 +73,7 @@ func POSTOverride(ctx context.Context, event *terraformv1.AgentpoolDbCreateEvent
 		er := fmt.Errorf("error from configTfc")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	agentPl, err := createAgentPool(ctxTfe, client, orgName, agentName)
+	agentPl, err := conf.CreateAgentPool(ctxTfe, client, orgName, agentName)
 	if err != nil {
 		er := fmt.Errorf("error from createAgentPool")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
@@ -144,7 +98,7 @@ func DELETEOverride(ctx context.Context, event *terraformv1.AgentpoolDbDeleteEve
 		return http.StatusInternalServerError, core.NewError(er, err)
 	}
 	if payloadObject.Spec().Id() != "" && payloadObject.Spec().IdPtr() != nil {
-		err := deleteAgentPool(ctxTfe, client, payloadObject.Spec().Id())
+		err := conf.DeleteAgentPool(ctxTfe, client, payloadObject.Spec().Id())
 		if err != nil {
 			er := fmt.Errorf("error from deleteAgentPool")
 			return http.StatusInternalServerError, core.NewError(err, er)
@@ -152,13 +106,13 @@ func DELETEOverride(ctx context.Context, event *terraformv1.AgentpoolDbDeleteEve
 	}
 	if payloadObject.Spec().Organization() != "" && payloadObject.Spec().OrganizationPtr() != nil &&
 		payloadObject.Spec().Name() != "" && payloadObject.Spec().NamePtr() != nil {
-		agentPools, _ := queryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
-		agentPl, queryErr := queryAgentPlByName(agentPools, payloadObject.Spec().Name())
+		agentPools, _ := conf.QueryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
+		agentPl, queryErr := conf.QueryAgentPlByName(agentPools, payloadObject.Spec().Name())
 		if queryErr != nil {
 			er := fmt.Errorf("error form queryAgentPlByName")
 			return http.StatusInternalServerError, core.NewError(er, queryErr)
 		}
-		err := deleteAgentPool(ctxTfe, client, agentPl.ID)
+		err := conf.DeleteAgentPool(ctxTfe, client, agentPl.ID)
 		if err != nil {
 			er := fmt.Errorf("error form deleteAgentPool")
 			return http.StatusInternalServerError, core.NewError(er, err)
@@ -177,7 +131,7 @@ func GETAgentpoolListOverride(ctx context.Context, event *terraformv1.AgentpoolL
 		er := fmt.Errorf("error from configTFC")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	agentPls, err := queryAgentPools(ctxTfe, client, orgName)
+	agentPls, err := conf.QueryAgentPools(ctxTfe, client, orgName)
 	if err != nil {
 		er := fmt.Errorf("error from queryAgentPools")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)

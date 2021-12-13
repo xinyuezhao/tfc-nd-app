@@ -89,12 +89,12 @@ agentpool: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v11 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v11 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v11 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v12 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v12 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v12 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v11 agentmgr:v11 agentpoolmgr:v11 hashicorp/tfc-agent:latest | gzip > images.tar.gz
+	docker save organizationmgr:v12 agentmgr:v12 agentpoolmgr:v12 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris
