@@ -12,32 +12,10 @@ spec:
       mongo:
         address: mongo-svc:27017
       directory:
-        service: clusterd
-        endpoint: clusterd-directory-notifier
-        databaseName: clusterd-directory
+        service: organization-manager
+        endpoint: organization-manager-directory-notifier
+        databaseName: organization-manager-directory
   services:
-    - service: clusterd
-      restPort: 0.0.0.0:8090
-      endpoint: clusterd-topic
-      databaseName: clusterd
-      managedResources:
-        - managedResource: terraform.argo.cisco.com/v1.Cluster
-          endpoint: cluster-topic
-        - managedResource: terraform.argo.cisco.com/v1.ClusterMember
-          endpoint: cluster-topic
-    - service: node-manager
-      endpoint: node-manager-topic
-      restPort: 0.0.0.0:8089
-      databaseName: nodemgr
-      managedResources:
-        - managedResource: terraform.argo.cisco.com/v1.Node
-          endpoint: node-topic
-        - managedResource: book.aci.cisco.com/v1.Book
-          endpoint: node-topic
-        - managedResource: book.aci.cisco.com/v1.Publisher
-          endpoint: node-topic
-        - managedResource: terraform.argo.cisco.com/v1.Task
-          endpoint: task-topic
     - service: agent-manager
       endpoint: agent-manager-topic
       restPort: 0.0.0.0:8089

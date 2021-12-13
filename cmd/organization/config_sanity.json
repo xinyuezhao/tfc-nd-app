@@ -1,10 +1,61 @@
 {
     "rest": {
-        "address":"0.0.0.0:8089"
+        "address":"0.0.0.0:8090"
     },
-    "logger":{},
+    "logger":{}, 
+    "app":{
+        "applications": [
+            {
+                "name": "se",
+                "prefix": "sedge",
+                "resources": [
+                {
+                    "name": "terraform.argo.cisco.com/v1.Organization",
+                    "service": "organization-manager",
+                    "endpoint": "organization-manager-topic"
+                },
+                {
+                    "name": "terraform.argo.cisco.com/v1.Agent",
+                    "service": "agent-manager",
+                    "endpoint": "agent-manager-topic"
+                },
+                {
+                    "name": "terraform.argo.cisco.com/v1.TokenList",
+                    "service": "agent-manager",
+                    "endpoint": "agent-topic"
+                },
+                {
+                    "name": "terraform.argo.cisco.com/v1.Agentpool",
+                    "service": "agentpool-manager",
+                    "endpoint": "agentpool-topic"
+                },
+                {
+                    "name": "terraform.argo.cisco.com/v1.AgentpoolList",
+                    "service": "agentpool-manager",
+                    "endpoint": "agentpool-topic"
+                }
+                ],
+                "services": [
+                {
+                    "name": "organization-manager",
+                    "endpoint": "organization-manager-topic",
+                    "database": "organizationmgr"
+                },
+                {
+                    "name": "agent-manager",
+                    "endpoint": "agent-manager-topic",
+                    "database": "agentmgr"
+                },
+                {
+                    "name": "agentpool-manager",
+                    "endpoint": "agentpool-manager-topic"
+                }
+                ]
+            }
+        ]
+    },
     "transport":{
-        "type": "kafka", 
+        "type": "kafka",
         "endpoint": "organization-manager-topic"
     },
     "platform":{
@@ -18,15 +69,15 @@
     "db":{
         "path": "mongo-svc:27017", 
         "type": "mongodb",
-        "name": "organizationmgr"
+        "name": "organization-manager"
     },
     "directory":{
-        "service": "clusterd",
+        "service": "organization-manager",
         "type": "mongodb",
         "skipDefault": true,
-        "endpoint": "clusterd-directory-notifier",
+        "endpoint": "organization-manager-directory-notifier",
         "database": {
-            "name": "clusterd-directory"
+            "name": "organization-manager-directory"
         }
     }
 }

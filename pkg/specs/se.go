@@ -14,44 +14,25 @@ const (
 func GenerateSESpec() (name string, ts []string, data []byte) {
 	appName := "se"
 	appPrefix := "sedge"
-	nodeService := "node-manager"
-	nodeServiceTopic := nodeManagerTopic
-	clusterService := "clusterd"
-	clusterServiceTopic := "clusterd-topic"
-	node := terraformv1.NodeFactory().Meta().Key()
-	nodeTopic := "node-topic"
-	cluster := terraformv1.ClusterFactory().Meta().Key()
-	clusterTopic := "cluster-topic"
-	clusterMember := terraformv1.ClusterMemberFactory().Meta().Key()
-	topics := []string{nodeServiceTopic, clusterServiceTopic, nodeTopic, clusterTopic}
+	organizationService := "organization-manager"
+	organizationServiceTopic := "organization-manager-topic"
+	organizationTopic := "organization-topic"
+	organization := terraformv1.OrganizationFactory().Meta().Key()
+	topics := []string{organizationServiceTopic}
 	appDoc := `{
 		"name": "` + appName + `",
 		"prefix": "` + appPrefix + `",
 		"resources": [
 		{
-			"name": "` + node + `",
-			"service": "` + nodeService + `",
-			"endpoint": "` + nodeTopic + `"
-		},
-		{
-			"name": "` + cluster + `",
-			"service": "` + clusterService + `",
-			"endpoint": "` + clusterTopic + `"
-		},
-		{
-			"name": "` + clusterMember + `",
-			"service": "` + clusterService + `",
-			"endpoint": "` + clusterTopic + `"
+			"name": "` + organization + `",
+			"service": "` + organizationService + `",
+			"endpoint": "` + organizationTopic + `"
 		}
 		],
 		"services": [
-			{
-			"name": "` + nodeService + `",
-			"endpoint": "` + nodeServiceTopic + `"
-		},
 		{
-			"name": "` + clusterService + `",
-			"endpoint": "` + clusterServiceTopic + `"
+			"name": "` + organizationService + `",
+			"endpoint": "` + organizationServiceTopic + `"
 		}
 		]
 	}`
@@ -60,6 +41,6 @@ func GenerateSESpec() (name string, ts []string, data []byte) {
 
 // CheckSEDirectory check the directory entires
 func CheckSEDirectory(dir fw.Directory) bool {
-	_, err := dir.Locator().Endpoint("node-manager")
+	_, err := dir.Locator().Endpoint("organization-manager")
 	return err == nil
 }

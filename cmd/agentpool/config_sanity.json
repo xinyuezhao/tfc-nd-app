@@ -21,12 +21,12 @@
         "name": "agentpoolmgr"
     },
     "directory":{
-        "service": "clusterd",
+        "service": "organization-manager",
         "type": "mongodb",
         "skipDefault": true,
-        "endpoint": "clusterd-directory-notifier",
+        "endpoint": "organization-manager-directory-notifier",
         "database": {
-            "name": "clusterd-directory"
+            "name": "organization-manager-directory"
         }
     }
 }

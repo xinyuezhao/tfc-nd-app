@@ -75,13 +75,7 @@ sanity: clean lint docker-images
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
-services: clusterd node organization agent agentpool
-
-clusterd: generate
-	go build ./cmd/cluster
-
-node: generate
-	go build ./cmd/node
+services: organization agent agentpool
 
 organization: generate
 	go build ./cmd/organization
@@ -95,14 +89,12 @@ agentpool: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/nodemgr/Dockerfile --tag nodemgr:v11 .
-	docker build --file deployment/docker/clustermgr/Dockerfile --tag clustermgr:v11 .
 	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v11 .
 	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v11 .
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v11 .
 
 docker-archive: docker-images
-	docker save nodemgr:v11 clustermgr:v11 organizationmgr:v11 agentmgr:v11 agentpoolmgr:v11 hashicorp/tfc-agent:latest | gzip > images.tar.gz
+	docker save organizationmgr:v11 agentmgr:v11 agentpoolmgr:v11 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 intersight: docker-archive
 	cp node deployment/docker/intersight/nodemgr/polaris

@@ -10,36 +10,6 @@
           "prefix": "sedge",
           "resources": [
             {
-              "name": "book.aci.cisco.com/v1.Book",
-              "service": "node-manager",
-              "endpoint": "node-topic"
-            },
-            {
-              "name": "book.aci.cisco.com/v1.Publisher",
-              "service": "node-manager",
-              "endpoint": "node-topic"
-            },
-            {
-              "name": "terraform.argo.cisco.com/v1.Node",
-              "service": "node-manager",
-              "endpoint": "node-topic"
-            },
-            {
-              "name": "terraform.argo.cisco.com/v1.NodeOper",
-              "service": "node-manager",
-              "endpoint": "nodeoper-topic"
-            },
-            {
-              "name": "terraform.argo.cisco.com/v1.Cluster",
-              "service": "clusterd",
-              "endpoint": "cluster-topic"
-            },
-            {
-              "name": "terraform.argo.cisco.com/v1.ClusterMember",
-              "service": "clusterd",
-              "endpoint": "cluster-topic"
-            },
-            {
               "name": "terraform.argo.cisco.com/v1.Organization",
               "service": "organization-manager",
               "endpoint": "organization-topic"
@@ -67,14 +37,6 @@
           ],
           "services": [
             {
-              "name": "node-manager",
-              "endpoint": "node-manager-topic"
-            },
-            {
-              "name": "clusterd",
-              "endpoint": "clusterd-topic"
-            },
-            {
               "name": "organization-manager",
               "endpoint": "organization-manager-topic"
             },
@@ -92,7 +54,7 @@
     },
     "transport": {
       "type": "kafka",
-      "endpoint": "clusterd-topic"
+      "endpoint": "organization-manager-topic"
     },
     "platform":{
       "kafka":{
