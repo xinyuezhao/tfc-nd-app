@@ -46,7 +46,7 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 	name := event.Resource().(terraformv1.Agent).Spec().Name()
 	obj, err := event.Store().ResolveByName(ctx, terraformv1.AgentDNForDefault(name))
 	if err != nil {
-		er := fmt.Errorf("error from resolveByName()")
+		er := fmt.Errorf("error from ResolveByName")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	payloadObject := obj.(terraformv1.Agent)
@@ -54,11 +54,9 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 		return nil, http.StatusInternalServerError, err
 	}
 	TLSclient := conf.ConfigTLSClient()
-	// call feature api to get feature instance status
-	// whether query feature instance operstate right after it was created?
 	features, err := conf.QueryFeatures(ctx, TLSclient)
 	if err != nil {
-		er := fmt.Errorf("error from queryFeatures")
+		er := fmt.Errorf("error from QueryFeatures")
 		return nil, http.StatusInternalServerError, core.NewError(err, er)
 	}
 	for _, feature := range features.Instances[0].Features {
@@ -66,7 +64,6 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 			payloadObject.SpecMutable().SetStatus(feature.OperState)
 		}
 	}
-	// get agentPoolId != "" when agentToken was created automatically
 	agentPlId := payloadObject.Spec().AgentpoolId()
 	if agentPlId != "" {
 		_, TFEclient, err := conf.ConfigTFC()
@@ -74,7 +71,7 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 			er := fmt.Errorf("error from configTFC")
 			return nil, http.StatusInternalServerError, core.NewError(err, er)
 		}
-		// get agentId by agentPoolId & agentName when agentToken was created automatically
+		// get agentId by agentPoolId & agentName when userToken was provided by user
 		agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
 		if err != nil {
 			er := fmt.Errorf("error from queryAgents")
@@ -123,9 +120,8 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 				payloadObject.SpecMutable().SetStatus(feature.OperState)
 			}
 		}
-		// get agentPoolId
 		agentPlId := payloadObject.Spec().AgentpoolId()
-		// query agent status only when agentToken was created by backend
+		// query agent status only when userToken was provided by user
 		if agentPlId != "" {
 			_, TFEclient, err := conf.ConfigTFC()
 			if err != nil {
