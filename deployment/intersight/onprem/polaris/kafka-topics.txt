@@ -1,6 +1,0 @@
-node-topic    3
-nodeoper-topic   3
-cluster-topic    3
-node-manager-topic  3
-clusterd-topic   3
-
