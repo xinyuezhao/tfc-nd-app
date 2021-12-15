@@ -89,32 +89,12 @@ agentpool: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v12 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v12 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v12 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v17 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v17 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v17 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v12 agentmgr:v12 agentpoolmgr:v12 hashicorp/tfc-agent:latest | gzip > images.tar.gz
-
-intersight: docker-archive
-	cp node deployment/docker/intersight/nodemgr/polaris
-	cp cmd/node/config.json deployment/docker/intersight/nodemgr/
-	docker build --tag polaris:v1 deployment/docker/intersight/nodemgr
-
-	cp cluster deployment/docker/intersight/clustermgr/rigel
-	cp cmd/cluster/config.json deployment/docker/intersight/clustermgr
-	docker build --tag rigel:v1 deployment/docker/intersight/clustermgr
-
-	docker save polaris:v1 | gzip > polaris_image.tar.gz
-	docker save rigel:v1 | gzip > rigel_image.tar.gz
-
-deploy-on-kind: docker-images
-	kind get clusters | grep -E "^argo$$" || (echo 'No kind cluster found for argo. Run `kind create cluster --name argo`'; exit 1)
-	kind load docker-image nodemgr:v1 --name argo
-	kind load docker-image clustermgr:v1 --name argo
-
-	kubectl --context kind-argo delete --ignore-not-found -f deployment/kind/all-in-one.yaml
-	kubectl --context kind-argo apply -f deployment/kind/all-in-one.yaml
+	docker save organizationmgr:v17 agentmgr:v17 agentpoolmgr:v17 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 spartan: clean bundle generate
 	GOOS=linux GOARCH=amd64 go build ./cmd/cluster
