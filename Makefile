@@ -71,7 +71,7 @@ bundle:
 $(eval $(call build-for-linux,sanity))
 sanity: clean lint docker-images
 	go test -c ./cmd/testsuite
-	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v1 .
+	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v21 .
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
@@ -89,19 +89,11 @@ agentpool: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v17 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v17 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v17 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v21 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v21 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v21 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v17 agentmgr:v17 agentpoolmgr:v17 hashicorp/tfc-agent:latest | gzip > images.tar.gz
-
-spartan: clean bundle generate
-	GOOS=linux GOARCH=amd64 go build ./cmd/cluster
-	GOOS=linux GOARCH=amd64 go build ./cmd/node
-	docker build --file deployment/spartan/node/Dockerfile --tag terraform-spartan-node:v1 .
-	docker build --file deployment/spartan/clusterd/Dockerfile --tag terraform-spartan-cluster:v1 .
-	rm node
-	rm cluster
+	docker save organizationmgr:v21 agentmgr:v21 agentpoolmgr:v21 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 .PHONY: generate lint test terraform services
