@@ -71,7 +71,7 @@ bundle:
 $(eval $(call build-for-linux,sanity))
 sanity: clean lint docker-images
 	go test -c ./cmd/testsuite
-	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v21 .
+	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v1 .
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
@@ -89,11 +89,11 @@ agentpool: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v21 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v21 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v21 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v1 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v1 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v1 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v21 agentmgr:v21 agentpoolmgr:v21 hashicorp/tfc-agent:latest | gzip > images.tar.gz
+	docker save organizationmgr:v1 agentmgr:v1 agentpoolmgr:v1 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 .PHONY: generate lint test terraform services

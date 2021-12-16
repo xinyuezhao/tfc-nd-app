@@ -1,5 +1,0 @@
-{
-    "inbandIP": "10.1.1.1",
-    "name": "node-123",
-    "cluster": "/v1/clusters/cluster-1" 
-}

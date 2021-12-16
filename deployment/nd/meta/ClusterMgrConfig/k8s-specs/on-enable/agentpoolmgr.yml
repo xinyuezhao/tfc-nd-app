@@ -51,7 +51,7 @@ spec:
             path: cacerts.crt
       containers:
       - name: agentpoolmgr
-        image: agentpoolmgr:v21
+        image: agentpoolmgr:v1
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: kafka-certs
