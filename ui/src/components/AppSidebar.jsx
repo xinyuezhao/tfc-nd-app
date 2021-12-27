@@ -15,17 +15,17 @@ function AppSidebar() {
       path: `${pathPrefix}/home`,
       title: "Agents",
       icon: IconConstants.PLUGIN,
+      // icon-participant-list
     },
     {
       id: "Auth",
       path: `${pathPrefix}/auth`,
       title: "Auth",
-      icon: IconConstants.PLUGIN,
+      icon: IconConstants.COG,
     },
   ];
 
   return (
-    <>
       <Sidebar
         theme={Sidebar.THEMES.INDIGO}
         title="Terraform Cloud"
@@ -33,7 +33,6 @@ function AppSidebar() {
         locked={true}
         items={sidebarItems}
       />
-    </>
   );
 }
 

@@ -34,34 +34,25 @@ function Agent(props) {
       setDescription(agent.description);
       setAgentToken(agent.agentToken);
     }
-    console.log("Inside create agent");
+    console.log("Inside create agent without user token");
   }, [agent]);
 
   const updateDetails = useCallback(() => {
     let payload = {
-      agentName,
-      description,
-      agentToken,
+      name: agentName,
+      description: description,
+      token: agentToken,
     }
-
-    const closeDetailsScreenActions = () => {
-      screenActions.closeScreen(screenId);
-      props.close();
-    };
 
     if (agent) {
       updateAgent(agent?.sys_id, payload);
     } else {
       createAgent(payload);
     }
-    closeDetailsScreenActions();
   }, [
-    props,
     agent,
     agentName,
     description,
-    screenId,
-    screenActions,
     updateAgent,
     createAgent,
     agentToken,
@@ -75,8 +66,10 @@ function Agent(props) {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
+      console.log("screen action ID = ", screenId)
+      screenActions.closeScreen("create-agent-modal");
     }
-  }, [checkBeforeSubmit, updateDetails]);
+  }, [checkBeforeSubmit, updateDetails, screenActions, screenId]);
 
 
   const onClose = () => {
@@ -97,7 +90,9 @@ function Agent(props) {
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
         <Card className="col" style={{ width: "90%", paddingLeft: "30px", paddingTop: "0px" }}>
             <div className="agent-container justify-content-center">
-              <div className="row">Agent Name</div>
+              <div className="row">Agent Name
+                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              </div>
               <div className="row p-5">
                 <Input required=""
                   value={agentName}

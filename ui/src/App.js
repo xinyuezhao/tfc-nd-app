@@ -14,6 +14,16 @@ import "./App.css";
 export const pathPrefix = "/appcenter/cisco/terraformcloud/ui";
 
 function App(props) {
+  const menuOptions = [
+    {
+      id: "Delete Agent",
+      Header: "Delete Agent",
+      accessor: "Delete Agent",
+      align: "center",
+      tooltips: true,
+    },
+  ];
+  
   useEffect(() => {
     const payload = {
       nd_url: window.location.origin,
@@ -50,11 +60,20 @@ function App(props) {
               className="content-fluid relative"
             >
               <AppSidebar />
-              <div className="content-header"></div>
+              <div className="content-header">
+              </div>
               <main className="main-con">
                 <header className="header header--compressed" style={{ background: "transparent" }}>
                   <div className="header-bar container">
-                    <div className="header-bar__main"></div>
+                    <div className="header-bar__main">
+                    <div className="right-menu-icons" style={{ float:"right", paddingTop: "10px" }}>
+                      <span className="badge-wrapper">
+                            <button className="btn btn--icon dropdown--type-button btn--small  btn--dropdown" items={menuOptions}>
+                              <span className="icon-cog icon-small"></span>
+                            </button>
+                      </span>
+                    </div>
+                    </div>
                   </div>
                 </header>
                 <div>
@@ -100,3 +119,7 @@ function App(props) {
 
 export default withRouter(App);
 
+// this is for ico on top
+// <span className="icon-cog"
+//       style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px"}}>
+//     </span>

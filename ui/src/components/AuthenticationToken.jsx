@@ -1,19 +1,17 @@
 import React,{useState, useEffect,useCallback} from 'react';
 
 import {
-  useObjectPickerSubmit,
   DetailScreen,
   Input,
-  useScreenActions,
-  Card,
-  LABELS,
   Panel,
   Cards,
   MoreLessPanel,
-  Button
+  InfoAlert,
+  useScreenActions,
 } from 'blueprint-react';
 import _ from 'lodash';
 import './CiscoObjectPicker.scss';
+import AgentTable from './AgentTable';
 
 /**
  * A sample of create new renderer funciton component that is passed as createItemRenderer.
@@ -26,19 +24,17 @@ function AuthenticationToken(props) {
     screenActions,
   } = props;
 
-  const [agentToken, setAgentToken] = useState('');
-  const [isOpen, setIsOpen] = useState(true);
+  const [userToken, setUserToken] = useState('');
+  // const [isOpen, setIsOpen] = useState(true);
+  const [selectedToken, setSelectedToken] = useState(false);
+  const action = useScreenActions();
 
   useEffect(() => {
     if (token) {
-      setAgentToken(token.agentToken);
+      setUserToken(token.userToken);
     }
   }, [token]);
 
-
-  const handleOnChange = useEffect((evt) => {
-    //   // set agent pool name and unique ID here
-  }, []);
 
   const checkBeforeSubmit = useCallback(() => {
     return true;
@@ -47,30 +43,41 @@ function AuthenticationToken(props) {
   const onAction = useCallback(() => {
     const result = checkBeforeSubmit();
     if (result) {
-      handleOnChange();
+      if (selectedToken) {
+        console.log("usertoken is true so pass the token ", token)
+        action.openScreen(AgentTable, {
+          title: "title",
+          screenId: "agent-table",
+          data: selectedToken,
+        });
+        // screenActions.closeScreen("create-agent-pool-modal"); // screenId
+      } else {
+        console.log("usertoken is false then pass empty ", token)
+        action.openScreen(AgentTable, {
+          title: "title",
+          screenId: "agent-table",
+          data: selectedToken,
+        });
+        // screenActions.closeScreen("create-agent-pool-modal");
+      }
     }
-  }, [checkBeforeSubmit, handleOnChange]);
+  }, [checkBeforeSubmit, selectedToken, token, action, screenActions]);
 
+  const displayTokenInput = () => {
+    console.log("In display TOKEN ")
+    setSelectedToken(true);
+  }
 
-  const onClose = () => {
-    setIsOpen(false);
-  };
-
-  const onMinimize = (a) => {
-    props.close();
-  };
-
+  const hideTokenInput = () => {
+    console.log("In HIDE TOKEN ")
+    setSelectedToken(false);
+  }
 
   return (
     <DetailScreen
       onAction={onAction}
-      onClose={onClose}
-      onMinimize={onMinimize}
       title={"User Authentication"}
-      createItemRenderer={handleOnChange}
-      cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Save"}
-      isOpen={isOpen}
     >
     <div style={{ paddingLeft: "10%" }}>
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
@@ -89,35 +96,50 @@ function AuthenticationToken(props) {
             {
               headerContent: {
                 title: 'Terraform API access',
-                subtitle: <MoreLessPanel key="more-less-1a"
+                subtitle: (<MoreLessPanel key="more-less-1a"
                   persistCollapsed={true}
                   collapsedLines={2}
                   moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
                   By providing the one time user authentication token, users will be able to create agents
                   without needing to provide unique agent token. Terraform Connect will also be able to display subscription
                   details and utilization overview.
-                </MoreLessPanel>,
+                </MoreLessPanel>),
               },
-              uid: 'cards-compliance-group-single-value-0'
+              uid: 'token-present-1',
+              onAction: displayTokenInput
+
             },
             {
               headerContent: {
                 title: 'No Terraform API access',
-                subtitle: <MoreLessPanel key="more-less-1a"
+                subtitle: (<MoreLessPanel key="more-less-1a"
                   persistCollapsed={true}
                   collapsedLines={2}
                   moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-                  Agent taken will be required for every agent creation. There will be no visibility into subscription details and utilization overview.
-                </MoreLessPanel>
+                  Agent token will be required for every agent creation. There will be no visibility into subscription details and utilization overview.
+                </MoreLessPanel>),
               },
-              uid: 'cards-compliance-group-single-value-1',
-              onAction: (cardProps, cardState, evt) => {
-                // You logic goes here
-                console.log(cardProps);
-            }
+              uid: 'token-absent-0',
+              onAction: hideTokenInput
             }
           ]}
         />
+        {!selectedToken ? null : <div className="cards__header"
+        style={{ margin: "2px" }}>
+          <InfoAlert
+            title="Alert Title"
+            children="Instruction on how to use authentication. Get terraform user token."
+          />
+          <div className="cards__header" style={{ paddingLeft: "0px", paddingTop: "35px" }}>Authentication Token
+            <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+          </div>
+          <div className="cards__header" style={{ paddingBottom: "25px", paddingRight: "75%", paddingLeft: "0px"}}>
+            <Input required=""
+              value={userToken}
+              onChange={(e) => setUserToken(e.target.value)}
+            />
+          </div>
+        </div>}
       </Panel>
       {/* ========================================== */}
     </div>
