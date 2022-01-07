@@ -1,7 +1,8 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState} from "react";
 import { Route, Switch, Redirect } from "react-router-dom";
 import { withRouter } from "react-router";
-import { ScreenManager, ErrorBoundary } from "blueprint-react";
+import { ScreenManager,
+  ErrorBoundary, Dropdown, LABELS, IconButton, Modal, useScreenActions  } from "blueprint-react";
 
 import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";
@@ -11,47 +12,42 @@ import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
 // import { isUserLogin } from "./service/api_service";
 
+
 export const pathPrefix = "/appcenter/cisco/terraformcloud/ui";
 
 function App(props) {
+
+  const [showAbout, setShowAbout] = useState(false);
+  const actions = useScreenActions();
+
   const menuOptions = [
     {
-      id: "Delete Agent",
-      Header: "Delete Agent",
-      accessor: "Delete Agent",
-      align: "center",
-      tooltips: true,
+      label: "Setup",
+      action: () => {
+        actions.openScreen(AuthenticationToken, {
+        title: "title",
+        screenId: "authentication-token",
+      })
+      console.log("open screen")
+    }
+    },
+    {
+      label: LABELS.about,
+      action: () => setShowAbout(true),
     },
   ];
-  
+
+
   useEffect(() => {
     const payload = {
       nd_url: window.location.origin,
     };
-    // isUserLogin(payload)
-    //   .then((response) => {
-    //     if (response.status === 200) {
-    //       localStorage.setItem("login_type", response.data.login_mechanism);
-    //       localStorage.setItem(
-    //         "instance_url",
-    //         response.data.terraformcloud_instance_url
-    //       );
-    //       window.location.pathname === pathPrefix + "/login" &&
-    //         props.history.push(pathPrefix + "/dashboard");
-    //     }
-    //   })
-    //   .catch((err) => {
-    //     if (err.response?.status === 401) {
-    //       props.history.push({
-    //         pathname: pathPrefix + "/login",
-    //         state: { sessionExpired: true },
-    //       });
-    //     }
-    //   });
+
   }, [props.history]);
   return (
     <div>
       <ErrorBoundary>
+      <AboutModal show={showAbout} onClose={() => setShowAbout(false)} />
         <ScreenManager>
           <div id="content-container" style={{ background: "#dfdfdfa1" }}>
             <div
@@ -67,11 +63,12 @@ function App(props) {
                   <div className="header-bar container">
                     <div className="header-bar__main">
                     <div className="right-menu-icons" style={{ float:"right", paddingTop: "10px" }}>
-                      <span className="badge-wrapper">
-                            <button className="btn btn--icon dropdown--type-button btn--small  btn--dropdown" items={menuOptions}>
-                              <span className="icon-cog icon-small"></span>
-                            </button>
-                      </span>
+                    <Dropdown
+                    type={Dropdown.TYPE.BUTTON}
+                    size={Dropdown.SIZE.SMALL}
+                    icon={IconButton.ICON.COG}
+                    menuDirection={Dropdown.MENU_DIRECTION.LEFT}
+                    items={menuOptions} />
                     </div>
                     </div>
                   </div>
@@ -119,7 +116,16 @@ function App(props) {
 
 export default withRouter(App);
 
-// this is for ico on top
-// <span className="icon-cog"
-//       style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px"}}>
-//     </span>
+
+const AboutModal = (props) => {
+  const {
+    show,
+    onClose,
+  } = props;
+
+  return (<Modal title="Terraform Cloud" isOpen={show} onClose={onClose}>
+  <p>Version ##.#(#)</p>
+  <p>Cisco Systems, Inc. All rights reserved.</p>
+  {/*<p>Current System Time: <Timestamp relative date={Date} autoUpdate /> </p>  */}
+</Modal>)
+}

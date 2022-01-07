@@ -20,7 +20,7 @@ import Agent from "./CreateAgent";
 import AgentWoToken from "./CreateAgentWoToken";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import { pathPrefix } from "../App";
-// import {emptyImage} from "blueprint-react/assets/images/empty-raining.svg";
+import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
 import { Link } from "react-router-dom";
 
 function AgentTable(props) {
@@ -330,7 +330,7 @@ function AgentTable(props) {
               </header>
             </div>
             <div align="center">
-              {/* <img src={emptyImage} alt="empty"></img> */}
+              <img src={emptyImage} alt="empty"/>
               <h4 align="center">No results found</h4>
               <p align="center">Create a new Agent</p>
               <Button theme={"btn--primary"} onClick={() => handleOpenAgent()}>Create Agent</Button>

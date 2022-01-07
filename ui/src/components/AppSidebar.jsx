@@ -1,5 +1,5 @@
 import React from "react";
-import { Sidebar, IconConstants } from "blueprint-react";
+import { Sidebar, IconConstants, Icon } from "blueprint-react";
 import { pathPrefix } from "../App";
 
 function AppSidebar() {
@@ -14,7 +14,7 @@ function AppSidebar() {
       id: "Agents",
       path: `${pathPrefix}/home`,
       title: "Agents",
-      icon: IconConstants.PLUGIN,
+      icon: Icon.TYPE.PARTICIPANT_LIST,
       // icon-participant-list
     },
     {
