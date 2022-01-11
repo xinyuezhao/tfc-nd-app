@@ -11,7 +11,8 @@ import {
   LABELS,
   IconConstants,
   IconButton,
-  SecondarySidebar
+  SecondarySidebar,
+  Card
 } from "blueprint-react";
 import {
   fetchAgents,
@@ -26,9 +27,13 @@ import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
 import { Link } from "react-router-dom";
 
 function AgentTable(props) {
+
+  // deletesingle agent function and print onitemselected to print the selected 
+
   const menuOptions = [
     {
       id: "Delete Agent",
+      label: "Delete Agent",
       Header: "Delete Agent",
       accessor: "Delete Agent",
       align: "center",
@@ -81,22 +86,27 @@ function AgentTable(props) {
       width: 300,
       icon: Icon.TYPE.COG,
       Cell: (row) => (
-        // <Dropdown
-        // row={row}
-        // type={Dropdown.TYPE.BUTTON}
-        // size={Dropdown.SIZE.SMALL}
-        // icon={Icon.TYPE.MORE}
-        // preferredPlacements={["bottom"]}
-        // items={menuOptions} />
-        <Dropdown 
-        header="Dropdown header" 
-        type={Dropdown.TYPE.ICON} icon={Icon.TYPE.MORE} size={Icon.SIZE.SMALL}  items={menuOptions}/>
+        <Dropdown
+        row={row}
+        type={Dropdown.TYPE.ICON}
+        icon={Icon.TYPE.MORE}
+        size={Icon.SIZE.SMALL}
+        items={menuOptions}
+        onItemSelected={(data, selectedItem) => {
+          console.log("Item selected", data, selectedItem, row.original )
+          deleteAgents(row.original.description)
+            .then(() => {
+              setSuccessAlert("Deleted Agent %s Successfully", row.original.name);
+              getAgents();
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+            }}/>
       ),
     },
   ];
 
-  // <Dropdown row={row} type={Dropdown.TYPE.ICON} icon={Icon.TYPE.MORE} size={Icon.SIZE.SMALL} items={menuOptions}
-  // key={"dropdown-tool-key-2"}/>
 
   const action = useScreenActions();
 
@@ -194,6 +204,7 @@ function AgentTable(props) {
       });
   }
 
+
   const handleCreateAgent = useCallback((payload) => {
     console.log("start create agent");
     setInfoAlert("Creating Agent");
@@ -243,28 +254,12 @@ function AgentTable(props) {
     ]
   );
 
-  const handleViewAgent = useCallback(
+  const handleSidebar = useCallback(
     (data) => {
       console.log("handle view agent", data);
       setViewAgent(data);
-      const title = `Agent ${data.name}`;
-      action.openScreen(
-        {
-        title: title,
-        screenId: "abc",
-        viewAgent,
-        agent: data,
-        close: () => {
-          setOpenSidebar(false);
-        },
-        createAgent: handleCreateAgent,
-      });
-    },
-    [
-      action,
-      viewAgent,
-      handleCreateAgent,
-    ]
+      setOpenSidebar(!openSidebar);
+    }
   );
 
   const menuItems = [
@@ -286,6 +281,9 @@ function AgentTable(props) {
   });
   console.log("TableData = ", TableData);
 
+  const headerContent1 = {
+    title: "Agent", subtitle: `${viewAgent.name}`,
+  }
 
 
   return (
@@ -294,11 +292,27 @@ function AgentTable(props) {
     {checkComponentRender(
         openSidebar,
         <SecondarySidebar
-          secondarySidebarData={viewAgent}
-          handleOpenAgent={handleViewAgent}
-          openSidebar={openSidebar}
-          setOpenSidebar={(isOpen) => setOpenSidebar(isOpen)}
-        />
+          closable={true}
+          key="sidebar-key"
+          opened={openSidebar}
+          headerContent={headerContent1}
+          footerContent={<div style={{textAlign: 'center'}}>Footer content</div>}
+        >
+        <Card>
+          <h3 style={{ textAlign:"center"}}>{`${viewAgent.status}`}</h3>
+        </Card>
+        <div class="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
+          {/* ========================================== */}
+          <div style={{ paddingTop: "30px", color: "gray" }}>Description</div>
+          <div>{`${viewAgent.description}`}</div>
+          {/* ========================================== */}
+          <div style={{ paddingTop: "30px", color: "gray" }}>Organization</div>
+          <div>{`${viewAgent.organization}`}</div>
+          {/* ========================================== */}
+          <div style={{ paddingTop: "30px", color: "gray" }}>Agent Pool</div>
+          <div>{`${viewAgent.agentpool}`}</div>
+          {/* ========================================== */}
+        </SecondarySidebar>
       )}
 
     {checkComponentRender(
@@ -380,7 +394,7 @@ function AgentTable(props) {
           onPageChange={(pageNumber) => {
             setCurrentPage(pageNumber + 1);
           }}
-          onRowClick={handleViewAgent}
+          onRowClick={handleSidebar}
           getSelected={(agentsData) => {
             console.table("getSelected args %O: ", agentsData);
             agentsData &&
