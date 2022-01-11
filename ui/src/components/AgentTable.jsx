@@ -9,7 +9,9 @@ import {
   Icon,
   StructuredFilter,
   LABELS,
-  IconConstants
+  IconConstants,
+  IconButton,
+  SecondarySidebar
 } from "blueprint-react";
 import {
   fetchAgents,
@@ -77,12 +79,24 @@ function AgentTable(props) {
     {
       Header: 'options',
       width: 300,
+      icon: Icon.TYPE.COG,
       Cell: (row) => (
-          <Dropdown row={row} type={Dropdown.TYPE.ICON} icon={Icon.TYPE.MORE} size={Icon.SIZE.SMALL} items={menuOptions}
-          key={"dropdown-tool-key-2"}/>
+        // <Dropdown
+        // row={row}
+        // type={Dropdown.TYPE.BUTTON}
+        // size={Dropdown.SIZE.SMALL}
+        // icon={Icon.TYPE.MORE}
+        // preferredPlacements={["bottom"]}
+        // items={menuOptions} />
+        <Dropdown 
+        header="Dropdown header" 
+        type={Dropdown.TYPE.ICON} icon={Icon.TYPE.MORE} size={Icon.SIZE.SMALL}  items={menuOptions}/>
       ),
     },
   ];
+
+  // <Dropdown row={row} type={Dropdown.TYPE.ICON} icon={Icon.TYPE.MORE} size={Icon.SIZE.SMALL} items={menuOptions}
+  // key={"dropdown-tool-key-2"}/>
 
   const action = useScreenActions();
 
@@ -231,7 +245,7 @@ function AgentTable(props) {
 
   const handleViewAgent = useCallback(
     (data) => {
-      console.log("handle view agent", data.name);
+      console.log("handle view agent", data);
       setViewAgent(data);
       const title = `Agent ${data.name}`;
       action.openScreen(
@@ -276,6 +290,16 @@ function AgentTable(props) {
 
   return (
     <div className="background-container">
+
+    {checkComponentRender(
+        openSidebar,
+        <SecondarySidebar
+          secondarySidebarData={viewAgent}
+          handleOpenAgent={handleViewAgent}
+          openSidebar={openSidebar}
+          setOpenSidebar={(isOpen) => setOpenSidebar(isOpen)}
+        />
+      )}
 
     {checkComponentRender(
       showConfirm,
@@ -330,7 +354,7 @@ function AgentTable(props) {
               </header>
             </div>
             <div align="center">
-              <img src={emptyImage} alt="empty"/>
+              <img src={emptyImage} alt="empty" width="15%" height="15%"/>
               <h4 align="center">No results found</h4>
               <p align="center">Create a new Agent</p>
               <Button theme={"btn--primary"} onClick={() => handleOpenAgent()}>Create Agent</Button>
