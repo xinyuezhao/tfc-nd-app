@@ -41,3 +41,10 @@ spec:
           endpoint: agentpool-topic
         - managedResource: terraform.argo.cisco.com/v1.AgentpoolList
           endpoint: agentpool-topic
+    - service: credentials-manager
+      endpoint: credentials-manager-topic
+      restPort: 0.0.0.0:8089
+      databaseName: credentialsmgr
+      managedResources:
+        - managedResource: terraform.argo.cisco.com/v1.Credentials
+          endpoint: credentials-topic

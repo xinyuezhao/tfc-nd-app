@@ -100,6 +100,18 @@ spec:
    topicProperties:
     retention.ms: 86400
     segment.ms: 86400
+ - name: credentials-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
+ - name: credentials-manager-topic
+   partitions: 6
+   replicas: 1
+   topicProperties:
+    retention.ms: 86400
+    segment.ms: 86400
  acls:
  - name: organization-topic-wr
    cn: cisco-terraform
@@ -149,6 +161,22 @@ spec:
    cn: cisco-terraform
    topic: agentpool-manager-topic
    op: Read
+ - name: credentials-topic-wr
+   cn: cisco-terraform
+   topic: credentials-topic
+   op: Write
+ - name: credentials-topic-rd
+   cn: cisco-terraform
+   topic: credentials-topic
+   op: Read
+ - name: credentials-manager-topic-wr
+   cn: cisco-terraform
+   topic: credentials-manager-topic
+   op: Write
+ - name: credentials-manager-topic-rd
+   cn: cisco-terraform
+   topic: credentials-manager-topic
+   op: Read
 ---
 kind: PersistentVolumeClaim
 apiVersion: v1
@@ -194,3 +222,11 @@ spec:
     authType: open
     listenPaths:
     - path: "/sedgeapi/v1/cisco-terraform/agentpoolmgr"
+  - target: credentialsmgr
+    service:
+      scheme: http
+      name: credentialsmgr
+      port: 80
+    authType: open
+    listenPaths:
+    - path: "/sedgeapi/v1/cisco-terraform/credentialsmgr"

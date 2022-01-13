@@ -51,3 +51,13 @@ type Credential struct {
 		}
 	}
 }
+
+type Credentials struct {
+	Response []struct {
+		Components struct {
+			Terraform struct {
+				Credentials map[string]interface{}
+			}
+		}
+	}
+}

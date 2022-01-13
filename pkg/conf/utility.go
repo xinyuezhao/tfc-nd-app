@@ -322,6 +322,85 @@ func RemoveAgentPool(ctx context.Context, client *tfe.Client, agentPlID string) 
 	return nil
 }
 
+// Add credentials
+func AddCredentials(name string, token string) error {
+	client := ConfigTLSClient()
+	payload := map[string]string{
+		"name":  name,
+		"token": token,
+	}
+	payloadBuf := new(bytes.Buffer)
+	json.NewEncoder(payloadBuf).Encode(payload)
+	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/addcredentials", payloadBuf)
+	if err != nil {
+		er := fmt.Errorf("error while building request to add credentials")
+		return core.NewError(er, err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		er := fmt.Errorf("error while sending request to add credentials")
+		return core.NewError(er, err)
+	}
+	b, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		er := fmt.Errorf("error while parsing response from AddCredentials")
+		return core.NewError(er, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		err := fmt.Errorf("error! Response content from AddCredentials: %s", string(b))
+		return err
+	}
+	return nil
+}
+
+// Get credentials
+func GetCredentials() (string, bool, bool, error) {
+	configured := false
+	tokenExist := false
+	client := ConfigTLSClient()
+	var jsonData = []byte(`{"components": {"terraform":{}}}`)
+	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", bytes.NewBuffer(jsonData))
+	if err != nil {
+		er := fmt.Errorf("error while building request to get credentials")
+		return "", configured, tokenExist, core.NewError(er, err)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, err := client.Do(req)
+	if err != nil {
+		er := fmt.Errorf("error while sending request to get credentials")
+		return "", configured, tokenExist, core.NewError(er, err)
+	}
+	b, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		er := fmt.Errorf("error while parsing response from GetCredentials")
+		return "", configured, tokenExist, core.NewError(er, err)
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		err := fmt.Errorf("error! Response content from GetCredentials: %s", string(b))
+		return "", configured, tokenExist, err
+	}
+	credentials := Credentials{}
+	err = json.NewDecoder(resp.Body).Decode(&credentials)
+	if err != nil {
+		er := fmt.Errorf("error while decoding credentials")
+		return "", configured, tokenExist, core.NewError(er, err)
+	}
+	res := credentials.Response[0].Components.Terraform.Credentials
+	if token, ok := res["token"]; ok {
+		configured = true
+		tokenStr := token.(string)
+		if tokenStr != "" {
+			tokenExist = true
+		}
+		return tokenStr, configured, tokenExist, nil
+	} else {
+		return "", configured, tokenExist, nil
+	}
+}
+
 // Query credentials
 func QueryCredentials() (string, error) {
 	client := ConfigTLSClient()
