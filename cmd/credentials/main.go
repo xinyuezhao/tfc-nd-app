@@ -1,0 +1,87 @@
+package main
+
+import (
+	"context"
+	"fmt"
+	"net/http"
+
+	"golang.cisco.com/argo/pkg/core"
+	"golang.cisco.com/argo/pkg/mo"
+	"golang.cisco.com/argo/pkg/service"
+	"golang.cisco.com/examples/terraform/gen/schema"
+	"golang.cisco.com/examples/terraform/gen/terraformv1"
+	"golang.cisco.com/examples/terraform/pkg/conf"
+	"golang.cisco.com/examples/terraform/pkg/handlers"
+	"golang.cisco.com/examples/terraform/pkg/platform"
+)
+
+func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent) (terraformv1.Credentials, int, error) {
+	log := core.LoggerFromContext(ctx)
+	log.Info("register overriding GET credentials")
+	payloadObject := event.Resource().(terraformv1.Credentials)
+	name := payloadObject.Spec().Name()
+	token, configured, tokenExist, err := conf.GetCredentials()
+	if err != nil {
+		er := fmt.Errorf("error from GetCredentials")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
+	}
+	result := terraformv1.CredentialsFactory()
+	errs := make([]error, 0)
+	errs = append(errs, result.SpecMutable().SetConfigured(configured),
+		result.SpecMutable().SetTokenExist(tokenExist),
+		result.SpecMutable().SetToken(token),
+		result.SpecMutable().SetName(name))
+	if err := core.NewError(errs...); err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	return result, http.StatusOK, nil
+}
+
+func POSTOverride(ctx context.Context, event *terraformv1.CredentialsDbCreateEvent) (terraformv1.Credentials, int, error) {
+	log := core.LoggerFromContext(ctx)
+
+	log.Info("register overriding POST credentials")
+	payloadObject := event.Resource().(terraformv1.Credentials)
+	name := payloadObject.Spec().Name()
+	token := payloadObject.Spec().Token()
+	err := conf.AddCredentials(name, token)
+	if err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	result := terraformv1.CredentialsFactory()
+	errs := make([]error, 0)
+	errs = append(errs, result.SpecMutable().SetName(name),
+		result.SpecMutable().SetToken(token))
+	if err := core.NewError(errs...); err != nil {
+		return nil, http.StatusInternalServerError, err
+	}
+	return result, http.StatusOK, nil
+}
+
+func onStart(ctx context.Context, changer mo.Changer) error {
+	log := core.LoggerFromContext(ctx)
+
+	log.Info("register overriding GET and POST during app start")
+	return nil
+}
+
+func main() {
+	handlerReg := []interface{}{
+		handlers.CredentialsHandler,
+	}
+
+	terraformv1.CredentialsMeta().RegisterAPIMethodGET(GETOverride)
+	terraformv1.CredentialsMeta().RegisterAPIMethodPOST(POSTOverride)
+
+	var apx service.Service
+	var opts service.Options
+	opts.PlatformFactory = platform.New
+	apx = service.New("credentials-manager", schema.Schema(), &opts)
+	if apx == nil {
+		panic("Could not create the service")
+	}
+	if err := apx.OnStart(onStart).
+		Start(handlerReg...); err != nil {
+		panic(err)
+	}
+}

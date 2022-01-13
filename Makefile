@@ -43,6 +43,7 @@ clean:
 	rm -f organization
 	rm -f agent
 	rm -f agentpool
+	rm -f credentials
 	rm -f testsuite
 	rm -rf argo
 	rm -rf pkg/bundle
@@ -75,7 +76,7 @@ sanity: clean lint docker-images
 	rm -rf testsuite.test
 	./deployment/sanity/scripts/sanity.sh
 
-services: organization agent agentpool
+services: organization agent agentpool credentials
 
 organization: generate
 	go build ./cmd/organization
@@ -86,14 +87,18 @@ agent: generate
 agentpool: generate
 	go build ./cmd/agentpool
 
+credentials: generate
+	go build ./cmd/credentials
+
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v1 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v1 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v1 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v11 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v11 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v11 .
+	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v11 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v1 agentmgr:v1 agentpoolmgr:v1 hashicorp/tfc-agent:latest | gzip > images.tar.gz
+	docker save organizationmgr:v11 agentmgr:v11 agentpoolmgr:v11 credentialsmgr:v11 hashicorp/tfc-agent:latest | gzip > images.tar.gz
 
 .PHONY: generate lint test terraform services
