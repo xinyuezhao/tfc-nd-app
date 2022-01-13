@@ -325,9 +325,13 @@ func RemoveAgentPool(ctx context.Context, client *tfe.Client, agentPlID string) 
 // Add credentials
 func AddCredentials(name string, token string) error {
 	client := ConfigTLSClient()
-	payload := map[string]string{
-		"name":  name,
-		"token": token,
+	payload := map[string]interface{}{
+		"components": map[string]interface{}{
+			name: map[string]interface{}{
+				"credentials": map[string]string{"token": token},
+				"sharedWith":  []string{"cisco-terraform"},
+			},
+		},
 	}
 	payloadBuf := new(bytes.Buffer)
 	json.NewEncoder(payloadBuf).Encode(payload)
