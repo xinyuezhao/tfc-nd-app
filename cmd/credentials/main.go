@@ -20,11 +20,12 @@ func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent)
 	log.Info("register overriding GET credentials")
 	payloadObject := event.Resource().(terraformv1.Credentials)
 	name := payloadObject.Spec().Name()
-	token, configured, tokenExist, err := conf.GetCredentials()
+	token, configured, tokenExist, err := conf.GetCredentials(ctx, name)
 	if err != nil {
 		er := fmt.Errorf("error from GetCredentials")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
+	log.Info(fmt.Sprintf("Credentials name %v, token %v, configured %v, tokenExist %v", name, token, configured, tokenExist))
 	result := terraformv1.CredentialsFactory()
 	errs := make([]error, 0)
 	errs = append(errs, result.SpecMutable().SetConfigured(configured),
@@ -34,27 +35,35 @@ func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent)
 	if err := core.NewError(errs...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
+	log.Info(fmt.Sprintf("Get credentials result: name %v, token %v, configured %v, tokenExist %v", result.Spec().Name(), result.Spec().Token(), result.Spec().Configured(), result.Spec().TokenExist()))
 	return result, http.StatusOK, nil
 }
 
 func POSTOverride(ctx context.Context, event *terraformv1.CredentialsDbCreateEvent) (terraformv1.Credentials, int, error) {
 	log := core.LoggerFromContext(ctx)
-
 	log.Info("register overriding POST credentials")
 	payloadObject := event.Resource().(terraformv1.Credentials)
 	name := payloadObject.Spec().Name()
 	token := payloadObject.Spec().Token()
-	err := conf.AddCredentials(name, token)
+	err := conf.AddCredentials(ctx, name, token)
+	log.Info(fmt.Sprintf("Post credentials name %v, token %v", name, token))
 	if err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	result := terraformv1.CredentialsFactory()
 	errs := make([]error, 0)
+	tokenExist := false
+	if token != "" {
+		tokenExist = true
+	}
 	errs = append(errs, result.SpecMutable().SetName(name),
-		result.SpecMutable().SetToken(token))
+		result.SpecMutable().SetToken(token),
+		result.SpecMutable().SetConfigured(true),
+		result.SpecMutable().SetTokenExist(tokenExist))
 	if err := core.NewError(errs...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
+	log.Info(fmt.Sprintf("post credentials result name %v, token %v, configured %v, tokenExist %v", result.Spec().Name(), result.Spec().Token(), result.Spec().Configured(), result.Spec().TokenExist()))
 	return result, http.StatusOK, nil
 }
 

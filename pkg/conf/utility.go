@@ -323,7 +323,9 @@ func RemoveAgentPool(ctx context.Context, client *tfe.Client, agentPlID string) 
 }
 
 // Add credentials
-func AddCredentials(name string, token string) error {
+func AddCredentials(ctx context.Context, name string, token string) error {
+	log := core.LoggerFromContext(ctx)
+	log.Info("start adding credentials")
 	client := ConfigTLSClient()
 	payload := map[string]interface{}{
 		"components": map[string]interface{}{
@@ -347,6 +349,7 @@ func AddCredentials(name string, token string) error {
 		return core.NewError(er, err)
 	}
 	b, err := httputil.DumpResponse(resp, true)
+	log.Info(fmt.Sprintf("Response from AddCredentials %v", b))
 	if err != nil {
 		er := fmt.Errorf("error while parsing response from AddCredentials")
 		return core.NewError(er, err)
@@ -360,12 +363,23 @@ func AddCredentials(name string, token string) error {
 }
 
 // Get credentials
-func GetCredentials() (string, bool, bool, error) {
+func GetCredentials(ctx context.Context, name string) (string, bool, bool, error) {
+	log := core.LoggerFromContext(ctx)
+	log.Info("start querying credentials")
 	configured := false
 	tokenExist := false
 	client := ConfigTLSClient()
-	var jsonData = []byte(`{"components": {"terraform":{}}}`)
-	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", bytes.NewBuffer(jsonData))
+	//TODO: query credential according to name
+	payload := map[string]interface{}{
+		"components": map[string]interface{}{
+			name: map[string]string{},
+		},
+	}
+	payloadBuf := new(bytes.Buffer)
+	json.NewEncoder(payloadBuf).Encode(payload)
+	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", payloadBuf)
+	// var jsonData = []byte(`{"components": {"terraform":{}}}`)
+	// req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", bytes.NewBuffer(jsonData))
 	if err != nil {
 		er := fmt.Errorf("error while building request to get credentials")
 		return "", configured, tokenExist, core.NewError(er, err)
@@ -377,6 +391,7 @@ func GetCredentials() (string, bool, bool, error) {
 		return "", configured, tokenExist, core.NewError(er, err)
 	}
 	b, err := httputil.DumpResponse(resp, true)
+	log.Info(fmt.Sprintf("Response from GetCredentials %v", b))
 	if err != nil {
 		er := fmt.Errorf("error while parsing response from GetCredentials")
 		return "", configured, tokenExist, core.NewError(er, err)
