@@ -6,6 +6,7 @@ import (
 	"crypto/tls"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
 
@@ -368,8 +369,8 @@ func GetCredentials(ctx context.Context, name string) (string, bool, bool, error
 	log.Info("start querying credentials")
 	configured := false
 	tokenExist := false
+	tokenStr := ""
 	client := ConfigTLSClient()
-	//TODO: query credential according to name
 	payload := map[string]interface{}{
 		"components": map[string]interface{}{
 			name: map[string]string{},
@@ -378,8 +379,6 @@ func GetCredentials(ctx context.Context, name string) (string, bool, bool, error
 	payloadBuf := new(bytes.Buffer)
 	json.NewEncoder(payloadBuf).Encode(payload)
 	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", payloadBuf)
-	// var jsonData = []byte(`{"components": {"terraform":{}}}`)
-	// req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", bytes.NewBuffer(jsonData))
 	if err != nil {
 		er := fmt.Errorf("error while building request to get credentials")
 		return "", configured, tokenExist, core.NewError(er, err)
@@ -393,7 +392,7 @@ func GetCredentials(ctx context.Context, name string) (string, bool, bool, error
 	b, err := httputil.DumpResponse(resp, true)
 	log.Info(fmt.Sprintf("Response from GetCredentials %v", b))
 	if err != nil {
-		er := fmt.Errorf("error while parsing response from GetCredentials")
+		er := fmt.Errorf("error while dumping response from GetCredentials")
 		return "", configured, tokenExist, core.NewError(er, err)
 	}
 	defer resp.Body.Close()
@@ -401,23 +400,25 @@ func GetCredentials(ctx context.Context, name string) (string, bool, bool, error
 		err := fmt.Errorf("error! Response content from GetCredentials: %s", string(b))
 		return "", configured, tokenExist, err
 	}
-	credentials := Credentials{}
-	err = json.NewDecoder(resp.Body).Decode(&credentials)
-	if err != nil {
-		er := fmt.Errorf("error while decoding credentials")
-		return "", configured, tokenExist, core.NewError(er, err)
+	resBody, _ := ioutil.ReadAll(resp.Body)
+	respStr := string(resBody)
+	resBytes := []byte(respStr)
+	var jsonRes map[string]interface{}
+	e := json.Unmarshal(resBytes, &jsonRes)
+	if e != nil {
+		fmt.Println("error while parsing response from GetCredentials")
 	}
-	res := credentials.Response[0].Components.Terraform.Credentials
-	if token, ok := res["token"]; ok {
+	response := jsonRes["response"].([]interface{})[0].(map[string]interface{})
+	credentials := response["components"].(map[string]interface{})[name].(map[string]interface{})
+	token := credentials["credentials"]
+	if token != nil {
 		configured = true
-		tokenStr := token.(string)
+		tokenStr = token.(map[string]interface{})["token"].(string)
 		if tokenStr != "" {
 			tokenExist = true
 		}
-		return tokenStr, configured, tokenExist, nil
-	} else {
-		return "", configured, tokenExist, nil
 	}
+	return tokenStr, configured, tokenExist, nil
 }
 
 // Query credentials

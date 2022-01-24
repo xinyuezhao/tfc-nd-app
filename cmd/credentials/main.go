@@ -20,22 +20,20 @@ func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent)
 	log.Info("register overriding GET credentials")
 	payloadObject := event.Resource().(terraformv1.Credentials)
 	name := payloadObject.Spec().Name()
-	token, configured, tokenExist, err := conf.GetCredentials(ctx, name)
+	_, configured, tokenExist, err := conf.GetCredentials(ctx, name)
 	if err != nil {
 		er := fmt.Errorf("error from GetCredentials")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	log.Info(fmt.Sprintf("Credentials name %v, token %v, configured %v, tokenExist %v", name, token, configured, tokenExist))
 	result := terraformv1.CredentialsFactory()
 	errs := make([]error, 0)
 	errs = append(errs, result.SpecMutable().SetConfigured(configured),
 		result.SpecMutable().SetTokenExist(tokenExist),
-		result.SpecMutable().SetToken(token),
+		result.SpecMutable().SetToken("***"),
 		result.SpecMutable().SetName(name))
 	if err := core.NewError(errs...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	log.Info(fmt.Sprintf("Get credentials result: name %v, token %v, configured %v, tokenExist %v", result.Spec().Name(), result.Spec().Token(), result.Spec().Configured(), result.Spec().TokenExist()))
 	return result, http.StatusOK, nil
 }
 
