@@ -230,3 +230,11 @@ spec:
     authType: open
     listenPaths:
     - path: "/sedgeapi/v1/cisco-terraform/credentialsmgr"
+  - target: ui
+    service:
+      scheme: http
+      name: ui
+      port: 80
+    authType: open
+    listenPaths:
+    - path: "/appcenter/cisco/terraform/ui"
