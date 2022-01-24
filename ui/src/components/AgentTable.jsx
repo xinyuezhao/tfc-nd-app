@@ -26,20 +26,14 @@ import { pathPrefix } from "../App";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
 import { Link } from "react-router-dom";
 
+const stopClick = (e) => {
+  e.stopPropagation();
+  e.preventDefault();
+  return false;
+};
+
 function AgentTable(props) {
 
-  // deletesingle agent function and print onitemselected to print the selected 
-
-  const menuOptions = [
-    {
-      id: "Delete Agent",
-      label: "Delete Agent",
-      Header: "Delete Agent",
-      accessor: "Delete Agent",
-      align: "center",
-      tooltips: true,
-    },
-  ];
   const allColumns = [
     {
       id: "Status",
@@ -85,27 +79,32 @@ function AgentTable(props) {
       Header: 'options',
       width: 300,
       icon: Icon.TYPE.COG,
-      Cell: (row) => (
-        <Dropdown
-        row={row}
-        type={Dropdown.TYPE.ICON}
-        icon={Icon.TYPE.MORE}
-        size={Icon.SIZE.SMALL}
-        items={menuOptions}
-        onItemSelected={(data, selectedItem) => {
-          console.log("Item selected", data, selectedItem, row.original )
-          deleteAgents(row.original.description)
-            .then(() => {
-              setSuccessAlert("Deleted Agent %s Successfully", row.original.name);
-              getAgents();
-            })
-            .catch((error) => {
-              console.log(error);
-            });
-            }}/>
-      ),
+      Cell: (row) => {
+
+        const menuOptions = [
+          {
+            label: "Delete",
+            action: (item) => {
+              const {original} = row;
+              console.log(`Delete Item`, original.id)
+            }
+          },
+        ];
+
+        return (
+          <div id={row.dn} onClick={stopClick}>
+            <Dropdown
+              type={Dropdown.TYPE.ICON}
+              icon={Icon.TYPE.MORE}
+              size={Icon.SIZE.SMALL}
+              items={menuOptions}
+              key={"dropdown-tool-key-2"}/>
+          </div>
+        )
+      },
     },
   ];
+
 
 
   const action = useScreenActions();
@@ -223,8 +222,28 @@ function AgentTable(props) {
         error.response?.data?.detail?.detail &&
           setWarningAlert(error.response?.data?.detail?.detail);
       });
-  }, []);
+  });
 
+  const handleUserToken = useCallback(() => {
+    console.log("start create agent");
+    setInfoAlert("Creating Agent");
+    // get access token use api
+    createAgents()
+      .then((res) => {
+        setInfoAlert("");
+        setSuccessAlert("Created Agent Successfully");
+        console.log("agent data = ", agents )
+        console.log("Agent creation DONE. data = ", res.data )
+        getAgents();
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+        error.response?.data?.detail?.detail &&
+          setWarningAlert(error.response?.data?.detail?.detail);
+      });
+  });
 
   const handleOpenAgent = useCallback(
     (data) => {

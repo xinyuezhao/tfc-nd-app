@@ -88,10 +88,21 @@ const AboutModal = (props) => {
     onClose,
   } = props;
 
-  return (<Modal title="Terraform Cloud" isOpen={show} onClose={onClose}>
-  <h3>Terraform Cloud</h3>
-  <p>Version ##.#(#)</p>
-  <p>Cisco Systems, Inc. All rights reserved.</p>
-  {/*<p>Current System Time: <Timestamp relative date={Date} autoUpdate /> </p>  */}
-</Modal>)
+  return (
+    <Modal
+      isOpen={show}
+      onClose={onClose}
+      // cancelButtonProps={{ style: { display: 'none' } }}
+      cancelButtonLabel={null} // prevent cancel button from being added to footer.
+      applyButtonLabel={null}
+      style={{ color: "white"}}
+      // footer={null}
+      >
+      <div class="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}/>
+      <h3>Terraform Cloud</h3>
+      <p>Version ##.#(#)</p>
+      <p>Cisco Systems, Inc. All rights reserved.</p>
+      {/*<p>Current System Time: <Timestamp relative date={Date} autoUpdate /> </p>  */}
+    </Modal>
+  )
 }
