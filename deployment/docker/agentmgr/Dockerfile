@@ -1,4 +1,5 @@
 FROM alpine:latest
+RUN apk --no-cache add curl
 WORKDIR /security/
 COPY pkg/bundle/client.cer.pem .
 COPY pkg/bundle/client.key.pem .
