@@ -26,7 +26,7 @@ const Header = ({setShowAbout}) => {
         <header className="header header--compressed" style={{ background: "transparent" }}>
             <div className="header-bar container">
                 <div className="header-bar__main">
-                    <div className="right-menu-icons" style={{ float:"right", paddingTop: "10px" }}>
+                    <div className="right-menu-icons" style={{ float:"right", paddingTop: "10px", marginRight:"0px" }}>
                         <Dropdown
                             type={Dropdown.TYPE.BUTTON}
                             size={Dropdown.SIZE.SMALL}

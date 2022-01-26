@@ -15,7 +15,6 @@ function AppSidebar() {
       path: `${pathPrefix}/home`,
       title: "Agents",
       icon: Icon.TYPE.PARTICIPANT_LIST,
-      // icon-participant-list
     },
     // {
     //   id: "Auth",
@@ -26,13 +25,14 @@ function AppSidebar() {
   ];
 
   return (
-      <Sidebar
-        theme={Sidebar.THEMES.INDIGO}
-        title="Terraform Cloud"
-        expanded={true}
-        locked={true}
-        items={sidebarItems}
-      />
+    <Sidebar
+      theme={Sidebar.THEMES.INDIGO}
+      title="Connector for Terraform"
+      expanded={true}
+      locked={true}
+      compressed={false}
+      items={sidebarItems}
+    />
   );
 }
 

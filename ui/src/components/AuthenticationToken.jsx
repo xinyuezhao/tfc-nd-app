@@ -9,12 +9,14 @@ import {
   InfoAlert,
   useScreenActions,
 } from 'blueprint-react';
-import _ from 'lodash';
 import './CiscoObjectPicker.scss';
 import AgentTable from './AgentTable';
+import {
+  fetchUserToken,
+} from "../service/api_service";
 
 /**
- * A sample of create new renderer funciton component that is passed as createItemRenderer.
+ * A sample of create new renderer function component that is passed as createItemRenderer.
  * Please see the use of useObjectPickerSubmit to get the click event on Modal create button
  */
 

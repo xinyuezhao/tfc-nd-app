@@ -37,9 +37,9 @@ function fetchAgentPools(organization) {
 function createAgentPool(payload) {
   return axios.post("/agentpoolmgr/api/terraform.argo.cisco.com/v1/agentpools", payload);
 }
-// function getAccessToken(payload) {
-//   return axios.post("/gettoken", payload);
-// }
+function fetchUserToken(payload) {
+  return axios.get("/credentialsmgr/api/terraform.argo.cisco.com/v1/credentials/terraform", payload);
+}
 
 // function refreshAccessToken(payload) {
 //   return axios.post("/refreshtoken", payload);
@@ -62,7 +62,7 @@ export {
   fetchOrganizations,
   fetchAgentPools,
   createAgentPool,
-  // getAccessToken,
+  fetchUserToken,
   // refreshAccessToken,
   // isUserLogin,
   // logout,

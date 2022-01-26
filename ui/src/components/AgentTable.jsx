@@ -18,6 +18,7 @@ import {
   fetchAgents,
   deleteAgents,
   createAgents,
+  fetchUserToken,
 } from "../service/api_service";
 import Agent from "./CreateAgent";
 import AgentWoToken from "./CreateAgentWoToken";
@@ -42,6 +43,7 @@ function AgentTable(props) {
       sortable: true,
       align: "center",
       tooltips: true,
+      // Cell: (row) => {<SmartHealthBadgeIconWrapper value={row.value} showLabel={true}/>}
     },
     {
       id: "Agent Name",
@@ -76,17 +78,18 @@ function AgentTable(props) {
       tooltips: true,
     },
     {
-      Header: 'options',
-      width: 300,
-      icon: Icon.TYPE.COG,
+      Header: '',
+      width: 75,
+      icon: IconConstants.COG,
       Cell: (row) => {
 
         const menuOptions = [
           {
             label: "Delete",
-            action: (item) => {
+            action: () => {
               const {original} = row;
-              console.log(`Delete Item`, original.id)
+              console.log(`Delete Item`, original.id, original.description)
+              openDeleteConfirm();
             }
           },
         ];
@@ -228,12 +231,11 @@ function AgentTable(props) {
     console.log("start create agent");
     setInfoAlert("Creating Agent");
     // get access token use api
-    createAgents()
+    fetchUserToken()
       .then((res) => {
         setInfoAlert("");
-        setSuccessAlert("Created Agent Successfully");
-        console.log("agent data = ", agents )
-        console.log("Agent creation DONE. data = ", res.data )
+        setSuccessAlert("User Token is accessed Successfully");
+        console.log("User Token is  = ", res.data )
         getAgents();
       })
       .catch((error) => {
@@ -337,7 +339,7 @@ function AgentTable(props) {
     {checkComponentRender(
       showConfirm,
       <Modal
-        title={`Delete ${selectedAgents.length} agents`}
+        title={`Delete ${selectedAgents.length} agent(s)`}
         isOpen={showConfirm}
         applyButtonLabel="Delete"
         contentTextAlign={Modal.CONTENT_TEXT_ALIGN.LEFT}
@@ -360,7 +362,7 @@ function AgentTable(props) {
             <h2 style={{ fontWeight: "350" }}>Agents</h2>
             <a href="/">
               <span className="icon-refresh"
-                style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px"}}>
+                style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px", marginRight:"20px"}}>
               </span>
             </a>
           </div>

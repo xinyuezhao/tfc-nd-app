@@ -42,7 +42,7 @@ function App(props) {
               className="content-fluid relative"
             >
               <AppSidebar />
-              <div className="content-header">
+              <div className="content-header" >
               </div>
               <main className="main-con">
                 <Header setShowAbout={setShowAbout}/>
@@ -99,7 +99,7 @@ const AboutModal = (props) => {
       // footer={null}
       >
       <div class="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}/>
-      <h3>Terraform Cloud</h3>
+      <h3>Nexus Dashboard Connector forTerraform</h3>
       <p>Version ##.#(#)</p>
       <p>Cisco Systems, Inc. All rights reserved.</p>
       {/*<p>Current System Time: <Timestamp relative date={Date} autoUpdate /> </p>  */}
