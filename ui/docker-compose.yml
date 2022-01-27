@@ -1,0 +1,8 @@
+version: "3.5"
+services:
+  frontend:
+    container_name: ui
+    build: .
+    image: tfc-nd-app/ui:latest
+    ports:
+      - 3000:3000

@@ -18,7 +18,8 @@ import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
 // import { isUserLogin } from "./service/api_service";
 
-export const pathPrefix = "/appcenter/cisco/terraformcloud/ui";
+// export const pathPrefix = "/appcenter/cisco/terraformcloud/ui";
+export const pathPrefix = "/appcenter/cisco/terraform/ui";
 
 function App(props) {
 
