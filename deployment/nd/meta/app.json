@@ -4,7 +4,7 @@
     "Tools and Utilities"
   ],
   "contact": {
-    "contact-email": "dcn-ecosystem@cisco.com",
+    "contact-email": "apic-se-dev@cisco.com",
     "contact-phone": "1800-553-2447",
     "contact-url": "https://mycase.cloudapps.cisco.com/case"
   },
@@ -12,10 +12,10 @@
   "name": "Nexus Dashboard Connector for HashiCorp Terraform",
   "platforms": {
     "se": {
-      "hostversion": "2.1.2"
+      "hostversion": "1.1.2"
     }
   },
-  "shortdescr": "Manage Terraform Cloud Agent directly from Nexus Dashboard",
+  "shortdescr": "App showcasing argo framework capabilities",
   "signature": 666666,
   "vendor": "Cisco",
   "vendordomain": "Cisco",
