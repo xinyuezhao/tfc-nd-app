@@ -40,12 +40,10 @@ clean:
 	rm -rf $(CURDIR)/gen
 	rm -f node
 	rm -f cluster
-	rm -f testsuite.test
 	rm -f organization
 	rm -f agent
 	rm -f agentpool
 	rm -f credentials
-	rm -f testsuite
 	rm -rf argo
 	rm -rf pkg/bundle
 	rm -f images.tar.gz
@@ -71,8 +69,7 @@ bundle:
 	rm argo-bundle.tar.gz
 
 $(eval $(call build-for-linux,sanity))
-sanity: go test -c ./cmd/testsuite
-	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v1 .
+sanity: go test -c ./testsuite
 	rm -rf testsuite.test
 
 services: organization agent agentpool credentials
@@ -97,11 +94,8 @@ docker-images: bundle services
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v14 .
 	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v14 .
 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v1 .
-	go test -c ./cmd/testsuite
-	docker build --file deployment/docker/testsuite/Dockerfile --tag terraform-testsuite:v1 .
-	rm -rf testsuite.test
 
 docker-archive: docker-images
-	docker save organizationmgr:v14 agentmgr:v14 agentpoolmgr:v14 credentialsmgr:v14 hashicorp/tfc-agent:latest ui:v1 terraform-testsuite:v1 | gzip > images.tar.gz
+	docker save organizationmgr:v14 agentmgr:v14 agentpoolmgr:v14 credentialsmgr:v14 hashicorp/tfc-agent:latest ui:v1 | gzip > images.tar.gz
 
 .PHONY: generate lint test terraform services
