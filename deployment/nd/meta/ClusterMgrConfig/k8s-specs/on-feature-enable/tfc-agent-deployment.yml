@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: tfc-agent
-        image: cisco-terraform/hashicorp/tfc-agent:1.0.2
+        image: cisco-terraform/hashicorp/tfc-agent:latest
         imagePullPolicy: IfNotPresent
         env:
           - name: TFC_AGENT_TOKEN
