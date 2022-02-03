@@ -10,22 +10,21 @@ import {
   StructuredFilter,
   LABELS,
   IconConstants,
-  IconButton,
   SecondarySidebar,
-  Card
+  Card,
+  IconButton
 } from "blueprint-react";
 import {
   fetchAgents,
   deleteAgents,
   createAgents,
-  fetchUserToken,
 } from "../service/api_service";
 import Agent from "./CreateAgent";
 import AgentWoToken from "./CreateAgentWoToken";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import { pathPrefix } from "../App";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
-import { Link } from "react-router-dom";
+// import { Link } from "react-router-dom";
 
 const stopClick = (e) => {
   e.stopPropagation();
@@ -130,11 +129,11 @@ function AgentTable(props) {
       10
     )
   );
-  const [userToken, setUserToken] = useState(false);
+  const [userToken, setUserToken] = useState(true);
 
   const offset = useRef({ value: 0 });
   const limit = useRef({ value: 50 });
-  const finalAgent = useRef({ totalAgents: agents });
+  // const finalAgent = useRef({ totalAgents: agents });
 
   useEffect(() => {
     if (warningAlert || successAlert) {
@@ -225,27 +224,7 @@ function AgentTable(props) {
         error.response?.data?.detail?.detail &&
           setWarningAlert(error.response?.data?.detail?.detail);
       });
-  });
-
-  const handleUserToken = useCallback(() => {
-    console.log("start create agent");
-    setInfoAlert("Creating Agent");
-    // get access token use api
-    fetchUserToken()
-      .then((res) => {
-        setInfoAlert("");
-        setSuccessAlert("User Token is accessed Successfully");
-        console.log("User Token is  = ", res.data )
-        getAgents();
-      })
-      .catch((error) => {
-        console.log(error);
-        setInfoAlert("");
-        setSuccessAlert("");
-        error.response?.data?.detail?.detail &&
-          setWarningAlert(error.response?.data?.detail?.detail);
-      });
-  });
+  },[]);
 
   const handleOpenAgent = useCallback(
     (data) => {
@@ -360,11 +339,26 @@ function AgentTable(props) {
         <div className="col-xl-12">
           <div  style={{ paddingTop: "30px", paddingBottom: "15px", display: "flex", justifyContent: "space-between" }}>
             <h2 style={{ fontWeight: "350" }}>Agents</h2>
-            <a href="/">
+            {/*  <a href="/">
               <span className="icon-refresh"
                 style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px", marginRight:"20px"}}>
               </span>
-            </a>
+            </a>  check the below div instead to check the refresh button
+            <div key='refresh' className="refresh-button" onClick={getAgents} title={LABELS.refresh}>
+              <Icon key="refresh"
+                size={Icon.SIZE.SMALL}
+                type={Icon.TYPE.REFRESH}
+                style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px", marginRight:"20px"}}
+              >
+              </Icon>  the below line works too*/}
+            <div>
+              <IconButton className="" 
+                size={IconButton.SIZE.SMALL}
+                icon={IconButton.ICON.REFRESH}
+                onClick={getAgents}
+                style={{ marginRight:"20px"}}
+              />
+            </div>
           </div>
         </div>
       </div>

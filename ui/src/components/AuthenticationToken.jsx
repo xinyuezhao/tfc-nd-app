@@ -12,7 +12,7 @@ import {
 import './CiscoObjectPicker.scss';
 import AgentTable from './AgentTable';
 import {
-  fetchUserToken,
+  createAuthenticationToken,
 } from "../service/api_service";
 
 /**
@@ -29,6 +29,9 @@ function AuthenticationToken(props) {
   const [userToken, setUserToken] = useState('');
   // const [isOpen, setIsOpen] = useState(true);
   const [selectedToken, setSelectedToken] = useState(false);
+  const [warningAlert, setWarningAlert] = useState("");
+  const [infoAlert, setInfoAlert] = useState("");
+  const [successAlert, setSuccessAlert] = useState("");
   const action = useScreenActions();
 
   useEffect(() => {
@@ -38,32 +41,57 @@ function AuthenticationToken(props) {
   }, [token]);
 
 
-  const checkBeforeSubmit = useCallback(() => {
+  const checkBeforeSubmit = () => {
     return true;
-  },);
+  }
+
+  const handleCreateAuthenticationToken = useCallback((userToken) => {
+    console.log("Start creating authentication token", userToken);
+    const payload = {
+      "spec": {
+        "name": "terraform",
+        "token": userToken
+      }
+    }
+    createAuthenticationToken(payload)
+      .then((res) => {
+        setInfoAlert("");
+        setSuccessAlert("Created Agent Successfully");
+        console.log("Authentication token created. data = ", res.data )
+      })
+      .catch((error) => {
+        console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+        error.response?.data?.detail?.detail &&
+          setWarningAlert(error.response?.data?.detail?.detail);
+      });
+  });
+
 
   const onAction = useCallback(() => {
     const result = checkBeforeSubmit();
+    const token = handleCreateAuthenticationToken(userToken);
     if (result) {
       if (selectedToken) {
-        console.log("usertoken is true so pass the token ", token)
+        console.log("Added new Authentication token ", selectedToken)
         action.openScreen(AgentTable, {
           title: "title",
           screenId: "agent-table",
           data: selectedToken,
         });
-        // screenActions.closeScreen("create-agent-pool-modal"); // screenId
+        screenActions.closeScreen("authentication-token"); // screenId
       } else {
-        console.log("usertoken is false then pass empty ", token)
+        console.log("No use of Authentication token ", selectedToken)
         action.openScreen(AgentTable, {
           title: "title",
           screenId: "agent-table",
           data: selectedToken,
         });
-        // screenActions.closeScreen("create-agent-pool-modal");
+        screenActions.closeScreen("authentication-token");
       }
     }
-  }, [checkBeforeSubmit, selectedToken, token, action, screenActions]);
+  }, [checkBeforeSubmit, selectedToken, userToken, action, screenActions, handleCreateAuthenticationToken]);
 
   const displayTokenInput = () => {
     console.log("In display TOKEN ")

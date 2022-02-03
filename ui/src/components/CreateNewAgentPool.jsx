@@ -3,11 +3,10 @@ import React,{useState} from 'react';
 import {
   DetailScreen,
   Input,
-  useScreenActions,
   Card,
   LABELS
 } from 'blueprint-react';
-import _ from 'lodash';
+// import _ from 'lodash';
 import './CiscoObjectPicker.scss';
 import {
   createAgentPool,
@@ -15,7 +14,7 @@ import {
 
 
 // /**
-//  * A sample of create new renderer funciton component that is passed as createItemRenderer.
+//  * A sample of create new renderer function component that is passed as createItemRenderer.
 //  * Please see the use of useObjectPickerSubmit to get the click event on Modal create button
 //  */
 

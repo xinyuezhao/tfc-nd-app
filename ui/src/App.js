@@ -4,9 +4,6 @@ import { withRouter } from "react-router";
 import {
     ScreenManager,
     ErrorBoundary,
-    Dropdown,
-    LABELS,
-    IconButton,
     Modal,
 } from "blueprint-react";
 
@@ -14,7 +11,7 @@ import {Header} from "./components/Header";
 import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";
 // import Dashboard from "./components/Dashboard";
-import AuthenticationToken from "./components/AuthenticationToken"
+// import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
 // import { isUserLogin } from "./service/api_service";
 
@@ -90,20 +87,20 @@ const AboutModal = (props) => {
   } = props;
 
   return (
-    <Modal
+    <Modal class="about-modal"
+    title=" "
       isOpen={show}
       onClose={onClose}
       // cancelButtonProps={{ style: { display: 'none' } }}
       cancelButtonLabel={null} // prevent cancel button from being added to footer.
-      applyButtonLabel={null}
+      applyButtonLabel={null} // prevent OK button from being added to footer.
       style={{ color: "white"}}
       // footer={null}
       >
-      <div class="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}/>
-      <h3>Nexus Dashboard Connector forTerraform</h3>
+      <div class="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px", marginBottom: "15px"}}/>
+      <h3>Nexus Dashboard Connector for Terraform</h3>
       <p>Version ##.#(#)</p>
       <p>Cisco Systems, Inc. All rights reserved.</p>
-      {/*<p>Current System Time: <Timestamp relative date={Date} autoUpdate /> </p>  */}
     </Modal>
   )
 }

@@ -3,10 +3,10 @@ import {
   DetailScreen,
   Input,
   Card,
-  useScreenActions,
+  // useScreenActions,
   LABELS,
 } from "blueprint-react";
-import _ from 'lodash';
+// import _ from 'lodash';
 import './CiscoObjectPicker.scss';
 
 function Agent(props) {
@@ -19,7 +19,7 @@ function Agent(props) {
     createAgent,
   } = props;
 
-  const action = useScreenActions();
+  // const action = useScreenActions();
 
 
 
@@ -60,7 +60,7 @@ function Agent(props) {
 
   const checkBeforeSubmit = useCallback(() => {
     return true;
-  },);
+  },[]);
 
   const onAction = useCallback(() => {
     const result = checkBeforeSubmit();
