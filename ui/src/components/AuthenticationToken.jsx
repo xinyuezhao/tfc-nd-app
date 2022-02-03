@@ -109,8 +109,15 @@ function AuthenticationToken(props) {
       title={"User Authentication"}
       applyButtonLabel={"Save"}
     >
-    <div style={{ paddingLeft: "10%" }}>
-      <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
+    <div style={{ paddingLeft: "10%", paddingRight: "10%" }}>
+      <div style={{ paddingTop: "25px", paddingBottom: "25px", paddingLeft: "3%" }}>
+        <h1>
+          Let's Configure the basics
+        </h1>
+        <p style={{ color: "gray" }}>
+          There are a few things you need to configure before you get started with Nexus Dashboard Connector for Terraform
+        </p>
+      </div>
       <Panel border={Panel.BORDER.ALL} padding={Panel.PADDING.NONE}>
         <div className="cards__header">Connection Type</div>
         <Cards selectionMode={Cards.SELECTION_MODE.SINGLE}
