@@ -129,7 +129,7 @@ function AgentTable(props) {
       10
     )
   );
-  const [userToken, setUserToken] = useState(true);
+  const [userToken, setUserToken] = useState(false);
 
   const offset = useRef({ value: 0 });
   const limit = useRef({ value: 50 });

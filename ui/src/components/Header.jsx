@@ -23,7 +23,7 @@ const Header = ({setShowAbout}) => {
     ];
 
     return (
-        <header className="header header--compressed" style={{ background: "transparent" }}>
+        <header className="header header--compressed" >
             <div className="header-bar container">
                 <div className="header-bar__main">
                     <div className="right-menu-icons" style={{ float:"right", paddingTop: "10px", marginRight:"0px" }}>
