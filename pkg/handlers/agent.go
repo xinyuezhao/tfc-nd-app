@@ -36,6 +36,9 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 				er := fmt.Errorf("error from CreateAgentToken")
 				return core.NewError(er, err)
 			}
+			log.Info("description for agent token generated: " + agentToken.Description)
+			log.Info("agentPlID generated: " + agentPlID)
+			log.Info("agent token generated " + agentToken.Token)
 
 			if err := core.NewError(agent.SpecMutable().SetToken(agentToken.Token),
 				agent.SpecMutable().SetTokenId(agentToken.ID),
@@ -47,7 +50,8 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 		agent.SpecMutable().SetStatus("created")
 		// api call creating feature instance to deploy agent
 		TLSclient := conf.ConfigTLSClient()
-		param := map[string]string{"token": token, "name": name}
+		// TODO: use GetProxyConfig instead
+		param := map[string]string{"token": token, "name": name, "http_proxy": "http://proxy-wsa.esl.cisco.com", "https_proxy": "http://proxy-wsa.esl.cisco.com"}
 		body := map[string]interface{}{
 			"vendor":           conf.Vendor,
 			"version":          conf.Version,

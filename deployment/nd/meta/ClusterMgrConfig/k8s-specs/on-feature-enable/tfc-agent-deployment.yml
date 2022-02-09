@@ -26,3 +26,7 @@ spec:
             value: {{getConfigParameter "token" }}
           - name: TFC_AGENT_NAME
             value: {{getConfigParameter "name" }}
+          - name: http_proxy
+            value: {{getConfigParameter "http_proxy"}}
+          - name: https_proxy
+            value: {{getConfigParameter "https_proxy"}}

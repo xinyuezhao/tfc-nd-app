@@ -89,13 +89,13 @@ credentials: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v14 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v14 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v14 .
-	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v14 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v29 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v29 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v29 .
+	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v29 .
 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v1 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v14 agentmgr:v14 agentpoolmgr:v14 credentialsmgr:v14 hashicorp/tfc-agent:latest ui:v1 | gzip > images.tar.gz
+	docker save organizationmgr:v29 agentmgr:v29 agentpoolmgr:v29 credentialsmgr:v29 hashicorp/tfc-agent:latest ui:v1 | gzip > images.tar.gz
 
 .PHONY: generate lint test terraform services

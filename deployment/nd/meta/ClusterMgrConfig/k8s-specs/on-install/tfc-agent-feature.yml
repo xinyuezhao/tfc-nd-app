@@ -7,6 +7,8 @@ spec:
   configParameters:
     token: ""
     name: ""
+    https_proxy: ""
+    http_proxy: ""
   resources:
   - on-feature-enable/tfc-agent-deployment.yml
   - on-feature-enable/tfc-agent-service.yml
