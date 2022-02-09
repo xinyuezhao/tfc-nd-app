@@ -20,7 +20,7 @@ func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent)
 	log.Info("register overriding GET credentials")
 	payloadObject := event.Resource().(terraformv1.Credentials)
 	name := payloadObject.Spec().Name()
-	_, configured, tokenExist, err := conf.GetCredentials(ctx, name)
+	_, configured, tokenExist, err := conf.GetCredentials(name)
 	if err != nil {
 		er := fmt.Errorf("error from GetCredentials")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
@@ -73,6 +73,11 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 }
 
 func main() {
+	// get proxy config by api and set it as env var
+	if err := conf.ProxyConfig(); err != nil {
+		panic(err)
+	}
+
 	handlerReg := []interface{}{
 		handlers.CredentialsHandler,
 	}

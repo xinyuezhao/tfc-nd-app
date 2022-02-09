@@ -168,6 +168,10 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 }
 
 func main() {
+	// get proxy config by api and set it as env var
+	if err := conf.ProxyConfig(); err != nil {
+		panic(err)
+	}
 	handlerReg := []interface{}{
 		handlers.AgentHandler,
 		handlers.AgentValidator,

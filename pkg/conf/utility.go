@@ -9,6 +9,8 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/http/httputil"
+	"os"
+	"strings"
 
 	"github.com/hashicorp/go-tfe"
 	"golang.cisco.com/argo/pkg/core"
@@ -57,7 +59,11 @@ func QueryAgentTokens(ctx context.Context, client *tfe.Client, agentPlID string)
 
 func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client, agentplId string) ([]Agent, error) {
 	log := core.LoggerFromContext(ctx)
-	// query agents in given agentpool
+
+	client.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+		Proxy:           http.ProxyFromEnvironment,
+	}
 	url := fmt.Sprintf("https://app.terraform.io/api/v2/agent-pools/%s/agents", agentplId)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
@@ -71,6 +77,8 @@ func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client
 	}
 	auth := fmt.Sprintf("Bearer %s", Usertoken)
 	req.Header.Set("Authorization", auth)
+	log.Info("usertoken is " + Usertoken)
+	log.Info("authorization given is " + auth)
 	resp, e := client.Do(req)
 	if e != nil {
 		er := fmt.Errorf("error while sending request to query agents")
@@ -172,6 +180,7 @@ func ConfigTFC() (context.Context, *tfe.Client, error) {
 
 func ConfigTLSClient() *http.Client {
 	tr := &http.Transport{
+		// TODO: insecure only needed against ND
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: true},
 	}
 	client := &http.Client{Transport: tr}
@@ -268,6 +277,11 @@ func QueryAgentStatus(ctx context.Context, agentId string) (string, error) {
 	client := ConfigTLSClient()
 	// query agents inside given agentpool
 	log.Info("agent Id given " + agentId)
+
+	client.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+		Proxy:           http.ProxyFromEnvironment,
+	}
 	url := fmt.Sprintf("https://app.terraform.io/api/v2/agents/%s", agentId)
 	log.Info("query url " + url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
@@ -364,9 +378,7 @@ func AddCredentials(ctx context.Context, name string, token string) error {
 }
 
 // Get credentials
-func GetCredentials(ctx context.Context, name string) (string, bool, bool, error) {
-	log := core.LoggerFromContext(ctx)
-	log.Info("start querying credentials")
+func GetCredentials(name string) (string, bool, bool, error) {
 	configured := false
 	tokenExist := false
 	tokenStr := ""
@@ -390,7 +402,6 @@ func GetCredentials(ctx context.Context, name string) (string, bool, bool, error
 		return "", configured, tokenExist, core.NewError(er, err)
 	}
 	b, err := httputil.DumpResponse(resp, true)
-	log.Info(fmt.Sprintf("Response from GetCredentials %v", b))
 	if err != nil {
 		er := fmt.Errorf("error while dumping response from GetCredentials")
 		return "", configured, tokenExist, core.NewError(er, err)
@@ -421,50 +432,15 @@ func GetCredentials(ctx context.Context, name string) (string, bool, bool, error
 	return tokenStr, configured, tokenExist, nil
 }
 
-// Query credentials
-func QueryCredentials() (string, error) {
-	client := ConfigTLSClient()
-	var jsonData = []byte(`{"components": {"terraform":{}}}`)
-	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", bytes.NewBuffer(jsonData))
-	if err != nil {
-		er := fmt.Errorf("error while building request")
-		return "", core.NewError(er, err)
-	}
-	req.Header.Set("Content-Type", "application/json")
-	resp, err := client.Do(req)
-	if err != nil {
-		er := fmt.Errorf("error after querying credentials")
-		return "", core.NewError(er, err)
-	}
-	b, err := httputil.DumpResponse(resp, true)
-	if err != nil {
-		er := fmt.Errorf("error while dumping credentials response")
-		return "", core.NewError(er, err)
-	}
-	defer resp.Body.Close()
-	if resp.StatusCode != 200 {
-		err := fmt.Errorf("error while querying credentials. Response content: %s", string(b))
-		return "", err
-	}
-	credential := Credential{}
-	err = json.NewDecoder(resp.Body).Decode(&credential)
-	if err != nil {
-		er := fmt.Errorf("error while decoding credential")
-		return "", core.NewError(err, er)
-	}
-	token := credential.Response[0].Components.Terraform.Credentials.Token
-	return token, nil
-}
-
 func CheckUserTokenExist() (bool, string, error) {
-	exist, err := QueryCredentials()
+	token, _, _, err := GetCredentials("terraform")
 	if err != nil {
-		e := fmt.Errorf("credential from Querycredential " + exist)
-		er := fmt.Errorf("error from QueryCredentials")
+		e := fmt.Errorf("credential from GetCredentials " + token)
+		er := fmt.Errorf("error from GetCredentials")
 		return false, "", core.NewError(err, er, e)
 	}
-	if exist != "" {
-		return true, exist, nil
+	if token != "" {
+		return true, token, nil
 	} else {
 		err := fmt.Errorf("user Token required")
 		return false, "", err
@@ -527,4 +503,81 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 		return err
 	}
 	return nil
+}
+
+// Method to configure the proxy environment variable
+func ProxyConfig() error {
+	configMap, err := GetProxyConfig()
+	if err != nil {
+		err = fmt.Errorf("error while getting proxy configuration: %v", err)
+		return err
+	}
+	for configKey, configVal := range configMap {
+		os.Setenv(configKey, configVal)
+	}
+	return nil
+}
+
+// Method to get proxy configuration
+func GetProxyConfig() (map[string]string, error) {
+	client := ConfigTLSClient()
+	result := make(map[string]string)
+	req, err := http.NewRequest(http.MethodGet, "https://confd.confd.svc:19999/api/config/class/cluster", nil)
+	if err != nil {
+		err = fmt.Errorf("error while building request to query proxy configuration: %v", err)
+		return nil, err
+	}
+	resp, err := client.Do(req)
+	if err != nil {
+		err = fmt.Errorf("error after querying credentials: %v", err)
+		return nil, err
+	}
+	body, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		err = fmt.Errorf("error while dumping response from proxy config query %v", err)
+		return nil, err
+	}
+	defer resp.Body.Close()
+	if resp.StatusCode != 200 {
+		err := fmt.Errorf("error while querying proxy configuration. Response content: %s", string(body))
+		return nil, err
+	}
+	resBody, _ := ioutil.ReadAll(resp.Body)
+	var cluster_config []interface{}
+	errUnmarshal := json.Unmarshal(resBody, &cluster_config)
+	if errUnmarshal != nil {
+		errUnmarshal = fmt.Errorf("error while parsing response from proxyConfig %v", errUnmarshal)
+		return nil, errUnmarshal
+	}
+	if len(cluster_config) == 1 {
+		config := cluster_config[0].(map[string]interface{})
+		if proxy, ok := config["proxyConfig"]; ok {
+			ignore_hosts := []string{"confd.confd.svc", "resourcemgr.kubese.svc", "securitymgr-svc.securitymgr.svc"}
+			proxy := proxy.(map[string]interface{})
+			if ignored, ok := proxy["ignoreHosts"]; ok {
+				for _, ignore_host := range ignored.([]interface{}) {
+					ignore_hosts = append(ignore_hosts, ignore_host.(string))
+				}
+			}
+			//os.Setenv("no_proxy", strings.Join(ignore_hosts, ","))
+			result["no_proxy"] = strings.Join(ignore_hosts, ",")
+			if servers, ok := proxy["servers"]; ok {
+				for _, server := range servers.([]interface{}) {
+					server_map := server.(map[string]interface{})
+					proxy_string := server_map["proxyUrl"].(string)
+					password := server_map["password"]
+					username := server_map["username"]
+					if password != "" && username != "" {
+						proxy_split := strings.Split(proxy_string, "://")
+						if len(proxy_split) == 2 {
+							proxy_string = fmt.Sprintf("%v://%v:%v@%v", proxy_split[0], username, password, proxy_split[1])
+						}
+					}
+					// os.Setenv(strings.ToLower(fmt.Sprintf("%v_PROXY", server_map["proxyType"])), proxy_string)
+					result[strings.ToLower(fmt.Sprintf("%v_PROXY", server_map["proxyType"]))] = proxy_string
+				}
+			}
+		}
+	}
+	return result, nil
 }

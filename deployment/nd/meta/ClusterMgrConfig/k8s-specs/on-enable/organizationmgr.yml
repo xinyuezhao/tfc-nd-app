@@ -51,7 +51,7 @@ spec:
             path: cacerts.crt
       containers:
       - name: organizationmgr
-        image: organizationmgr:v13
+        image: organizationmgr:v29
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: kafka-certs
