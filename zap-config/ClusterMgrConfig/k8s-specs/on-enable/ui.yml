@@ -1,0 +1,42 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: ui
+  namespace: cisco-terraform
+  labels:
+    service: ui
+spec:
+  ports:
+  - name: ui
+    port: 80
+  selector:
+    service: ui
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: ui
+  namespace: cisco-terraform
+  labels:
+    service: ui
+spec:
+  strategy:
+    type: Recreate
+  selector:
+    matchLabels:
+      service: ui
+  template:
+    metadata:
+      labels:
+        service: ui
+    spec:
+      restartPolicy: Always
+      containers:
+      - name: tf-nd-app-ui
+        image: tf-nd-app-ui:v0.0.1
+        imagePullPolicy: IfNotPresent
+        ports:
+        - containerPort: 80
+        env:
+          - name: EXT_PLATFORM
+            value: "NexusDashboard"
