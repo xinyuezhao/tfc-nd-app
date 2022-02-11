@@ -1,0 +1,43 @@
+schemaVersion: 1
+id: Terraform
+tag: 1.0.1
+vendorID: Cisco
+displayName: Nexus Dashboard Connector for HashiCorp Terraform
+description: The Nexus Dashboard Connector for HashiCorp Terraform adds the ability to manage HashiCorp Terraform Cloud Agent directly from Nexus Dashboard.
+author: Cisco Systems, Inc.
+category: ["Tools and Utilities"]
+contact:
+  email: dcn-ecosystem@cisco.com
+  phone: 1-800-553-2447
+  url: https://mycase.cloudapps.cisco.com/case
+iconFile: "icon.png"
+runtime:
+  type: nd-app
+  meta:
+    compatibility:
+      platform:
+      - minVersion: "2.1.1e"
+        type: nd
+    k8sSpecs:
+      on-enable: ClusterMgrConfig/k8s-specs/on-enable
+      on-install: ClusterMgrConfig/k8s-specs/on-install
+      on-feature-enable: ClusterMgrConfig/k8s-specs/on-feature-enable
+images:
+- layer: docker://containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.0.1
+  name: tf-nd-app-organizationmgr
+  tag: v0.0.1
+- layer: docker://containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.0.1
+  name: tf-nd-app-agentmgr
+  tag: v0.0.1
+- layer: docker://containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.0.1
+  name: tf-nd-app-agentpoolmgr
+  tag: v0.0.1
+- layer: docker://containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.0.1
+  name: tf-nd-app-credentialmgr
+  tag: v0.0.1
+# - layer: docker://containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1
+#   name: tf-nd-app-ui
+#   tag: v0.0.1
+- layer: docker://hashicorp/tfc-agent:latest
+  name: tf-nd-app-tfc-agent
+  tag: latest

@@ -1,0 +1,14 @@
+apiVersion: case.cncf.io/v1
+kind: Feature
+metadata:
+  name: tfc-agent-feature
+  namespace: cisco-terraform
+spec:
+  configParameters:
+    token: ""
+    name: ""
+    https_proxy: ""
+    http_proxy: ""
+  resources:
+  - on-feature-enable/tfc-agent-deployment.yml
+  - on-feature-enable/tfc-agent-service.yml

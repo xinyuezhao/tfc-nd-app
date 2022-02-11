@@ -38,6 +38,7 @@ lint: | $(LINTER) generate
 clean:
 	rm -rf $(BINDIR)
 	rm -rf $(CURDIR)/gen
+	rm -rf build
 	rm -f node
 	rm -f cluster
 	rm -f organization
@@ -47,6 +48,7 @@ clean:
 	rm -rf argo
 	rm -rf pkg/bundle
 	rm -f images.tar.gz
+	rm -f images.tar.gzdocker
 	rm -rf .build
 	rm -f cisco-terraform-v*.aci
 	rm -f polaris_image.tar.gz
@@ -95,7 +97,27 @@ docker-images: bundle services
 	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v29 .
 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v1 .
 
+docker-nap: bundle services
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.0.1 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.0.1 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.0.1 .
+	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.0.1 .
+#	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1 .
+
 docker-archive: docker-images
 	docker save organizationmgr:v29 agentmgr:v29 agentpoolmgr:v29 credentialsmgr:v29 hashicorp/tfc-agent:latest ui:v1 | gzip > images.tar.gz
+
+docker-push: docker-nap
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.0.1
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.0.1
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.0.1
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.0.1
+#	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1
+
+zap-build:
+	./zap-dynamic build src:zap-config/ oci:build --sign-pki-key ~/.ssh/dcappcenter_staging_key.pem --author dev
+
+zap-pack: zap-build
+	./zap-dynamic pack oci:build/Terraform zap-archive:build/Terraform_Connect-1.0.0.100.nap --media-dir ./Media --sign-pki-key ~/.ssh/dcappcenter_staging_key.pem --author dev
 
 .PHONY: generate lint test terraform services
