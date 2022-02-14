@@ -26,12 +26,12 @@ func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent)
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	result := terraformv1.CredentialsFactory()
-	errs := make([]error, 0)
-	errs = append(errs, result.SpecMutable().SetConfigured(configured),
+	errors := make([]error, 0)
+	errors = append(errors, result.SpecMutable().SetConfigured(configured),
 		result.SpecMutable().SetTokenExist(tokenExist),
 		result.SpecMutable().SetToken("***"),
 		result.SpecMutable().SetName(name))
-	if err := core.NewError(errs...); err != nil {
+	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	return result, http.StatusOK, nil
@@ -49,16 +49,16 @@ func POSTOverride(ctx context.Context, event *terraformv1.CredentialsDbCreateEve
 		return nil, http.StatusInternalServerError, err
 	}
 	result := terraformv1.CredentialsFactory()
-	errs := make([]error, 0)
+	errors := make([]error, 0)
 	tokenExist := false
 	if token != "" {
 		tokenExist = true
 	}
-	errs = append(errs, result.SpecMutable().SetName(name),
+	errors = append(errors, result.SpecMutable().SetName(name),
 		result.SpecMutable().SetToken(token),
 		result.SpecMutable().SetConfigured(true),
 		result.SpecMutable().SetTokenExist(tokenExist))
-	if err := core.NewError(errs...); err != nil {
+	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	log.Info(fmt.Sprintf("post credentials result name %v, token %v, configured %v, tokenExist %v", result.Spec().Name(), result.Spec().Token(), result.Spec().Configured(), result.Spec().TokenExist()))

@@ -469,8 +469,8 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization,
 }
 
 func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) error {
-	errs := make([]error, 0)
-	errs = append(errs, newOrg.SpecMutable().SetName(org.Name),
+	errors := make([]error, 0)
+	errors = append(errors, newOrg.SpecMutable().SetName(org.Name),
 		newOrg.SpecMutable().SetEmail(org.Email),
 		newOrg.SpecMutable().SetCollaboratorAuthPolicy(string(org.CollaboratorAuthPolicy)),
 		newOrg.SpecMutable().SetCostEstimationEnabled(org.CostEstimationEnabled),
@@ -499,7 +499,7 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 			SetCanUpdateOAuth(org.Permissions.CanUpdateOAuth),
 		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateSentinel(org.Permissions.CanUpdateSentinel))
-	if err := core.NewError(errs...); err != nil {
+	if err := core.NewError(errors...); err != nil {
 		return err
 	}
 	return nil
