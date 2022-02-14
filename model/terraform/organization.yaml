@@ -1,7 +1,7 @@
 kind: Struct
 metadata:
   name: OrganizationSpec
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   props:
@@ -35,7 +35,7 @@ spec:
 kind: Struct
 metadata:
   name: OrganizationPermissions
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   props:
@@ -61,7 +61,7 @@ spec:
 kind: Resource
 metadata:
   name: Organization
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   spec:
@@ -75,7 +75,7 @@ kind: ResourceHandler
 metadata:
   name: OrganizationHandler
 spec:
-  resource: terraform.argo.cisco.com/v1.Organization
+  resource: terraform.cisco.com/v1.Organization
   operations:
     - CREATE
   retryStrategy:
