@@ -48,12 +48,12 @@ func GETOverride(ctx context.Context, event *terraformv1.AgentpoolDbReadEvent) (
 		return nil, http.StatusInternalServerError, core.NewError(queryErr, er)
 	}
 	result := terraformv1.AgentpoolFactory()
-	errs := make([]error, 0)
-	errs = append(errs, result.SpecMutable().SetName(agentPl.Name),
+	errors := make([]error, 0)
+	errors = append(errors, result.SpecMutable().SetName(agentPl.Name),
 		result.SpecMutable().SetOrganization(agentPl.Organization.Name),
 		result.SpecMutable().SetId(agentPl.ID))
 
-	if err := core.NewError(errs...); err != nil {
+	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	return result, http.StatusOK, nil
@@ -79,12 +79,12 @@ func POSTOverride(ctx context.Context, event *terraformv1.AgentpoolDbCreateEvent
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	result := terraformv1.AgentpoolFactory()
-	errs := make([]error, 0)
-	errs = append(errs, result.SpecMutable().SetName(agentPl.Name),
+	errors := make([]error, 0)
+	errors = append(errors, result.SpecMutable().SetName(agentPl.Name),
 		result.SpecMutable().SetOrganization(agentPl.Organization.Name),
 		result.SpecMutable().SetId(agentPl.ID),
 		result.SpecMutable().SetName(agentName))
-	if err := core.NewError(errs...); err != nil {
+	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	return result, http.StatusOK, nil
@@ -137,15 +137,15 @@ func GETAgentpoolListOverride(ctx context.Context, event *terraformv1.AgentpoolL
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	result := terraformv1.AgentpoolListFactory()
-	errs := make([]error, 0)
+	errors := make([]error, 0)
 	for _, agentPl := range agentPls {
 		agentPlSpec := terraformv1.AgentplSpecFactory(nil, 0)
-		errs = append(errs, agentPlSpec.SetName(agentPl.Name),
+		errors = append(errors, agentPlSpec.SetName(agentPl.Name),
 			agentPlSpec.SetId(agentPl.ID),
 			result.SpecMutable().AgentpoolsAppendEl(agentPlSpec))
 	}
-	errs = append(errs, result.SpecMutable().SetOrganization(orgName))
-	if err := core.NewError(errs...); err != nil {
+	errors = append(errors, result.SpecMutable().SetOrganization(orgName))
+	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	return result, http.StatusOK, nil

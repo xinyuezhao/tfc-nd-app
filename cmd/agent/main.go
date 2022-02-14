@@ -30,12 +30,12 @@ func GETOverride(ctx context.Context, event *terraformv1.TokenListDbReadEvent) (
 		return nil, http.StatusInternalServerError, core.NewError(err, er)
 	}
 	result := terraformv1.TokenListFactory()
-	errs := make([]error, 0)
+	errors := make([]error, 0)
 	for _, token := range tokens {
-		errs = append(errs, result.SpecMutable().TokensAppendEl(token.ID))
+		errors = append(errors, result.SpecMutable().TokensAppendEl(token.ID))
 	}
-	errs = append(errs, result.SpecMutable().SetAgentpool(agentPlId))
-	if err := core.NewError(errs...); err != nil {
+	errors = append(errors, result.SpecMutable().SetAgentpool(agentPlId))
+	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
 	return result, http.StatusOK, nil
