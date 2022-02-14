@@ -6,36 +6,36 @@
     "app":{
         "applications": [
             {
-                "name": "se",
-                "prefix": "sedge",
+                "name": "terraform",
+                "prefix": "terraformdge",
                 "resources": [
                 {
-                    "name": "terraform.argo.cisco.com/v1.Organization",
+                    "name": "terraform.cisco.com/v1.Organization",
                     "service": "organization-manager",
                     "endpoint": "organization-topic"
                 },
                 {
-                    "name": "terraform.argo.cisco.com/v1.Agent",
+                    "name": "terraform.cisco.com/v1.Agent",
                     "service": "agent-manager",
                     "endpoint": "agent-topic"
                 },
                 {
-                    "name": "terraform.argo.cisco.com/v1.TokenList",
+                    "name": "terraform.cisco.com/v1.TokenList",
                     "service": "agent-manager",
                     "endpoint": "agent-topic"
                 },
                 {
-                    "name": "terraform.argo.cisco.com/v1.Agentpool",
+                    "name": "terraform.cisco.com/v1.Agentpool",
                     "service": "agentpool-manager",
                     "endpoint": "agentpool-topic"
                 },
                 {
-                    "name": "terraform.argo.cisco.com/v1.AgentpoolList",
+                    "name": "terraform.cisco.com/v1.AgentpoolList",
                     "service": "agentpool-manager",
                     "endpoint": "agentpool-topic"
                 },
                 {
-                    "name": "terraform.argo.cisco.com/v1.Credentials",
+                    "name": "terraform.cisco.com/v1.Credentials",
                     "service": "credentials-manager",
                     "endpoint": "credentials-topic"
                 }

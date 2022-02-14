@@ -12,7 +12,7 @@ const (
 	tokenTest             = "testToken"
 	tokenUpdated          = "updatedTestToken"
 	credentialsmgrBaseURL = setupURL + "/sedgeapi/v1/cisco-terraform/credentialsmgr/"
-	credentialsURL        = credentialsmgrBaseURL + "api/terraform.argo.cisco.com/v1/credentials"
+	credentialsURL        = credentialsmgrBaseURL + "api/terraform/v1/credentials"
 	credentialsQueryURL   = credentialsURL + "/" + credentialsTest
 )
 

@@ -1,7 +1,7 @@
 kind: Struct
 metadata:
   name: AgentpoolSpec
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   props:
@@ -15,7 +15,7 @@ spec:
 kind: Resource
 metadata:
   name: Agentpool
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   spec:
@@ -45,7 +45,7 @@ kind: ResourceHandler
 metadata:
   name: AgentpoolHandler
 spec:
-  resource: terraform.argo.cisco.com/v1.Agentpool
+  resource: terraform.cisco.com/v1.Agentpool
   operations:
     - CREATE
   retryStrategy:
@@ -58,7 +58,7 @@ kind: Resource
 metadata:
   name: AgentpoolList
   plural: agentpoolList
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   spec:
@@ -71,7 +71,7 @@ spec:
 kind: Struct
 metadata:
   name: AgentplListSpec
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   props:
@@ -83,7 +83,7 @@ spec:
 kind: Struct
 metadata:
   name: AgentplSpec
-  group: terraform.argo.cisco.com
+  group: terraform.cisco.com
   version: v1
 spec:
   props:

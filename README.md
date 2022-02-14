@@ -30,25 +30,25 @@ $ echo '{"userName": "admin", "userPasswd": "ins3965!", "domain": "DefaultAuth"}
 You can query organizations from organizationmgr using the following request.
 
 ```
-$ http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/organizationmgr/api/terraform.argo.cisco.com/v1/organizations
+$ http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/organizationmgr/api/terraform.cisco.com/v1/organizations
 ```
 
 You can query a specific agentpool from agentpoolmgr using the following request.
 
 ```
-$ http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/agentpoolmgr/api/terraform.argo.cisco.com/v1/agentpools/organization/{{organization name}}/agentpool/{{agentpool name}}
+$ http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/agentpoolmgr/api/terraform.cisco.com/v1/agentpools/organization/{{organization name}}/agentpool/{{agentpool name}}
 ```
 
 An agent can be posted as follows.
 
 ```
-$ echo '{"spec": {"description": "description for agent", "name": "agent_without_token", "organization": {{organization name}}, "agentpool": {{agentpool name}}}}' | http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.argo.cisco.com/v1/agents
+$ echo '{"spec": {"description": "description for agent", "name": "agent_without_token", "organization": {{organization name}}, "agentpool": {{agentpool name}}}}' | http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.cisco.com/v1/agents
 ```
 
 Once the agent is created, query the agent resource to verify that.
 
 ```
-$ http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.argo.cisco.com/v1/agents/agent_without_token
+$ http --verify=no --session=nd https://172.31.187.83/sedgeapi/v1/cisco-terraform/nodemgr/api/terraform.cisco.com/v1/agents/agent_without_token
 HTTP/1.1 200 OK
 Content-Length: 469
 Content-Type: application/json
@@ -64,7 +64,7 @@ X-Xss-Protection: 1; mode=block
 
 {
     "meta": {
-        "id": "terraform.argo.cisco.com/v1.Agent/a2c2290e-db75-4bc4-a5d7-0e45b100d46a",
+        "id": "terraform.cisco.com/v1.Agent/a2c2290e-db75-4bc4-a5d7-0e45b100d46a",
         "specGenID": 2,
         "statusGenID": 0,
         "status": 3,
@@ -76,7 +76,7 @@ X-Xss-Protection: 1; mode=block
         "org": "ARGO-FW-TENANT",
         "domain": "",
         "namespace": "",
-        "key": "terraform.argo.cisco.com/v1.Agent"
+        "key": "terraform.cisco.com/v1.Agent"
     },
     "spec": {
         "description": "description for agent",
