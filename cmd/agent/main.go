@@ -16,15 +16,15 @@ import (
 	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
-func GETOverride(ctx context.Context, event *terraformv1.TokenListDbReadEvent) (terraformv1.TokenList, int, error) {
+func GETTokenListOverride(ctx context.Context, event *terraformv1.TokenListDbReadEvent) (terraformv1.TokenList, int, error) {
 	payloadObject := event.Resource().(terraformv1.TokenList)
-	agentPlId := payloadObject.Spec().Agentpool()
-	ctxTfe, client, err := conf.ConfigTFC()
+	agentPoolId := payloadObject.Spec().Agentpool()
+	tfcContext, tfcClient, err := conf.ConfigTFC()
 	if err != nil {
 		er := fmt.Errorf("error from configTFC")
 		return nil, http.StatusInternalServerError, core.NewError(err, er)
 	}
-	tokens, err := conf.QueryAgentTokens(ctxTfe, client, agentPlId)
+	tokens, err := conf.QueryAgentTokens(tfcContext, tfcClient, agentPoolId)
 	if err != nil {
 		er := fmt.Errorf("error from QueryAgentTokens")
 		return nil, http.StatusInternalServerError, core.NewError(err, er)
@@ -34,7 +34,7 @@ func GETOverride(ctx context.Context, event *terraformv1.TokenListDbReadEvent) (
 	for _, token := range tokens {
 		errors = append(errors, result.SpecMutable().TokensAppendEl(token.ID))
 	}
-	errors = append(errors, result.SpecMutable().SetAgentpool(agentPlId))
+	errors = append(errors, result.SpecMutable().SetAgentpool(agentPoolId))
 	if err := core.NewError(errors...); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
@@ -53,8 +53,8 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 	if err := core.NewError(payloadObject.SpecMutable().SetToken("********")); err != nil {
 		return nil, http.StatusInternalServerError, err
 	}
-	TLSclient := conf.ConfigTLSClient()
-	features, err := conf.QueryFeatures(ctx, TLSclient)
+	tlsClient := conf.ConfigTLSClient()
+	features, err := conf.QueryFeatures(ctx, tlsClient)
 	if err != nil {
 		er := fmt.Errorf("error from QueryFeatures")
 		return nil, http.StatusInternalServerError, core.NewError(err, er)
@@ -64,15 +64,15 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 			payloadObject.SpecMutable().SetStatus(feature.OperState)
 		}
 	}
-	agentPlId := payloadObject.Spec().AgentpoolId()
-	if agentPlId != "" {
-		_, TFEclient, err := conf.ConfigTFC()
+	agentPoolId := payloadObject.Spec().AgentpoolId()
+	if agentPoolId != "" {
+		_, tfcClient, err := conf.ConfigTFC()
 		if err != nil {
 			er := fmt.Errorf("error from configTFC")
 			return nil, http.StatusInternalServerError, core.NewError(err, er)
 		}
 		// get agentId by agentPoolId & agentName when userToken was provided by user
-		agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
+		agents, err := conf.QueryAgents(ctx, tlsClient, tfcClient, agentPoolId)
 		if err != nil {
 			er := fmt.Errorf("error from queryAgents")
 			return nil, http.StatusInternalServerError, core.NewError(er, err)
@@ -102,8 +102,8 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 	log := core.LoggerFromContext(ctx)
 	objs := event.Resolver.ResolveByKind(ctx, terraformv1.AgentMeta().MetaKey())
 	result := make([]terraformv1.Agent, 0)
-	TLSclient := conf.ConfigTLSClient()
-	features, err := conf.QueryFeatures(ctx, TLSclient)
+	tlsClient := conf.ConfigTLSClient()
+	features, err := conf.QueryFeatures(ctx, tlsClient)
 	if err != nil {
 		er := fmt.Errorf("error during querying features")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
@@ -120,16 +120,16 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 				payloadObject.SpecMutable().SetStatus(feature.OperState)
 			}
 		}
-		agentPlId := payloadObject.Spec().AgentpoolId()
+		agentPoolId := payloadObject.Spec().AgentpoolId()
 		// query agent status only when userToken was provided by user
-		if agentPlId != "" {
-			_, TFEclient, err := conf.ConfigTFC()
+		if agentPoolId != "" {
+			_, tfcClient, err := conf.ConfigTFC()
 			if err != nil {
 				er := fmt.Errorf("error during config TFC")
 				return nil, http.StatusInternalServerError, core.NewError(er, err)
 			}
 			// get agentId by agentPoolId & agentName
-			agents, err := conf.QueryAgents(ctx, TLSclient, TFEclient, agentPlId)
+			agents, err := conf.QueryAgents(ctx, tlsClient, tfcClient, agentPoolId)
 			if err != nil {
 				er := fmt.Errorf("error during querying agents")
 				return nil, http.StatusInternalServerError, core.NewError(er, err)
@@ -177,7 +177,7 @@ func main() {
 		handlers.AgentValidator,
 	}
 
-	terraformv1.TokenListMeta().RegisterAPIMethodGET(GETOverride)
+	terraformv1.TokenListMeta().RegisterAPIMethodGET(GETTokenListOverride)
 	terraformv1.AgentMeta().RegisterAPIMethodGET(GETAgentOverride)
 	terraformv1.AgentMeta().RegisterAPIMethodList(ListOverride)
 
