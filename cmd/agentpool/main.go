@@ -17,14 +17,10 @@ import (
 	"golang.cisco.com/examples/terraform/pkg/platform"
 )
 
-func GETOverride(ctx context.Context, event *terraformv1.AgentpoolDbReadEvent) (terraformv1.Agentpool, int, error) {
+func GETAgentPoolOverride(ctx context.Context, event *terraformv1.AgentpoolDbReadEvent) (terraformv1.Agentpool, int, error) {
 	log := core.LoggerFromContext(ctx)
 
 	log.Info("register overriding GET")
-	log.Info("show indentity " + event.ID())
-	log.Info("show dn " + event.DN())
-	log.Info("org name is " + event.Resource().(terraformv1.Agentpool).Spec().Organization())
-	log.Info("agentPl name is " + event.Resource().(terraformv1.Agentpool).Spec().Name())
 	payloadObject := event.Resource().(terraformv1.Agentpool)
 	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
@@ -63,8 +59,7 @@ func POSTOverride(ctx context.Context, event *terraformv1.AgentpoolDbCreateEvent
 	log := core.LoggerFromContext(ctx)
 
 	log.Info("register overriding POST")
-	log.Info("show indentity " + event.ID())
-	log.Info("show dn " + event.DN())
+
 	payloadObject := event.Resource().(terraformv1.Agentpool)
 	orgName := payloadObject.Spec().Organization()
 	agentName := payloadObject.Spec().Name()
@@ -97,14 +92,14 @@ func DELETEOverride(ctx context.Context, event *terraformv1.AgentpoolDbDeleteEve
 		er := fmt.Errorf("error from configTFC")
 		return http.StatusInternalServerError, core.NewError(er, err)
 	}
-	if payloadObject.Spec().Id() != "" && payloadObject.Spec().IdPtr() != nil {
-		err := conf.DeleteAgentPool(ctxTfe, client, payloadObject.Spec().Id())
+	id := payloadObject.Spec().Id()
+	if id != "" {
+		err := conf.DeleteAgentPool(ctxTfe, client, id)
 		if err != nil {
 			er := fmt.Errorf("error from deleteAgentPool")
 			return http.StatusInternalServerError, core.NewError(err, er)
 		}
-	}
-	if payloadObject.Spec().Organization() != "" && payloadObject.Spec().OrganizationPtr() != nil &&
+	} else if payloadObject.Spec().Organization() != "" && payloadObject.Spec().OrganizationPtr() != nil &&
 		payloadObject.Spec().Name() != "" && payloadObject.Spec().NamePtr() != nil {
 		agentPools, _ := conf.QueryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
 		agentPl, queryErr := conf.QueryAgentPlByName(agentPools, payloadObject.Spec().Name())
@@ -121,11 +116,11 @@ func DELETEOverride(ctx context.Context, event *terraformv1.AgentpoolDbDeleteEve
 	return http.StatusOK, nil
 }
 
-func GETAgentpoolListOverride(ctx context.Context, event *terraformv1.AgentpoolListDbReadEvent) (terraformv1.AgentpoolList, int, error) {
+func GETAgentPoolListOverride(ctx context.Context, event *terraformv1.AgentpoolListDbReadEvent) (terraformv1.AgentpoolList, int, error) {
 	log := core.LoggerFromContext(ctx)
 	log.Info("register overriding GET for AgentpoolList")
-	orgAgentPl := event.Resource().(terraformv1.AgentpoolList)
-	orgName := orgAgentPl.Spec().Organization()
+	agentPoolList := event.Resource().(terraformv1.AgentpoolList)
+	orgName := agentPoolList.Spec().Organization()
 	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
 		er := fmt.Errorf("error from configTFC")
@@ -169,10 +164,10 @@ func main() {
 		handlers.AgentpoolHandler,
 	}
 
-	terraformv1.AgentpoolMeta().RegisterAPIMethodGET(GETOverride)
+	terraformv1.AgentpoolMeta().RegisterAPIMethodGET(GETAgentPoolOverride)
 	terraformv1.AgentpoolMeta().RegisterAPIMethodPOST(POSTOverride)
 	terraformv1.AgentpoolMeta().RegisterAPIMethodDELETE(DELETEOverride)
-	terraformv1.AgentpoolListMeta().RegisterAPIMethodGET(GETAgentpoolListOverride)
+	terraformv1.AgentpoolListMeta().RegisterAPIMethodGET(GETAgentPoolListOverride)
 
 	var apx service.Service
 	var opts service.Options
