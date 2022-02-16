@@ -205,7 +205,12 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-terraform/organizationmgr"
+    - path: "api/organization/{id}"
+      urlRewrites:
+      - path: "{id}"
+        method: "GET"
+        matchPattern: "api/organization/(.*)"
+        rewriteTo: "api/terraform.cisco.com/$1"
   - target: agentmgr
     service:
       scheme: http
