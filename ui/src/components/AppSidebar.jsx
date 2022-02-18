@@ -4,12 +4,12 @@ import { pathPrefix } from "../App";
 
 function AppSidebar() {
   const sidebarItems = [
-    // {
-    //   id: "Dashboard",
-    //   path: `${pathPrefix}/dashboard`,
-    //   title: "Overview",
-    //   icon: IconConstants.LAYERS,
-    // },
+    {
+      id: "Dashboard",
+      path: `${pathPrefix}/dashboard`,
+      title: "Overview",
+      icon: Icon.TYPE.LAYERS,
+    },
     {
       id: "Agents",
       path: `${pathPrefix}/home`,

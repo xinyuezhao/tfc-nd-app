@@ -45,7 +45,7 @@ function CreateNewAgentPool(props) {
       screenActions.closeScreen("create-agent-pool-modal"); // screenId
     })
     .catch((error) => {
-      console.log(error);;
+      console.log(error);
     });
   };
 

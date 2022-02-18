@@ -35,7 +35,7 @@ function Agent(props) {
       setDescription(agent.description);
       setAgentToken(agent.agentToken);
     }
-    console.log("Inside create agent without user token");
+    console.log("INFO: Create agent without user token");
   }, [agent]);
 
   const updateDetails = useCallback(() => {
@@ -67,15 +67,21 @@ function Agent(props) {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
-      console.log("screen action ID = ", screenId)
       screenActions.closeScreen("create-agent-modal");
     }
-  }, [checkBeforeSubmit, updateDetails, screenActions, screenId]);
+  }, [checkBeforeSubmit, updateDetails, screenActions]);
 
 
   const onClose = () => {
     setIsOpen(false);
   };
+
+  let applyButtonProps = {disabled: true};
+
+  if(agentName && description && agentToken){
+    applyButtonProps = {};
+  }
+
 
 
 //  Name is not required, description is.
@@ -86,6 +92,7 @@ function Agent(props) {
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={`${agent ? "Update" : "Save"}`}
+      applyButtonProps={applyButtonProps}
     >
       <div style={{ paddingLeft: "10%" }}>
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>

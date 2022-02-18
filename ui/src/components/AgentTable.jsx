@@ -33,6 +33,9 @@ const stopClick = (e) => {
 };
 
 function AgentTable(props) {
+  const {
+    refreshAuthConfig
+  } = props;
 
   const allColumns = [
     {
@@ -89,6 +92,7 @@ function AgentTable(props) {
               const {original} = row;
               console.log(`Delete Item`, original.id, original.description)
               openDeleteConfirm();
+              deleteAgent(original.description);
             }
           },
         ];
@@ -156,7 +160,6 @@ function AgentTable(props) {
 
       // setfilterRemove(!!!queryParam);
       setFetchingData(setLoading === false ? false : true);
-      console.log("INSIDE GET AGENTSSS.....")
       fetchAgents(
         pageSizeLimit ? pageSizeLimit : limit.current.value,
         offset.current.value,
@@ -164,7 +167,6 @@ function AgentTable(props) {
       )
       .then((res) => {
         setAgents(res.data);
-        console.log("GET agents API Response: ", res.data)
         setFetchingData(false);
       })
       .catch((err) => {
@@ -188,13 +190,27 @@ function AgentTable(props) {
     setShowConfirm(true);
   }
 
-  function deleteAgent() {
+  function deleteAgentsInBulk() {
     setShowConfirm(false);
     setInfoAlert("Deleting Agents");
     const description = selectedAgents.map(
       (agentsData) => agentsData.description
     );
-    console.log("DELETE description", description);
+    deleteAgents(description)
+      .then(() => {
+        setSuccessAlert("Deleted Agents Successfully");
+        getAgents();
+      })
+      .catch((error) => {
+        console.log(error);
+      });
+  }
+
+  function deleteAgent(agent) {
+    setShowConfirm(false);
+    setInfoAlert("Deleting Agent");
+    const description = agent;
+    console.log("DELETE agents in row", description);
     deleteAgents(description)
       .then(() => {
         setSuccessAlert("Deleted Agents Successfully");
@@ -207,14 +223,11 @@ function AgentTable(props) {
 
 
   const handleCreateAgent = useCallback((payload) => {
-    console.log("start create agent");
     setInfoAlert("Creating Agent");
     createAgents(payload)
       .then((res) => {
         setInfoAlert("");
         setSuccessAlert("Created Agent Successfully");
-        console.log("agent data = ", agents )
-        console.log("Agent creation DONE. data = ", res.data )
         getAgents();
       })
       .catch((error) => {
@@ -224,11 +237,11 @@ function AgentTable(props) {
         error.response?.data?.detail?.detail &&
           setWarningAlert(error.response?.data?.detail?.detail);
       });
-  },[]);
+  },[getAgents]);
 
   const handleOpenAgent = useCallback(
     (data) => {
-      console.log("handle open agent");
+      console.log("Agent table auth config", refreshAuthConfig);
       if(userToken){
         const title = `${data ? "Update" : "Create"} Agent`;
         action.openScreen(Agent, {
@@ -256,11 +269,9 @@ function AgentTable(props) {
 
   const handleSidebar = useCallback(
     (data) => {
-      console.log("handle view agent", data);
       setViewAgent(data);
       setOpenSidebar(!openSidebar);
-    }
-  );
+    }, [openSidebar]);
 
   const menuItems = [
     {
@@ -279,7 +290,6 @@ function AgentTable(props) {
   ).map((item) => {
     return {id: item.meta.id, ...item.spec}
   });
-  console.log("TableData = ", TableData);
 
   const headerContent1 = {
     title: "Agent", subtitle: `${viewAgent.name}`,
@@ -326,7 +336,7 @@ function AgentTable(props) {
           setShowConfirm(false);
         }}
         onAction={(data) => {
-          data === "component-modal-apply-button" && deleteAgent();
+          data === "component-modal-apply-button" && deleteAgentsInBulk();
         }}
       >
         {`Are you sure want to delete agent(s) ${selectedAgents.map(

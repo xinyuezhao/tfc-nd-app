@@ -1,7 +1,7 @@
 import {Dropdown, IconButton, LABELS, useScreenActions} from 'blueprint-react';
 import AuthenticationToken from './AuthenticationToken';
 
-const Header = ({setShowAbout}) => {
+const Header = ({setShowAbout, authConfig, refreshAuthConfig}) => {
 
     const actions = useScreenActions();
 
@@ -12,8 +12,9 @@ const Header = ({setShowAbout}) => {
                 actions.openScreen(AuthenticationToken, {
                     title: "title",
                     screenId: "authentication-token",
+                    authConfig: authConfig,
+                    refreshAuthConfig: refreshAuthConfig,
                 });
-                console.log("open screen")
             }
         },
         {

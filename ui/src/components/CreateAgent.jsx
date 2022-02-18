@@ -75,7 +75,7 @@ function Agent(props) {
 
   const checkBeforeSubmit = useCallback(() => {
     return true;
-  },);
+  },[]);
 
   const onAction = () => {
     const result = checkBeforeSubmit();
@@ -153,6 +153,12 @@ function Agent(props) {
     });
   }, [organization, action]);
 
+  let applyButtonProps = {disabled: true};
+
+  if(agentName && description && organization && agentPool){
+    applyButtonProps = {};
+  }
+
 
   return (
     <DetailScreen
@@ -161,6 +167,7 @@ function Agent(props) {
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={`${agent ? "Update" : "Save"}`}
+      applyButtonProps={applyButtonProps}
     >
       <div style={{ paddingLeft: "10%" }}>
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
