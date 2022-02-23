@@ -64,8 +64,14 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 			payloadObject.SpecMutable().SetStatus(feature.OperState)
 		}
 	}
+	// query agent status only when userToken exists
+	_, _, exist, err := conf.GetCredentials("terraform")
+	if err != nil {
+		er := fmt.Errorf("error while getting user token")
+		return nil, http.StatusInternalServerError, core.NewError(er, err)
+	}
 	agentPoolId := payloadObject.Spec().AgentpoolId()
-	if agentPoolId != "" {
+	if agentPoolId != "" && exist {
 		_, tfcClient, err := conf.ConfigTFC()
 		if err != nil {
 			er := fmt.Errorf("error from configTFC")
@@ -121,8 +127,13 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 			}
 		}
 		agentPoolId := payloadObject.Spec().AgentpoolId()
-		// query agent status only when userToken was provided by user
-		if agentPoolId != "" {
+		// query agent status only when userToken exists
+		_, _, exist, err := conf.GetCredentials("terraform")
+		if err != nil {
+			er := fmt.Errorf("error while getting user token")
+			return nil, http.StatusInternalServerError, core.NewError(er, err)
+		}
+		if agentPoolId != "" && exist {
 			_, tfcClient, err := conf.ConfigTFC()
 			if err != nil {
 				er := fmt.Errorf("error during config TFC")
