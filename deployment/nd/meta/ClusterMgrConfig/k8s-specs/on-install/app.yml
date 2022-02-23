@@ -205,12 +205,8 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "api/organization/{id}"
-      urlRewrites:
-      - path: "{id}"
-        method: "GET"
-        matchPattern: "api/organization/(.*)"
-        rewriteTo: "api/terraform.cisco.com/$1"
+    - path: "api/organization/"
+      targetSubPath: "api/terraform.cisco.com/" 
   - target: agentmgr
     service:
       scheme: http
@@ -218,7 +214,8 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-terraform/agentmgr"
+    - path: "api/agent/"
+      targetSubPath: "api/terraform.cisco.com/" 
   - target: agentpoolmgr
     service:
       scheme: http
@@ -226,7 +223,8 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-terraform/agentpoolmgr"
+    - path: "api/agentpool/"
+      targetSubPath: "api/terraform.cisco.com/"
   - target: credentialsmgr
     service:
       scheme: http
@@ -234,7 +232,8 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "/sedgeapi/v1/cisco-terraform/credentialsmgr"
+    - path: "api/credentials/"
+      targetSubPath: "api/terraform.cisco.com/"
   - target: ui
     service:
       scheme: http
