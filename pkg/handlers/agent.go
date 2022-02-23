@@ -47,7 +47,7 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 			}
 		}
 		token := agent.Spec().Token()
-		agent.SpecMutable().SetStatus("created")
+		agent.SpecMutable().SetStatus("Created")
 		// api call creating feature instance to deploy agent
 		TLSclient := conf.ConfigTLSClient()
 		// TODO: use GetProxyConfig instead
