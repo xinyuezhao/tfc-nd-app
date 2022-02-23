@@ -86,7 +86,7 @@ X-Xss-Protection: 1; mode=block
         "organization": "",
         "name": "agent_without_token",
         "token": "********",
-        "status": "created",
+        "status": "Created",
         "agentId": ""
     }
 }
