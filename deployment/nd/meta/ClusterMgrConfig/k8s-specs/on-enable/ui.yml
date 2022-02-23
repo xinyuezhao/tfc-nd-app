@@ -8,7 +8,7 @@ metadata:
 spec:
   ports:
   - name: ui
-    port: 80
+    port: 3000
   selector:
     service: ui
 ---
@@ -33,10 +33,10 @@ spec:
       restartPolicy: Always
       containers:
       - name: ui
-        image: ui:v1
+        image: cn-ecosystem/tf-nd-app-ui:latest
         imagePullPolicy: IfNotPresent
         ports:
-        - containerPort: 80
+        - containerPort: 3000
         env:
           - name: EXT_PLATFORM
             value: "NexusDashboard"
