@@ -11,7 +11,7 @@ spec:
       enabled: true
       autoRefresh: true
   deploymentFlavors:
-  - name: virtual
+  - name: default
     enableInjection: true
     storage:
     - storageID: logger
@@ -29,11 +29,11 @@ spec:
         limit: 3Gi
   defaultFlavors:
   - caseDeploymentProfile: physical-standard
-    flavor: virtual
+    flavor: default
   - caseDeploymentProfile: physical-small
-    flavor: virtual
+    flavor: default
   - caseDeploymentProfile: default
-    flavor: virtual
+    flavor: default
 ---
 apiVersion: case.cncf.io/v1
 kind: Certificate
