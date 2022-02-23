@@ -16,12 +16,6 @@ function AppSidebar() {
       title: "Agents",
       icon: Icon.TYPE.PARTICIPANT_LIST,
     },
-    // {
-    //   id: "Auth",
-    //   path: `${pathPrefix}/auth`,
-    //   title: "Auth",
-    //   icon: IconConstants.COG,
-    // },
   ];
 
   return (

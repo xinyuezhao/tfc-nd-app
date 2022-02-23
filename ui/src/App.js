@@ -21,7 +21,7 @@ export const pathPrefix = "/appcenter/cisco/terraform/ui";
 function App(props) {
 
   const [showAbout, setShowAbout] = useState(false);
-  const [authConfig, setAuthConfig] = useState(false);
+  const [authConfig, setAuthConfig] = useState("");
 
   useEffect(() => {
     const payload = {
@@ -87,8 +87,7 @@ function App(props) {
                           <Route
                             exact
                             path={pathPrefix + "/home"}
-                            component={AgentTable}
-                            refreshAuthConfig={getAuthConfig}
+                            render={() => <AgentTable authConfig={authConfig} />}
                           />
                           <Route
                             exact

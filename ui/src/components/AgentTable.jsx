@@ -34,7 +34,7 @@ const stopClick = (e) => {
 
 function AgentTable(props) {
   const {
-    refreshAuthConfig
+    authConfig,
   } = props;
 
   const allColumns = [
@@ -45,7 +45,17 @@ function AgentTable(props) {
       sortable: true,
       align: "center",
       tooltips: true,
-      // Cell: (row) => {<SmartHealthBadgeIconWrapper value={row.value} showLabel={true}/>}
+      Cell: (row) => {
+
+        return (
+        <div class="StatusTile">
+          {row.value === "Running"
+            ?<span class="status-tile-icon status-success icon-check-outline" style={{color: "#6cc04a"}}></span>
+            :<span class="status-tile-icon status-success icon-check-outline" style={{color: "#e2231a"}}></span>
+          }
+          <label class="status-tile-text "> {`${row.value}`}</label>
+        </div>
+      )},
     },
     {
       id: "Agent Name",
@@ -133,7 +143,7 @@ function AgentTable(props) {
       10
     )
   );
-  const [userToken, setUserToken] = useState(false);
+
 
   const offset = useRef({ value: 0 });
   const limit = useRef({ value: 50 });
@@ -227,7 +237,7 @@ function AgentTable(props) {
     createAgents(payload)
       .then((res) => {
         setInfoAlert("");
-        setSuccessAlert("Created Agent Successfully");
+        setSuccessAlert("Created Agent Successfully", res);
         getAgents();
       })
       .catch((error) => {
@@ -241,8 +251,8 @@ function AgentTable(props) {
 
   const handleOpenAgent = useCallback(
     (data) => {
-      console.log("Agent table auth config", refreshAuthConfig);
-      if(userToken){
+      console.log("INFO: User token exists: ", authConfig.tokenExist);
+      if(authConfig.tokenExist){
         const title = `${data ? "Update" : "Create"} Agent`;
         action.openScreen(Agent, {
           title: title,
@@ -263,7 +273,7 @@ function AgentTable(props) {
     [
       action,
       handleCreateAgent,
-      userToken,
+      authConfig,
     ]
   );
 
@@ -309,7 +319,14 @@ function AgentTable(props) {
           footerContent={<div style={{textAlign: 'center'}}>Footer content</div>}
         >
         <Card>
-          <h3 style={{ textAlign:"center"}}>{`${viewAgent.status}`}</h3>
+          {viewAgent.status === "Running"
+            ?<h3 style={{ textAlign:"center"}}>
+                <span class="status-tile-icon status-success icon-check-outline" style={{color: "#6cc04a"}}></span>  {`${viewAgent.status}`}
+            </h3>
+            :<h3 style={{ textAlign:"center"}}>
+              <span class="status-tile-icon status-success icon-check-outline" style={{color: "#e2231a"}}></span>  {`${viewAgent.status}`}
+            </h3>
+          }
         </Card>
         <div class="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
           {/* ========================================== */}
