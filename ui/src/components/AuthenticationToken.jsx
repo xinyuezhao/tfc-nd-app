@@ -176,7 +176,7 @@ function AuthenticationToken(props) {
             children="Instruction on how to use authentication. Get terraform user token."
           />
           <div className="cards__header" style={{ paddingLeft: "0px", paddingTop: "35px" }}>Authentication Token
-            <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+            <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
           </div>
           <div className="cards__header" style={{ paddingBottom: "25px", paddingRight: "75%", paddingLeft: "0px"}}>
             <Input required=""

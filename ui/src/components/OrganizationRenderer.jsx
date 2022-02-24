@@ -15,7 +15,7 @@ const OrgDetailRenderer = (props) => {
     <Card className="col d-flex justify-content-center" style={{ position: "relative", display: "inline-block"}}>
     <CardHeader>
       <div>
-        <div class="icon-communities icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}></div>
+        <div className="icon-communities icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}></div>
         <div style={{float: "right", marginLeft: "10px"}}>
           <div style={{ fontWeight: "bold", fontSize: "12px", padding: "2px"}}>Organization</div>
           <div style={{ padding: "2px"}}>{item.name }</div>

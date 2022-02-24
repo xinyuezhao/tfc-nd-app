@@ -118,7 +118,7 @@ const AboutModal = (props) => {
   } = props;
 
   return (
-    <Modal class="about-modal"
+    <Modal className="about-modal"
     title=" "
       isOpen={show}
       onClose={onClose}
@@ -128,7 +128,7 @@ const AboutModal = (props) => {
       style={{ color: "white"}}
       // footer={null}
       >
-      <div class="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px", marginBottom: "15px"}}/>
+      <div className="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px", marginBottom: "15px"}}/>
       <h3>Nexus Dashboard Connector for Terraform</h3>
       <p>Version ##.#(#)</p>
       <p>Cisco Systems, Inc. All rights reserved.</p>

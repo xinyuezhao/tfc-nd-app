@@ -174,7 +174,7 @@ function Agent(props) {
         <Card className="col" style={{ width: "90%", paddingLeft: "30px", paddingTop: "0px" }}>
             <div className="agent-container justify-content-center">
               <div className="row">Agent Name
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5">
                 <Input required=""
@@ -184,7 +184,7 @@ function Agent(props) {
               </div>
               {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Description
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5">
                 <Input required=""
@@ -194,7 +194,7 @@ function Agent(props) {
               </div>
               {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Organization
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5">
                 <ObjectPicker required
@@ -210,7 +210,7 @@ function Agent(props) {
               </div>
               {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Agent Pool
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5" style={{ paddingBottom: "30px" }}>
                 <ObjectPicker required disabled={!(organization !== null && Object.keys(organization).length !== 0)}

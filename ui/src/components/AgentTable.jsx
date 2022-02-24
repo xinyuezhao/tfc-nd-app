@@ -16,8 +16,8 @@ import {
 } from "blueprint-react";
 import {
   fetchAgents,
-  deleteAgents,
-  createAgents,
+  deleteAgent,
+  createAgent,
 } from "../service/api_service";
 import Agent from "./CreateAgent";
 import AgentWoToken from "./CreateAgentWoToken";
@@ -37,6 +37,18 @@ function AgentTable(props) {
     authConfig,
   } = props;
 
+  const statuses = {
+    running: <span className="status-tile-icon status-success icon-check-outline" style={{color: "#6abf4b"}}></span>,
+    created: <span className="status-tile-icon status-success icon-add-outline" style={{color: "#64bbe3"}}></span>,
+    enabling: <span className="status-tile-icon status-success icon-animation" style={{color: "#fbab18"}}></span>,
+    errored: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#e2231a"}}></span>,
+    exited: <span className="status-tile-icon status-success icon-leave-meeting" ></span>,
+    idle: <span className="status-tile-icon status-success  icon-clock" style={{color: "#6abf4b"}}></span>,
+    busy: <span className="status-tile-icon status-success  icon-diagnostics" style={{color: "#6abf4b"}}></span>,
+    unknown: <span className="status-tile-icon status-success icon-exclamation-triangle" style={{color: "#f27938"}}></span>,
+    failed: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#e2231a"}}></span>,
+  }
+
   const allColumns = [
     {
       id: "Status",
@@ -46,14 +58,10 @@ function AgentTable(props) {
       align: "center",
       tooltips: true,
       Cell: (row) => {
-
         return (
-        <div class="StatusTile">
-          {row.value === "Running"
-            ?<span class="status-tile-icon status-success icon-check-outline" style={{color: "#6cc04a"}}></span>
-            :<span class="status-tile-icon status-success icon-check-outline" style={{color: "#e2231a"}}></span>
-          }
-          <label class="status-tile-text "> {`${row.value}`}</label>
+        <div className="StatusTile">
+          {statuses[row.value.toLowerCase()]}
+          <label className="status-tile-text "> {`${row.value}`}</label>
         </div>
       )},
     },
@@ -102,7 +110,6 @@ function AgentTable(props) {
               const {original} = row;
               console.log(`Delete Item`, original.id, original.description)
               openDeleteConfirm();
-              deleteAgent(original.description);
             }
           },
         ];
@@ -200,14 +207,12 @@ function AgentTable(props) {
     setShowConfirm(true);
   }
 
-  function deleteAgentsInBulk() {
+  function handleDeleteAgent() {
     setShowConfirm(false);
     setInfoAlert("Deleting Agents");
-    const description = selectedAgents.map(
-      (agentsData) => agentsData.description
-    );
-    deleteAgents(description)
-      .then(() => {
+    Promise.all(selectedAgents.map(
+      (agentsData) => deleteAgent(agentsData.name)
+    )).then(() => {
         setSuccessAlert("Deleted Agents Successfully");
         getAgents();
       })
@@ -215,26 +220,10 @@ function AgentTable(props) {
         console.log(error);
       });
   }
-
-  function deleteAgent(agent) {
-    setShowConfirm(false);
-    setInfoAlert("Deleting Agent");
-    const description = agent;
-    console.log("DELETE agents in row", description);
-    deleteAgents(description)
-      .then(() => {
-        setSuccessAlert("Deleted Agents Successfully");
-        getAgents();
-      })
-      .catch((error) => {
-        console.log(error);
-      });
-  }
-
 
   const handleCreateAgent = useCallback((payload) => {
     setInfoAlert("Creating Agent");
-    createAgents(payload)
+    createAgent(payload)
       .then((res) => {
         setInfoAlert("");
         setSuccessAlert("Created Agent Successfully", res);
@@ -319,16 +308,11 @@ function AgentTable(props) {
           footerContent={<div style={{textAlign: 'center'}}>Footer content</div>}
         >
         <Card>
-          {viewAgent.status === "Running"
-            ?<h3 style={{ textAlign:"center"}}>
-                <span class="status-tile-icon status-success icon-check-outline" style={{color: "#6cc04a"}}></span>  {`${viewAgent.status}`}
-            </h3>
-            :<h3 style={{ textAlign:"center"}}>
-              <span class="status-tile-icon status-success icon-check-outline" style={{color: "#e2231a"}}></span>  {`${viewAgent.status}`}
-            </h3>
-          }
+          <h3 style={{ textAlign:"center"}}>
+            {statuses[`${viewAgent.status}`.toLowerCase()]} {`${viewAgent.status}`}
+          </h3>
         </Card>
-        <div class="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
+        <div className="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
           {/* ========================================== */}
           <div style={{ paddingTop: "30px", color: "gray" }}>Description</div>
           <div>{`${viewAgent.description}`}</div>
@@ -353,12 +337,12 @@ function AgentTable(props) {
           setShowConfirm(false);
         }}
         onAction={(data) => {
-          data === "component-modal-apply-button" && deleteAgentsInBulk();
+          data === "component-modal-apply-button" && handleDeleteAgent();
         }}
       >
         {`Are you sure want to delete agent(s) ${selectedAgents.map(
-          (items) => items.description
-        )}?`}
+          (items) => ' ' + items.name
+        )} ?`}
       </Modal>
     )}
 
@@ -366,20 +350,8 @@ function AgentTable(props) {
         <div className="col-xl-12">
           <div  style={{ paddingTop: "30px", paddingBottom: "15px", display: "flex", justifyContent: "space-between" }}>
             <h2 style={{ fontWeight: "350" }}>Agents</h2>
-            {/*  <a href="/">
-              <span className="icon-refresh"
-                style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px", marginRight:"20px"}}>
-              </span>
-            </a>  check the below div instead to check the refresh button
-            <div key='refresh' className="refresh-button" onClick={getAgents} title={LABELS.refresh}>
-              <Icon key="refresh"
-                size={Icon.SIZE.SMALL}
-                type={Icon.TYPE.REFRESH}
-                style={{ color: "white", borderRadius: "50%", background: "gray", textAlign: "center", lineHeight:"30px", height:"30px", width:"30px", marginRight:"20px"}}
-              >
-              </Icon>  the below line works too*/}
             <div>
-              <IconButton className="" 
+              <IconButton className=""
                 size={IconButton.SIZE.SMALL}
                 icon={IconButton.ICON.REFRESH}
                 onClick={getAgents}

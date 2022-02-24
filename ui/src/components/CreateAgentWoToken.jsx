@@ -104,7 +104,7 @@ function Agent(props) {
           />
             <div className="agent-container justify-content-center">
               <div className="row">Agent Name
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5">
                 <Input required=""
@@ -114,7 +114,7 @@ function Agent(props) {
               </div>
               {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Description
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5">
                 <Input required=""
@@ -124,7 +124,7 @@ function Agent(props) {
               </div>
               {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Agent Token
-                <span class="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
               <div className="row p-5">
                 <Input required=""

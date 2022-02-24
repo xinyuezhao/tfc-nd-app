@@ -9,18 +9,13 @@ function fetchAgents(limit = 50, offset = 0, query = "", agent_id = "") {
   });
 }
 
-function createAgents(payload) {
+function createAgent(payload) {
   return axios.post("/agent/v1/agents", payload);
 }
 
 
-function deleteAgents(description) {
-  console.log("description in api: ", description);
-  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/", { params: description })); //.../agents/?0=agent2
-  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/?description"+ description )); //agents/?descriptionagent2=
-  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/?"+ description )); ///?agent2=
-  // console.log("API is ", axios.delete("/argome.argo.cisco.com/v1/agents/", { params: {description},} )); //../agents/?description[]=test agent without token,agent3
-  return axios.delete("/agent/v1/agents/"+ description );
+function deleteAgent(name) {
+  return axios.delete("/agent/v1/agents/"+ name );
 }
 
 function fetchOrganizations() {
@@ -52,8 +47,8 @@ function createAuthenticationToken(payload) {
 
 export {
   fetchAgents,
-  createAgents,
-  deleteAgents,
+  createAgent,
+  deleteAgent,
   fetchOrganizations,
   fetchAgentPools,
   createAgentPool,

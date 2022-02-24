@@ -13,7 +13,7 @@ const PoolDetailRenderer = (props) => {
     <Card className="col d-flex justify-content-center" style={{ position: "relative", display: "inline-block"}}>
     <CardHeader>
       <div>
-        <div class="icon-insights icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}></div>
+        <div className="icon-insights icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}></div>
         <div style={{float: "right", marginLeft: "10px"}}>
           <div style={{ fontWeight: "bold", fontSize: "12px", padding: "2px"}}>Agent Pool</div>
           <div style={{ padding: "2px"}}>{item.name }</div>
