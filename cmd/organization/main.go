@@ -10,11 +10,11 @@ import (
 	"golang.cisco.com/argo/pkg/service"
 	"golang.cisco.com/argo/pkg/utils"
 
-	"golang.cisco.com/examples/terraform/gen/schema"
-	"golang.cisco.com/examples/terraform/gen/terraformv1"
-	"golang.cisco.com/examples/terraform/pkg/conf"
-	"golang.cisco.com/examples/terraform/pkg/handlers"
-	"golang.cisco.com/examples/terraform/pkg/platform"
+	"golang.cisco.com/terraform/gen/schema"
+	"golang.cisco.com/terraform/gen/terraformv1"
+	"golang.cisco.com/terraform/pkg/conf"
+	"golang.cisco.com/terraform/pkg/handlers"
+	"golang.cisco.com/terraform/pkg/platform"
 )
 
 func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv1.Organization, int, error) {

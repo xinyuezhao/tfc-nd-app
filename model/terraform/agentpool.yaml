@@ -51,7 +51,7 @@ spec:
   retryStrategy:
     delay: 500
   concurrencyKey: Agentpool
-  function: golang.cisco.com/examples/terraform/pkg/handlers.AgentpoolHandler
+  function: golang.cisco.com/terraform/pkg/handlers.AgentpoolHandler
   specStatusDiscriminator: both
 ---
 kind: Resource

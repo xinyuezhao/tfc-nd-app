@@ -10,11 +10,11 @@ import (
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
 
-	"golang.cisco.com/examples/terraform/gen/schema"
-	"golang.cisco.com/examples/terraform/gen/terraformv1"
-	"golang.cisco.com/examples/terraform/pkg/conf"
-	"golang.cisco.com/examples/terraform/pkg/handlers"
-	"golang.cisco.com/examples/terraform/pkg/platform"
+	"golang.cisco.com/terraform/gen/schema"
+	"golang.cisco.com/terraform/gen/terraformv1"
+	"golang.cisco.com/terraform/pkg/conf"
+	"golang.cisco.com/terraform/pkg/handlers"
+	"golang.cisco.com/terraform/pkg/platform"
 )
 
 func GETAgentPoolOverride(ctx context.Context, event *terraformv1.AgentpoolDbReadEvent) (terraformv1.Agentpool, int, error) {
@@ -31,16 +31,16 @@ func GETAgentPoolOverride(ctx context.Context, event *terraformv1.AgentpoolDbRea
 	var queryErr error
 	if payloadObject.Spec().Id() != "" && payloadObject.Spec().IdPtr() != nil {
 		agentID := payloadObject.Spec().Id()
-		agentPl, queryErr = conf.QueryAgentPlByID(ctxTfe, client, agentID)
+		agentPl, queryErr = conf.QueryAgentPoolByID(ctxTfe, client, agentID)
 	}
 	if payloadObject.Spec().Organization() != "" && payloadObject.Spec().OrganizationPtr() != nil &&
 		payloadObject.Spec().Name() != "" && payloadObject.Spec().NamePtr() != nil {
 		agentPools, _ := conf.QueryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
-		agentPl, queryErr = conf.QueryAgentPlByName(agentPools, payloadObject.Spec().Name())
+		agentPl, queryErr = conf.QueryAgentPoolByName(agentPools, payloadObject.Spec().Name())
 	}
 
 	if queryErr != nil {
-		er := fmt.Errorf("error from queryAgentPlByName")
+		er := fmt.Errorf("error from QueryAgentPoolByName")
 		return nil, http.StatusInternalServerError, core.NewError(queryErr, er)
 	}
 	result := terraformv1.AgentpoolFactory()
@@ -102,9 +102,9 @@ func DELETEOverride(ctx context.Context, event *terraformv1.AgentpoolDbDeleteEve
 	} else if payloadObject.Spec().Organization() != "" && payloadObject.Spec().OrganizationPtr() != nil &&
 		payloadObject.Spec().Name() != "" && payloadObject.Spec().NamePtr() != nil {
 		agentPools, _ := conf.QueryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
-		agentPl, queryErr := conf.QueryAgentPlByName(agentPools, payloadObject.Spec().Name())
+		agentPl, queryErr := conf.QueryAgentPoolByName(agentPools, payloadObject.Spec().Name())
 		if queryErr != nil {
-			er := fmt.Errorf("error form queryAgentPlByName")
+			er := fmt.Errorf("error form QueryAgentPoolByName")
 			return http.StatusInternalServerError, core.NewError(er, queryErr)
 		}
 		err := conf.DeleteAgentPool(ctxTfe, client, agentPl.ID)
