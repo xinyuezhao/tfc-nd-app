@@ -24,7 +24,6 @@ import AgentWoToken from "./CreateAgentWoToken";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import { pathPrefix } from "../App";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
-// import { Link } from "react-router-dom";
 
 const stopClick = (e) => {
   e.stopPropagation();
@@ -61,7 +60,7 @@ function AgentTable(props) {
         return (
         <div className="StatusTile">
           {statuses[row.value.toLowerCase()]}
-          <label className="status-tile-text "> {`${row.value}`}</label>
+          <label className="status-tile-text" style={{marginLeft: "5px", paddingTop: "2px"}}>{`${row.value}`}</label>
         </div>
       )},
     },
@@ -107,8 +106,6 @@ function AgentTable(props) {
           {
             label: "Delete",
             action: () => {
-              const {original} = row;
-              console.log(`Delete Item`, original.id, original.description)
               openDeleteConfirm();
             }
           },
@@ -127,8 +124,6 @@ function AgentTable(props) {
       },
     },
   ];
-
-
 
   const action = useScreenActions();
 
@@ -151,11 +146,6 @@ function AgentTable(props) {
     )
   );
 
-
-  const offset = useRef({ value: 0 });
-  const limit = useRef({ value: 50 });
-  // const finalAgent = useRef({ totalAgents: agents });
-
   useEffect(() => {
     if (warningAlert || successAlert) {
       setTimeout(() => {
@@ -167,39 +157,19 @@ function AgentTable(props) {
 
   const getAgents = useCallback(
     (setLoading, pageSizeLimit, removefilter = true) => {
-      //const flag = removeFilter ? true : flase
-
-      // const queryParam = removefilter
-      //   ? props.history.location?.state?.queryParam
-      //     ? props.history.location?.state?.queryParam
-      //     : ""
-      //   : "";
-
-      // setfilterRemove(!!!queryParam);
       setFetchingData(setLoading === false ? false : true);
-      fetchAgents(
-        pageSizeLimit ? pageSizeLimit : limit.current.value,
-        offset.current.value,
-        // queryParam
-      )
+      fetchAgents()
       .then((res) => {
         setAgents(res.data);
         setFetchingData(false);
       })
       .catch((err) => {
-        if (err.response?.status === 401) {
-          props.history.push({
-            pathname: pathPrefix + "/login",
-            state: { sessionExpired: true },
-          });
-        } else {
           err.response?.data?.detail?.message &&
             setWarningAlert(err.response.data?.detail?.message);
           setFetchingData(false);
-        }
       });
     },
-    [props.history]
+    []
   );
   useEffect(getAgents, [getAgents]);
 
@@ -218,6 +188,10 @@ function AgentTable(props) {
       })
       .catch((error) => {
         console.log(error);
+        setInfoAlert("");
+        setSuccessAlert("");
+        error.response?.data?.detail?.detail &&
+          setWarningAlert(error.response?.data?.detail?.detail);
       });
   }
 
@@ -241,23 +215,17 @@ function AgentTable(props) {
   const handleOpenAgent = useCallback(
     (data) => {
       console.log("INFO: User token exists: ", authConfig.tokenExist);
+      let agentComponent = AgentWoToken;
       if(authConfig.tokenExist){
-        const title = `${data ? "Update" : "Create"} Agent`;
-        action.openScreen(Agent, {
-          title: title,
-          screenId: "create-agent-modal",
-          agent: data,
-          createAgent: handleCreateAgent,
-        });
-      } else {
-        const title = `${data ? "Update" : "Create"} Agent`;
-        action.openScreen(AgentWoToken, {
-          title: title,
-          screenId: "create-agent-modal",
-          agent: data,
-          createAgent: handleCreateAgent,
-        });
+        agentComponent = Agent;
       }
+      const title = `${data ? "Update" : "Create"} Agent`;
+      action.openScreen(agentComponent, {
+        title: title,
+        screenId: "create-agent-modal",
+        agent: data,
+        createAgent: handleCreateAgent,
+      });
     },
     [
       action,
@@ -265,10 +233,10 @@ function AgentTable(props) {
       authConfig,
     ]
   );
-
+// change handleSidebar -> handleSceondarySidebar
   const handleSidebar = useCallback(
     (data) => {
-      setViewAgent(data);
+      setViewAgent(data); //setViewAgent-> setSecondarySidebarData
       setOpenSidebar(!openSidebar);
     }, [openSidebar]);
 
@@ -290,7 +258,7 @@ function AgentTable(props) {
     return {id: item.meta.id, ...item.spec}
   });
 
-  const headerContent1 = {
+  const secondarySidebarHeaderContent = {
     title: "Agent", subtitle: `${viewAgent.name}`,
   }
 
@@ -304,7 +272,7 @@ function AgentTable(props) {
           closable={true}
           key="sidebar-key"
           opened={openSidebar}
-          headerContent={headerContent1}
+          headerContent={secondarySidebarHeaderContent}
           footerContent={<div style={{textAlign: 'center'}}>Footer content</div>}
         >
         <Card>
@@ -313,16 +281,12 @@ function AgentTable(props) {
           </h3>
         </Card>
         <div className="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
-          {/* ========================================== */}
           <div style={{ paddingTop: "30px", color: "gray" }}>Description</div>
           <div>{`${viewAgent.description}`}</div>
-          {/* ========================================== */}
           <div style={{ paddingTop: "30px", color: "gray" }}>Organization</div>
           <div>{`${viewAgent.organization}`}</div>
-          {/* ========================================== */}
           <div style={{ paddingTop: "30px", color: "gray" }}>Agent Pool</div>
           <div>{`${viewAgent.agentpool}`}</div>
-          {/* ========================================== */}
         </SecondarySidebar>
       )}
 
@@ -410,7 +374,7 @@ function AgentTable(props) {
           }}
           onRowClick={handleSidebar}
           getSelected={(agentsData) => {
-            console.table("getSelected args %O: ", agentsData);
+            console.table("Agents selected for deletion: ", agentsData);
             agentsData &&
               agentsData?.selections &&
               setSelectedAgents(agentsData.selections);

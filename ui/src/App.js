@@ -30,21 +30,18 @@ function App(props) {
 
   }, [props.history]);
 
+  // check if we need 26-31
+
   const getAuthConfig = useCallback(() => {
       fetchAuthenticationToken()
       .then((res) => {
         setAuthConfig(res.data.spec);
       })
       .catch((err) => {
-        if (err.response?.status === 401) {
-          props.history.push({
-            pathname: pathPrefix + "/login",
-            state: { sessionExpired: true },
-          });
-        }
+        console.error(err);
       });
     },
-    [props.history]
+    []
   );
   useEffect(getAuthConfig, [getAuthConfig]);
 
@@ -86,7 +83,7 @@ function App(props) {
                           />
                           <Route
                             exact
-                            path={pathPrefix + "/home"}
+                            path={pathPrefix + "/agents"}
                             render={() => <AgentTable authConfig={authConfig} />}
                           />
                           <Route
@@ -122,11 +119,9 @@ const AboutModal = (props) => {
     title=" "
       isOpen={show}
       onClose={onClose}
-      // cancelButtonProps={{ style: { display: 'none' } }}
       cancelButtonLabel={null} // prevent cancel button from being added to footer.
       applyButtonLabel={null} // prevent OK button from being added to footer.
       style={{ color: "white"}}
-      // footer={null}
       >
       <div className="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px", marginBottom: "15px"}}/>
       <h3>Nexus Dashboard Connector for Terraform</h3>

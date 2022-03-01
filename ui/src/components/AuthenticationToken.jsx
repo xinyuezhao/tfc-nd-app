@@ -10,14 +10,10 @@ import {
   useScreenActions,
 } from 'blueprint-react';
 import './CiscoObjectPicker.scss';
-import AgentTable from './AgentTable';
-import {
-  createAuthenticationToken,
-} from "../service/api_service";
+import { createAuthenticationToken } from "../service/api_service";
 
 /**
- * A sample of create new renderer function component that is passed as createItemRenderer.
- * Please see the use of useObjectPickerSubmit to get the click event on Modal create button
+ * Add what this component does and add the desc for other components too
  */
 
 function AuthenticationToken(props) {
@@ -43,8 +39,6 @@ function AuthenticationToken(props) {
     }
   }
 
-
-
   const [userToken, setUserToken] = useState(defaultUserToken);
   const [selectedToken, setSelectedToken] = useState(defaultSelectedToken);
   const [warningAlert, setWarningAlert] = useState("");
@@ -63,7 +57,7 @@ function AuthenticationToken(props) {
     }
     createAuthenticationToken(payload)
       .then((res) => {
-        setSuccessAlert("Created Agent Successfully");
+        setSuccessAlert("Configured Token Successfully");
         refreshAuthConfig();
       })
       .catch((error) => {
@@ -76,16 +70,10 @@ function AuthenticationToken(props) {
   }, [refreshAuthConfig]);
 
 
-  const onAction = useCallback(() => {
+  const authTokenScreenOnAction = useCallback(() => {
     handleCreateAuthenticationToken(userToken);
-    if (selectedToken) {
-      console.log("INFO: Authentication token selected ", selectedToken)
-      screenActions.closeScreen("authentication-token"); // screenId
-    } else {
-      console.log("INFO: Authentication token not selected ", selectedToken)
-      screenActions.closeScreen("authentication-token");
-    }
-  }, [selectedToken, userToken, screenActions, handleCreateAuthenticationToken]);
+    screenActions.closeScreen("authentication-token");
+  }, [userToken, screenActions, handleCreateAuthenticationToken]);
 
   const displayTokenInput = () => {
     setSelectedToken(true);
@@ -142,7 +130,7 @@ function AuthenticationToken(props) {
 
   return (
     <DetailScreen
-      onAction={onAction}
+      onAction={authTokenScreenOnAction}
       title={"Connector for Terraform  - Setup"}
       applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
@@ -170,28 +158,27 @@ function AuthenticationToken(props) {
           cards={cards}
         />
         {!selectedToken ? null : <div className="cards__header"
-        style={{ margin: "2px" }}>
-          <InfoAlert
-            title="Alert Title"
-            children="Instruction on how to use authentication. Get terraform user token."
-          />
-          <div className="cards__header" style={{ paddingLeft: "0px", paddingTop: "35px" }}>Authentication Token
-            <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
-          </div>
-          <div className="cards__header" style={{ paddingBottom: "25px", paddingRight: "75%", paddingLeft: "0px"}}>
-            <Input required=""
-              value={userToken}
-              onChange={(e) => setUserToken(e.target.value)}
+          style={{ margin: "2px" }}>
+            <InfoAlert
+              title="Alert Title"
+              children="Instruction on how to use authentication. Get terraform user token."
             />
+            <div className="cards__header" style={{ paddingLeft: "0px", paddingTop: "35px" }}>Authentication Token
+              <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+            </div>
+            <div className="cards__header" style={{ paddingBottom: "25px", paddingRight: "75%", paddingLeft: "0px"}}>
+              <Input required=""
+                value={userToken}
+                onChange={(e) => setUserToken(e.target.value)}
+              />
+            </div>
           </div>
-        </div>}
+        }
       </Panel>
-      {/* ========================================== */}
     </div>
     </DetailScreen>
   );
 
 }
-
 
 export default AuthenticationToken;

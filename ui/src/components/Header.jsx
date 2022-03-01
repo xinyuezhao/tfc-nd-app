@@ -2,6 +2,7 @@ import {Dropdown, IconButton, LABELS, useScreenActions} from 'blueprint-react';
 import AuthenticationToken from './AuthenticationToken';
 
 const Header = ({setShowAbout, authConfig, refreshAuthConfig}) => {
+    // change above from const to function check other components too
 
     const actions = useScreenActions();
 
@@ -33,7 +34,8 @@ const Header = ({setShowAbout, authConfig, refreshAuthConfig}) => {
                             size={Dropdown.SIZE.SMALL}
                             icon={IconButton.ICON.COG}
                             menuDirection={Dropdown.MENU_DIRECTION.LEFT}
-                            items={menuOptions} />
+                            items={menuOptions}
+                        />
                     </div>
                 </div>
             </div>

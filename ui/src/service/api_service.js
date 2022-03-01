@@ -3,10 +3,8 @@ import axios from "axios";
 axios.defaults.baseURL = "/appcenter/cisco/terraform/api";
 axios.defaults.withCredentials = true;
 
-function fetchAgents(limit = 50, offset = 0, query = "", agent_id = "") {
-  return axios.get("/agent/v1/agents", {
-    params: { limit, offset, query, agent_id },
-  });
+function fetchAgents() {
+  return axios.get("/agent/v1/agents");
 }
 
 function createAgent(payload) {
@@ -37,14 +35,6 @@ function createAuthenticationToken(payload) {
   return axios.post("/credentials/v1/credentials", payload);
 }
 
-// function isUserLogin(payload) {
-//   return axios.post("/auth/is_current_user", payload);
-// }
-
-// function logout() {
-//   return axios.get("/auth/logout");
-// }
-
 export {
   fetchAgents,
   createAgent,
@@ -54,6 +44,4 @@ export {
   createAgentPool,
   fetchAuthenticationToken,
   createAuthenticationToken,
-  // isUserLogin,
-  // logout,
 };

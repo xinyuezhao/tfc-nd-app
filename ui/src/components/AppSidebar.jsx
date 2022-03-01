@@ -12,7 +12,7 @@ function AppSidebar() {
     },
     {
       id: "Agents",
-      path: `${pathPrefix}/home`,
+      path: `${pathPrefix}/agents`,
       title: "Agents",
       icon: Icon.TYPE.PARTICIPANT_LIST,
     },
