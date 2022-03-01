@@ -205,8 +205,13 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "api/organization/"
-      targetSubPath: "api/terraform.cisco.com/" 
+    - path: "api/v1/organizations"
+      targetSubPath: "api/terraform.cisco.com/v1/organizations" 
+      # urlRewrites:
+      # - path: "{id}"
+      #   method: "GET"
+      #   rewriteTo: "api/terraform.cisco.com/"
+
   - target: agentmgr
     service:
       scheme: http
@@ -215,7 +220,8 @@ spec:
     authType: open
     listenPaths:
     - path: "api/agent/"
-      targetSubPath: "api/terraform.cisco.com/" 
+      targetSubPath: "api/terraform.cisco.com/"
+
   - target: agentpoolmgr
     service:
       scheme: http
@@ -223,8 +229,27 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "api/agentpool/"
-      targetSubPath: "api/terraform.cisco.com/"
+    - path: "api/v1/agentpool/"
+      targetSubPath: "api/terraform.cisco.com/v1/agentpools/id/"
+    - path: "api/v1/organization/{org}/agentpools"
+      urlRewrites:
+      - path: "{org}/agentpools"
+        method: "GET"
+        matchPattern: "appcenter/cisco/terraform/api/v1/organization/(.*?)/agentpools"
+        rewriteTo: "api/terraform.cisco.com/v1/agentpoolList/$1" 
+    - path: "api/v1/organization/{org}/agentpool/{agentpool}"
+      urlRewrites:
+      - path: "{org}/agentpool/{agentpool}"
+        method: "GET"
+        matchPattern: "appcenter/cisco/terraform/api/v1/organization/(.*)/agentpool/(.*)"
+        rewriteTo: "api/terraform.cisco.com/v1/agentpools/organization/$1/agentpool/$2"
+      - path: "{org}/agentpool/{agentpool}"
+        method: "DELETE"
+        matchPattern: "appcenter/cisco/terraform/api/v1/organization/(.*)/agentpool/(.*)"
+        rewriteTo: "api/terraform.cisco.com/v1/agentpools/organization/$1/agentpool/$2"
+    - path: "api/v1/agentpools"
+      targetSubPath: "api/terraform.cisco.com/v1/agentpools"
+
   - target: credentialsmgr
     service:
       scheme: http
