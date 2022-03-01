@@ -219,8 +219,16 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "api/agent/"
-      targetSubPath: "api/terraform.cisco.com/"
+    # - path: "api/v1/agents/"
+    #   targetSubPath: "api/terraform.cisco.com/v1/agents/"
+    - path: "api/v1/agents"
+      targetSubPath: "api/terraform.cisco.com/v1/agents"
+    - path: "api/v1/agentpool/{agentpool}/tokens"
+      urlRewrites:
+      - path: "{agentpool}/tokens"
+        method: "GET"
+        matchPattern: "appcenter/cisco/terraform/api/v1/agentpool/(.*)/tokens"
+        rewriteTo: "api/terraform.cisco.com/v1/tokenList/$1" 
 
   - target: agentpoolmgr
     service:
@@ -257,8 +265,8 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    - path: "api/credentials/"
-      targetSubPath: "api/terraform.cisco.com/"
+    - path: "api/v1/credentials"
+      targetSubPath: "api/terraform.cisco.com/credentials"
   - target: ui
     service:
       scheme: http
