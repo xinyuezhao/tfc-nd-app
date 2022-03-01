@@ -31,6 +31,8 @@ spec:
       type: string
     - prop: TwoFactorConformant
       type: bool
+    - prop: Usage
+      type: v1.OrganizationUsage
 ---
 kind: Struct
 metadata:
@@ -57,6 +59,26 @@ spec:
       type: bool
     - prop: CanUpdateSentinel
       type: bool
+---
+kind: Struct
+metadata:
+  name: OrganizationUsage
+  group: terraform.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: ActiveAgentCount
+      type: int
+    - prop: AdminUserCount
+      type: int
+    - prop: AverageAppliesPerMonth
+      type: int
+    - prop: ConcurrencyLimitReached
+      type: int
+    - prop: TotalApplies
+      type: int
+    - prop: WorkspaceCount
+      type: int
 ---
 kind: Resource
 metadata:
