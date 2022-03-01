@@ -14,21 +14,21 @@ import (
 
 	"github.com/hashicorp/go-tfe"
 	"golang.cisco.com/argo/pkg/core"
-	"golang.cisco.com/examples/terraform/gen/terraformv1"
+	"golang.cisco.com/terraform/gen/terraformv1"
 )
 
 // Create a new agentPool for an organization
-func CreateAgentPool(ctx context.Context, client *tfe.Client, orgName, agentPlName string) (*tfe.AgentPool, error) {
-	createOptions := tfe.AgentPoolCreateOptions{Name: &agentPlName}
-	agentPl, err := client.AgentPools.Create(ctx, orgName, createOptions)
+func CreateAgentPool(ctx context.Context, client *tfe.Client, orgName, agentPoolName string) (*tfe.AgentPool, error) {
+	createOptions := tfe.AgentPoolCreateOptions{Name: &agentPoolName}
+	agentPool, err := client.AgentPools.Create(ctx, orgName, createOptions)
 	if err != nil {
-		er := fmt.Errorf("error while creating agentpool")
+		er := fmt.Errorf("error from CreateAgentPool while creating agentpool")
 		return nil, core.NewError(er, err)
 	}
-	return agentPl, nil
+	return agentPool, nil
 }
 
-func QueryAgentPlByID(ctx context.Context, client *tfe.Client, agentID string) (*tfe.AgentPool, error) {
+func QueryAgentPoolByID(ctx context.Context, client *tfe.Client, agentID string) (*tfe.AgentPool, error) {
 	agentPool, err := client.AgentPools.Read(ctx, agentID)
 	if err != nil {
 		er := fmt.Errorf("error while reading agentpool by ID")
@@ -57,44 +57,41 @@ func QueryAgentTokens(ctx context.Context, client *tfe.Client, agentPlID string)
 	return res, nil
 }
 
-func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client, agentplId string) ([]Agent, error) {
+func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client, agentPoolId string) ([]Agent, error) {
 	log := core.LoggerFromContext(ctx)
 
 	client.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 		Proxy:           http.ProxyFromEnvironment,
 	}
-	url := fmt.Sprintf("https://app.terraform.io/api/v2/agent-pools/%s/agents", agentplId)
+	url := fmt.Sprintf("%s/%s/agents", AgentPoolURL, agentPoolId)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
-		er := fmt.Errorf("error while building request to query agents")
-		return nil, core.NewError(er, err)
+		errBuildQuery := fmt.Errorf("error while building request to query agents")
+		return nil, core.NewError(errBuildQuery, err)
 	}
-	tokenExist, Usertoken, err := CheckUserTokenExist()
+	tokenExist, userToken, err := CheckUserTokenExist()
 	if !tokenExist || err != nil {
-		er := fmt.Errorf("error from CheckUserTokenExist")
-		return nil, core.NewError(er, err)
+		errTokenExist := fmt.Errorf("error from CheckUserTokenExist")
+		return nil, core.NewError(errTokenExist, err)
 	}
-	auth := fmt.Sprintf("Bearer %s", Usertoken)
+	auth := fmt.Sprintf("Bearer %s", userToken)
 	req.Header.Set("Authorization", auth)
-	log.Info("usertoken is " + Usertoken)
-	log.Info("authorization given is " + auth)
-	resp, e := client.Do(req)
-	if e != nil {
-		er := fmt.Errorf("error while sending request to query agents")
-		return nil, core.NewError(er, e)
+	resp, err := client.Do(req)
+	if err != nil {
+		errSendQuery := fmt.Errorf("error while sending request to query agents")
+		return nil, core.NewError(errSendQuery, err)
 	}
 	defer resp.Body.Close()
-	b, err := httputil.DumpResponse(resp, true)
+	responseBody, err := httputil.DumpResponse(resp, true)
 	log.Info("parsing response data")
 	if err != nil {
-		er := fmt.Errorf("error while dumping response of querying agents")
-		return nil, core.NewError(er, err)
+		errParseQuery := fmt.Errorf("error while dumping response of querying agents")
+		return nil, core.NewError(errParseQuery, err)
 	}
-	log.Info("response " + string(b))
-	log.Info("respose status " + resp.Status)
+	log.Info("response " + string(responseBody))
 	if resp.StatusCode != 200 {
-		err := core.NewError(fmt.Errorf("error while querying agents. Response content: %s", string(b)))
+		err := core.NewError(fmt.Errorf("error while querying agents. Response content: %s", string(responseBody)))
 		return nil, err
 	}
 	result := Agents{}
@@ -110,7 +107,7 @@ func QueryAgentId(ctx context.Context, agents []Agent, name string) string {
 	log := core.LoggerFromContext(ctx)
 	for _, agent := range agents {
 		log.Info(fmt.Sprintf("agent queried %s, status: %s", agent.Attributes.Name, agent.Attributes.Status))
-		if agent.Attributes.Name == name && agent.Attributes.Status == "idle" {
+		if agent.Attributes.Name == name && (agent.Attributes.Status == "idle" || agent.Attributes.Status == "busy" || agent.Attributes.Status == "unknown") {
 			return agent.Id
 		}
 	}
@@ -120,7 +117,7 @@ func QueryAgentId(ctx context.Context, agents []Agent, name string) string {
 func QueryFeatures(ctx context.Context, client *http.Client) (Feature, error) {
 	log := core.LoggerFromContext(ctx)
 	result := Feature{}
-	req, err := http.NewRequest(http.MethodGet, "https://resourcemgr.kubese.svc/api/config/dn/appinstances/cisco-terraform", nil)
+	req, err := http.NewRequest(http.MethodGet, FeatureURL, nil)
 	if err != nil {
 		er := fmt.Errorf("error while building request to query featureinstance")
 		return result, core.NewError(er, err)
@@ -132,16 +129,15 @@ func QueryFeatures(ctx context.Context, client *http.Client) (Feature, error) {
 		return result, core.NewError(er, err)
 	}
 	defer resp.Body.Close()
-	b, err := httputil.DumpResponse(resp, true)
+	responseBody, err := httputil.DumpResponse(resp, true)
 	log.Info("parsing response data")
 	if err != nil {
 		er := fmt.Errorf("error while dumping response of featureinstance")
 		return result, core.NewError(er, err)
 	}
-	log.Info("response " + string(b))
-	log.Info("respose status " + resp.Status)
+	log.Info("response " + string(responseBody))
 	if resp.StatusCode != 200 {
-		err := core.NewError(fmt.Errorf("error while querying features. Response content: %s", string(b)))
+		err := core.NewError(fmt.Errorf("error while querying features. Response content: %s", string(responseBody)))
 		return result, err
 	}
 
@@ -150,28 +146,22 @@ func QueryFeatures(ctx context.Context, client *http.Client) (Feature, error) {
 		er := fmt.Errorf("error while decoding feature")
 		return result, core.NewError(er, err)
 	}
-	for _, feature := range result.Instances[0].Features {
-		log.Info("feature instance " + feature.Instance)
-		log.Info("feature status " + feature.OperState)
-		log.Info("feature config name " + feature.ConfigParameters.Name)
-		log.Info("feature config token " + feature.ConfigParameters.Token)
-	}
 	return result, nil
 }
 
 func ConfigTFC() (context.Context, *tfe.Client, error) {
-	tokenExist, Usertoken, err := CheckUserTokenExist()
+	tokenExist, userToken, err := CheckUserTokenExist()
 	if !tokenExist || err != nil {
-		er := core.NewError(err, fmt.Errorf("not able to get userToken"))
-		return nil, nil, core.NewError(er, err)
+		errQueryToken := core.NewError(err, fmt.Errorf("not able to get userToken"))
+		return nil, nil, core.NewError(errQueryToken, err)
 	}
 	config := &tfe.Config{
-		Token: Usertoken,
+		Token: userToken,
 	}
 	client, err := tfe.NewClient(config)
 	if err != nil {
-		er := fmt.Errorf("error from NewClient")
-		return nil, nil, core.NewError(er, err)
+		errNewClient := fmt.Errorf("error from NewClient")
+		return nil, nil, core.NewError(errNewClient, err)
 	}
 	// Create a context
 	ctxTfe := context.Background()
@@ -188,10 +178,10 @@ func ConfigTLSClient() *http.Client {
 }
 
 // Query agentPool by the name
-func QueryAgentPlByName(agentPools []*tfe.AgentPool, name string) (*tfe.AgentPool, error) {
-	for _, agentPl := range agentPools {
-		if agentPl.Name == name {
-			return agentPl, nil
+func QueryAgentPoolByName(agentPools []*tfe.AgentPool, name string) (*tfe.AgentPool, error) {
+	for _, agentPool := range agentPools {
+		if agentPool.Name == name {
+			return agentPool, nil
 		}
 	}
 	return nil, fmt.Errorf(fmt.Sprintf("There is no agentPool named %v", name))
@@ -209,20 +199,19 @@ func QueryAgentPools(ctx context.Context, client *tfe.Client, name string) ([]*t
 }
 
 // Create a new agentToken
-func CreateAgentToken(ctx context.Context, client *tfe.Client, agentPool, organization, desc string) (*tfe.AgentToken, string, error) {
+func CreateAgentToken(ctx context.Context, client *tfe.Client, agentPoolName, organization, desc string) (*tfe.AgentToken, string, error) {
 	agentPools, _ := QueryAgentPools(ctx, client, organization)
-	agentPl, queryErr := QueryAgentPlByName(agentPools, agentPool)
+	agentPool, queryErr := QueryAgentPoolByName(agentPools, agentPoolName)
 	if queryErr != nil {
-		er := fmt.Errorf("error from QueryAgentPlByName while creating agentToken")
+		er := fmt.Errorf("error from QueryAgentPoolByName while creating agentToken")
 		return nil, "", core.NewError(er, queryErr)
 	}
-	agentToken, err := client.AgentTokens.Generate(ctx, agentPl.ID, tfe.AgentTokenGenerateOptions{Description: &desc})
+	agentToken, err := client.AgentTokens.Generate(ctx, agentPool.ID, tfe.AgentTokenGenerateOptions{Description: &desc})
 	if err != nil {
-		er := fmt.Errorf("error while generating agentToken")
-		return nil, "", core.NewError(er, err)
+		errCreateToken := fmt.Errorf("error while generating agentToken")
+		return nil, "", core.NewError(errCreateToken, err)
 	}
-	agentPlID := agentPl.ID
-	return agentToken, agentPlID, nil
+	return agentToken, agentPool.ID, nil
 }
 
 // Delete an existing agentToken
@@ -247,7 +236,7 @@ func DelFeatureInstance(ctx context.Context, client *http.Client, name string) e
 	}
 	payloadBuf := new(bytes.Buffer)
 	json.NewEncoder(payloadBuf).Encode(payload)
-	req, err := http.NewRequest(http.MethodPost, "https://resourcemgr.kubese.svc/api/config/delfeatureinstance", payloadBuf)
+	req, err := http.NewRequest(http.MethodPost, FeatureDelURL, payloadBuf)
 	if err != nil {
 		er := fmt.Errorf("error while building request to delete featureinstance")
 		return core.NewError(er, err)
@@ -275,6 +264,13 @@ func DelFeatureInstance(ctx context.Context, client *http.Client, name string) e
 func QueryAgentStatus(ctx context.Context, agentId string) (string, error) {
 	log := core.LoggerFromContext(ctx)
 	client := ConfigTLSClient()
+
+	tokenExist, userToken, err := CheckUserTokenExist()
+	if !tokenExist || err != nil {
+		er := fmt.Errorf("error from checkUserTokenExist while querying agent status")
+		return "", core.NewError(er, err)
+	}
+
 	// query agents inside given agentpool
 	log.Info("agent Id given " + agentId)
 
@@ -282,20 +278,16 @@ func QueryAgentStatus(ctx context.Context, agentId string) (string, error) {
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 		Proxy:           http.ProxyFromEnvironment,
 	}
-	url := fmt.Sprintf("https://app.terraform.io/api/v2/agents/%s", agentId)
+	url := fmt.Sprintf("%s/%s", AgentURL, agentId)
 	log.Info("query url " + url)
 	req, err := http.NewRequest(http.MethodGet, url, nil)
 	if err != nil {
 		er := fmt.Errorf("error while building request to query agent status")
 		return "", core.NewError(er, err)
 	}
-	tokenExist, Usertoken, err := CheckUserTokenExist()
-	if !tokenExist || err != nil {
-		er := fmt.Errorf("error from checkUserTokenExist while querying agent status")
-		return "", core.NewError(er, err)
-	}
+
 	// use user token to access terraform cloud API
-	auth := fmt.Sprintf("Bearer %s", Usertoken)
+	auth := fmt.Sprintf("Bearer %s", userToken)
 	req.Header.Set("Authorization", auth)
 	resp, e := client.Do(req)
 	if e != nil {
@@ -390,7 +382,7 @@ func GetCredentials(name string) (string, bool, bool, error) {
 	}
 	payloadBuf := new(bytes.Buffer)
 	json.NewEncoder(payloadBuf).Encode(payload)
-	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/getcredentials", payloadBuf)
+	req, err := http.NewRequest(http.MethodPost, CredentialsURL, payloadBuf)
 	if err != nil {
 		er := fmt.Errorf("error while building request to get credentials")
 		return "", configured, tokenExist, core.NewError(er, err)
@@ -456,10 +448,10 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization,
 	}
 	// filter orgs by entitlement
 	for _, element := range orgs.Items {
-		entitlements, ers := client.Organizations.Entitlements(ctx, element.Name)
-		if ers != nil {
-			er := fmt.Errorf("error while filter orgs by entitlement")
-			return nil, core.NewError(er, ers)
+		entitlements, errors := client.Organizations.Entitlements(ctx, element.Name)
+		if errors != nil {
+			errQueryOrg := fmt.Errorf("error while filter orgs by entitlement")
+			return nil, core.NewError(errQueryOrg, errors)
 		}
 		if entitlements.Agents {
 			res = append(res, element)

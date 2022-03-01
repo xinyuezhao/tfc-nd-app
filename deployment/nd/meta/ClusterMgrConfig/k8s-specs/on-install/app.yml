@@ -228,7 +228,7 @@ spec:
       - path: "{agentpool}/tokens"
         method: "GET"
         matchPattern: "appcenter/cisco/terraform/api/v1/agentpool/(.*)/tokens"
-        rewriteTo: "api/terraform.cisco.com/v1/tokenList/$1" 
+        rewriteTo: "api/terraform.cisco.com/v1/tokenList/$1"
 
   - target: agentpoolmgr
     service:

@@ -12,15 +12,15 @@ import (
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/model"
-	"golang.cisco.com/examples/terraform/gen/terraformv1"
-	"golang.cisco.com/examples/terraform/pkg/conf"
+	"golang.cisco.com/terraform/gen/terraformv1"
+	"golang.cisco.com/terraform/pkg/conf"
 )
 
 func AgentHandler(ctx context.Context, event mo.Event) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling Agent", "resource", event.Resource())
 	agent := event.Resource().(terraformv1.Agent)
-	agentPl := agent.Spec().Agentpool()
+	agentPool := agent.Spec().Agentpool()
 	org := agent.Spec().Organization()
 	name := agent.Spec().Name()
 	if event.Operation() == model.CREATE {
@@ -31,25 +31,25 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 				er := fmt.Errorf("error from ConfigTFC when creating agent")
 				return core.NewError(er, err)
 			}
-			agentToken, agentPlID, err := conf.CreateAgentToken(ctxTfe, client, agentPl, org, agent.Spec().Description())
+			agentToken, agentPoolID, err := conf.CreateAgentToken(ctxTfe, client, agentPool, org, agent.Spec().Description())
 			if err != nil {
 				er := fmt.Errorf("error from CreateAgentToken")
 				return core.NewError(er, err)
 			}
 			log.Info("description for agent token generated: " + agentToken.Description)
-			log.Info("agentPlID generated: " + agentPlID)
+			log.Info("agentPlID generated: " + agentPoolID)
 			log.Info("agent token generated " + agentToken.Token)
 
 			if err := core.NewError(agent.SpecMutable().SetToken(agentToken.Token),
 				agent.SpecMutable().SetTokenId(agentToken.ID),
-				agent.SpecMutable().SetAgentpoolId(agentPlID)); err != nil {
+				agent.SpecMutable().SetAgentpoolId(agentPoolID)); err != nil {
 				return err
 			}
 		}
 		token := agent.Spec().Token()
 		agent.SpecMutable().SetStatus("Created")
 		// api call creating feature instance to deploy agent
-		TLSclient := conf.ConfigTLSClient()
+		tlsClient := conf.ConfigTLSClient()
 		configMap, err := conf.GetProxyConfig()
 		if err != nil {
 			er := fmt.Errorf("error while querying proxy configuration")
@@ -67,14 +67,14 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 
 		payloadBuf := new(bytes.Buffer)
 		json.NewEncoder(payloadBuf).Encode(body)
-		req, e := http.NewRequest(http.MethodPost, "https://resourcemgr.kubese.svc/api/config/createfeatureinstance", payloadBuf)
+		req, e := http.NewRequest(http.MethodPost, conf.FeatureCreateURL, payloadBuf)
 		if e != nil {
 			er := fmt.Errorf("error while building createfeatureinstance request")
 			return core.NewError(er, e)
 		}
 		req.Header.Set("Content-Type", "application/json")
 		log.Info("before request post")
-		resp, e := TLSclient.Do(req)
+		resp, e := tlsClient.Do(req)
 		log.Info("after request post")
 		if e != nil {
 			er := fmt.Errorf("error while making request to create feature instance")
@@ -110,9 +110,9 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 	if event.Operation() == model.DELETE {
 		tokenID := agent.Spec().TokenId()
 		// delete feature instance to stop the agent
-		TLSclient := conf.ConfigTLSClient()
+		tlsClient := conf.ConfigTLSClient()
 		log.Info("before delete agent feature instance")
-		err := conf.DelFeatureInstance(ctx, TLSclient, name)
+		err := conf.DelFeatureInstance(ctx, tlsClient, name)
 		if err != nil {
 			er := fmt.Errorf("error from DelFeatureInstance")
 			return core.NewError(er, err)
@@ -147,12 +147,11 @@ func AgentValidator(ctx context.Context, event mo.Validation) error {
 	empty := ""
 	if name == "" {
 		empty = "name"
-	}
-	if desc == "" {
+	} else if desc == "" {
 		empty = "description"
 	}
 	if empty != "" {
-		err := core.NewError(fmt.Errorf("Agent %s can't be blank", empty))
+		err := core.NewError(fmt.Errorf("agent %s can't be blank", empty))
 		return err
 	}
 	return nil

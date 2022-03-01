@@ -103,5 +103,5 @@ spec:
   retryStrategy:
     delay: 500
   concurrencyKey: organization
-  function: golang.cisco.com/examples/terraform/pkg/handlers.OrganizationHandler
+  function: golang.cisco.com/terraform/pkg/handlers.OrganizationHandler
   specStatusDiscriminator: both

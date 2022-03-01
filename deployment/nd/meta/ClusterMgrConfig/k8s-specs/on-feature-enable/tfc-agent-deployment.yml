@@ -1,7 +1,7 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: feature-deployment-{{ getFeatureSuffix }}
+  name: feature-{{ getFeatureSuffix }}
   namespace: cisco-terraform
   labels:
     app: feature
@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: tfc-agent
-        image: cisco-terraform/hashicorp/tfc-agent:latest
+        image: cisco-terraform/hashicorp/tfc-agent:1.0.2
         imagePullPolicy: IfNotPresent
         env:
           - name: TFC_AGENT_TOKEN

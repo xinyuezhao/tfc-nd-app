@@ -8,11 +8,11 @@ import (
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/argo/pkg/service"
-	"golang.cisco.com/examples/terraform/gen/schema"
-	"golang.cisco.com/examples/terraform/gen/terraformv1"
-	"golang.cisco.com/examples/terraform/pkg/conf"
-	"golang.cisco.com/examples/terraform/pkg/handlers"
-	"golang.cisco.com/examples/terraform/pkg/platform"
+	"golang.cisco.com/terraform/gen/schema"
+	"golang.cisco.com/terraform/gen/terraformv1"
+	"golang.cisco.com/terraform/pkg/conf"
+	"golang.cisco.com/terraform/pkg/handlers"
+	"golang.cisco.com/terraform/pkg/platform"
 )
 
 func GETOverride(ctx context.Context, event *terraformv1.CredentialsDbReadEvent) (terraformv1.Credentials, int, error) {
@@ -55,7 +55,7 @@ func POSTOverride(ctx context.Context, event *terraformv1.CredentialsDbCreateEve
 		tokenExist = true
 	}
 	errors = append(errors, result.SpecMutable().SetName(name),
-		result.SpecMutable().SetToken(token),
+		result.SpecMutable().SetToken("***"),
 		result.SpecMutable().SetConfigured(true),
 		result.SpecMutable().SetTokenExist(tokenExist))
 	if err := core.NewError(errors...); err != nil {
