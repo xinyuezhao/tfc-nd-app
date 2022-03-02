@@ -344,7 +344,7 @@ func AddCredentials(ctx context.Context, name string, token string) error {
 	}
 	payloadBuf := new(bytes.Buffer)
 	json.NewEncoder(payloadBuf).Encode(payload)
-	req, err := http.NewRequest(http.MethodPost, "https://securitymgr-svc.securitymgr.svc:8989/api/config/addcredentials", payloadBuf)
+	req, err := http.NewRequest(http.MethodPost, CredentialsAddURL, payloadBuf)
 	if err != nil {
 		er := fmt.Errorf("error while building request to add credentials")
 		return core.NewError(er, err)
@@ -460,8 +460,57 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization,
 	return res, nil
 }
 
+func QueryOrgUsage(org *tfe.Organization) (map[string]interface{}, error) {
+	client := ConfigTLSClient()
+	client.Transport = &http.Transport{
+		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
+		Proxy:           http.ProxyFromEnvironment,
+	}
+	usageUrl := fmt.Sprintf("%s/%s/usage", OrgURL, org.Name)
+	req, err := http.NewRequest(http.MethodGet, usageUrl, nil)
+	if err != nil {
+		err = fmt.Errorf("error while building request to query organization usage report: %v", err)
+		return nil, err
+	}
+	tokenExist, userToken, err := CheckUserTokenExist()
+	if !tokenExist || err != nil {
+		errTokenExist := fmt.Errorf("error from CheckUserTokenExist")
+		return nil, core.NewError(errTokenExist, err)
+	}
+	auth := fmt.Sprintf("Bearer %s", userToken)
+	req.Header.Set("Authorization", auth)
+	resp, err := client.Do(req)
+	if err != nil {
+		errSendQuery := fmt.Errorf("error while sending request to query organization usage report")
+		return nil, core.NewError(errSendQuery, err)
+	}
+	defer resp.Body.Close()
+	responseBody, err := httputil.DumpResponse(resp, true)
+	if err != nil {
+		errParseQuery := fmt.Errorf("error while dumping response of querying organization usage report")
+		return nil, core.NewError(errParseQuery, err)
+	}
+	if resp.StatusCode != 200 {
+		err := core.NewError(fmt.Errorf("error while querying organization usage report. Response content: %s", string(responseBody)))
+		return nil, err
+	}
+	resBody, _ := ioutil.ReadAll(resp.Body)
+	var jsonRes map[string]interface{}
+	errUnmarshal := json.Unmarshal(resBody, &jsonRes)
+	if errUnmarshal != nil {
+		fmt.Println("error while parsing response from querying organization usage")
+	}
+	data := jsonRes["data"].(map[string]interface{})
+	attributes := data["attributes"].(map[string]interface{})
+	return attributes, nil
+}
+
 func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) error {
 	errors := make([]error, 0)
+	usage, err := QueryOrgUsage(org)
+	if err != nil {
+		errors = append(errors, err)
+	}
 	errors = append(errors, newOrg.SpecMutable().SetName(org.Name),
 		newOrg.SpecMutable().SetEmail(org.Email),
 		newOrg.SpecMutable().SetCollaboratorAuthPolicy(string(org.CollaboratorAuthPolicy)),
@@ -490,7 +539,19 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateOAuth(org.Permissions.CanUpdateOAuth),
 		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
-			SetCanUpdateSentinel(org.Permissions.CanUpdateSentinel))
+			SetCanUpdateSentinel(org.Permissions.CanUpdateSentinel),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetActiveAgentCount(usage["active-agent-count"].(float64)),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetAdminUserCount(usage["admin-user-count"].(float64)),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetAverageAppliesPerMonth(usage["average-applies-per-month"].(float64)),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetConcurrencyLimitReached(usage["concurrency-limit-reached"].(float64)),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetTotalApplies(usage["total-applies"].(float64)),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetWorkspaceCount(usage["workspace-count"].(float64)))
 	if err := core.NewError(errors...); err != nil {
 		return err
 	}

@@ -1,4 +1,4 @@
-module golang.cisco.com/examples/terraform
+module golang.cisco.com/terraform
 
 go 1.15
 

@@ -266,7 +266,7 @@ spec:
     authType: open
     listenPaths:
     - path: "api/v1/credentials"
-      targetSubPath: "api/terraform.cisco.com/credentials"
+      targetSubPath: "api/terraform.cisco.com/v1/credentials"
   - target: ui
     service:
       scheme: http

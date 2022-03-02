@@ -91,10 +91,10 @@ credentials: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v29 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v29 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v29 .
-	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v29 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v58 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v58 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v58 .
+	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v58 .
 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v1 .
 
 docker-nap: bundle services
@@ -105,7 +105,7 @@ docker-nap: bundle services
 #	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v29 agentmgr:v29 agentpoolmgr:v29 credentialsmgr:v29 hashicorp/tfc-agent:latest ui:v1 | gzip > images.tar.gz
+	docker save organizationmgr:v58 agentmgr:v58 agentpoolmgr:v58 credentialsmgr:v58 hashicorp/tfc-agent:latest containers.cisco.com/cn-ecosystem/tf-nd-app-ui:latest  | gzip > images.tar.gz
 
 docker-push: docker-nap
 	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.0.1

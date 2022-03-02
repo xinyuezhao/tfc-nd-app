@@ -68,17 +68,17 @@ metadata:
 spec:
   props:
     - prop: ActiveAgentCount
-      type: int
+      type: float64
     - prop: AdminUserCount
-      type: int
+      type: float64
     - prop: AverageAppliesPerMonth
-      type: int
+      type: float64
     - prop: ConcurrencyLimitReached
-      type: int
+      type: float64
     - prop: TotalApplies
-      type: int
+      type: float64
     - prop: WorkspaceCount
-      type: int
+      type: float64
 ---
 kind: Resource
 metadata:
