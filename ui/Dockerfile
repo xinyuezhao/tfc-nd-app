@@ -4,16 +4,13 @@
 FROM node:14.17-buster-slim as react-build
 
 # set working directory
-WORKDIR /cisco_nd_tfc_ui
+WORKDIR /cisco_tf_nd_app_ui
 
-# copy .npmrc and package.json to /cisco_nd_tfc_ui directory
+# copy .npmrc and package.json to /cisco_tf_nd_app_ui directory
 COPY .npmrc .
 COPY package.json .
 
-# install project dependencies
-# RUN apt-get update || : && apt-get install python -y
-
-# RUN apt-get update || : && apt-get install python -y
+#RUN apt-get update
 RUN npm install --quiet node-gyp -g
 
 # RUN npm install -g node-pre-gyp
@@ -36,7 +33,7 @@ EXPOSE 3000
 
 # copy the angular build folder to the root of nginx
 RUN rm /usr/share/nginx/html/index.html
-COPY --from=react-build /cisco_nd_tfc_ui/build /usr/share/nginx/html/appcenter/cisco/terraform/ui
+COPY --from=react-build /cisco_tf_nd_app_ui/build /usr/share/nginx/html/appcenter/cisco/terraform/ui
 RUN ln -s /usr/share/nginx/html/appcenter/cisco/terraform/ui/index.html /usr/share/nginx/html/index.html
 COPY ./temp/nginx.conf /etc/nginx/nginx.conf
 
