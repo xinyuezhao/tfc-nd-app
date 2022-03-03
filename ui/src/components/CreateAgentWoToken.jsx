@@ -22,8 +22,6 @@ function Agent(props) {
 
   // const action = useScreenActions();
 
-
-
   const [agentName, setName] = useState("");
   const [description, setDescription] = useState("");
   const [agentToken, setAgentToken] = useState("");
@@ -93,6 +91,7 @@ function Agent(props) {
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={`${agent ? "Update" : "Save"}`}
       applyButtonProps={applyButtonProps}
+      isOpen={isOpen}
     >
       <div style={{ paddingLeft: "10%" }}>
       <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
@@ -112,7 +111,6 @@ function Agent(props) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Description
                 <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
@@ -122,7 +120,6 @@ function Agent(props) {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Agent Token
                 <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
@@ -132,7 +129,6 @@ function Agent(props) {
                   onChange={(e) => setAgentToken(e.target.value)}
                 />
               </div>
-              {/* ========================================== */}
             </div>
         </Card>
       </div>

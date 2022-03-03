@@ -12,6 +12,7 @@ import {Header} from "./components/Header";
 import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";
 import Dashboard from "./components/Dashboard";
+import DashboardWoToken from "./components/DashboardWoToken";
 import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
 import { fetchAuthenticationToken } from "./service/api_service";
@@ -36,6 +37,7 @@ function App(props) {
       fetchAuthenticationToken()
       .then((res) => {
         setAuthConfig(res.data.spec);
+        console.log(res.data.spec)
       })
       .catch((err) => {
         console.error(err);
@@ -45,6 +47,7 @@ function App(props) {
   );
   useEffect(getAuthConfig, [getAuthConfig]);
 
+  let dashboardComponent = DashboardWoToken;
 
   if(!authConfig){
     return(
@@ -52,6 +55,11 @@ function App(props) {
         <Loader theme={Loader.THEME.INFO} message="Loading" />
       </div>
     )
+  } else{
+    if (authConfig.tokenExist){
+      dashboardComponent = Dashboard;
+    }
+
   }
 
   return (
@@ -79,7 +87,7 @@ function App(props) {
                           <Route
                             exact
                             path={pathPrefix + "/dashboard"}
-                            component={Dashboard}
+                            component={dashboardComponent}
                           />
                           <Route
                             exact
@@ -89,7 +97,7 @@ function App(props) {
                           <Route
                             exact
                             path={pathPrefix + "/"}
-                            component={AgentTable}
+                            component={dashboardComponent}
                           />
                           <Redirect exact from="*" to={pathPrefix} />
                         </Switch>

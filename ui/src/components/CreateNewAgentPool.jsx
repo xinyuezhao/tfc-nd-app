@@ -6,7 +6,6 @@ import {
   Card,
   LABELS
 } from 'blueprint-react';
-// import _ from 'lodash';
 import './CiscoObjectPicker.scss';
 import {
   createAgentPool,
@@ -27,7 +26,7 @@ function CreateNewAgentPool(props) {
     setAgentPool,
   } = props;
 
-  const [poolName, setName] = useState("");
+  const [poolName, setPoolName] = useState("");
   const [isOpen, setIsOpen] = useState(true);
 
   const onAction = () => {
@@ -41,11 +40,10 @@ function CreateNewAgentPool(props) {
     .then((res) => {
       getAgentPools(organization);
       setAgentPool(res.data.spec);
-      console.log("screen ID = ", screenId)
       screenActions.closeScreen("create-agent-pool-modal"); // screenId
     })
     .catch((error) => {
-      console.log(error);
+      console.log(error); //change error message
     });
   };
 
@@ -65,7 +63,7 @@ function CreateNewAgentPool(props) {
       onMinimize={onMinimize}
       title={"Create Agent Pool"}
       cancelButtonLabel={LABELS.cancel}
-      applyButtonLabel={"Create and Save"}
+      applyButtonLabel={"Create"}
       isOpen={isOpen}
     >
     <div style={{ paddingLeft: "10%" }}>
@@ -78,10 +76,9 @@ function CreateNewAgentPool(props) {
               <div className="row p-5" style={{ paddingTop: "10px" }}>
                 <Input required=""
                   value={poolName}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setPoolName(e.target.value)}
                 />
               </div>
-              {/* ========================================== */}
             </div>
         </Card>
       </div>

@@ -37,16 +37,30 @@ function AgentTable(props) {
   } = props;
 
   const statuses = {
-    running: <span className="status-tile-icon status-success icon-check-outline" style={{color: "#6abf4b"}}></span>,
+    running: <span className="status-tile-icon status-success icon-check-outline" style={{color: "#6ebe4a"}}></span>,
     created: <span className="status-tile-icon status-success icon-add-outline" style={{color: "#64bbe3"}}></span>,
-    enabling: <span className="status-tile-icon status-success icon-animation" style={{color: "#fbab18"}}></span>,
+    enabling: <span className="status-tile-icon status-success icon-animation" style={{color: "#ffcc00"}}></span>,
     errored: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#e2231a"}}></span>,
-    exited: <span className="status-tile-icon status-success icon-leave-meeting" ></span>,
-    idle: <span className="status-tile-icon status-success  icon-clock" style={{color: "#6abf4b"}}></span>,
-    busy: <span className="status-tile-icon status-success  icon-diagnostics" style={{color: "#6abf4b"}}></span>,
-    unknown: <span className="status-tile-icon status-success icon-exclamation-triangle" style={{color: "#f27938"}}></span>,
-    failed: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#e2231a"}}></span>,
+    exited: <span className="status-tile-icon status-success icon-leave-meeting" style={{color: "#888"}}></span>,
+    idle: <span className="status-tile-icon status-success  icon-clock" style={{color: "#98d280"}}></span>,
+    busy: <span className="status-tile-icon status-success  icon-diagnostics" style={{color: "#487b32"}}></span>,
+    unknown: <span className="status-tile-icon status-success icon-exclamation-triangle" style={{color: "#fbab18"}}></span>,
+    failed: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#9d2b2f"}}></span>,
   }
+
+  // let colors = [
+  //   'Success',
+  //   'Info',
+  //   'WarningAlt',
+  //   'Danger',
+  //   'Gray',
+  //   'Success',
+  //   'Success',
+  //   'Warning',
+  //   'Danger',
+  // ]
+
+
 
   const allColumns = [
     {

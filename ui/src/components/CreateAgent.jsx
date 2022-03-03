@@ -38,7 +38,7 @@ function Agent(props) {
   const [organizations, setOrganizations] = useState([]);
   const [agentPools, setAgentPools] = useState([]);
 
-
+// in case of update
   useEffect(() => {
     if (agent) {
       setName(agent.agentName);
@@ -59,7 +59,8 @@ function Agent(props) {
     }
 
     if (agent) {
-      updateAgent(agent?.sys_id, payload);
+      // updateAgent(agent?.sys_id, payload);
+      console.log("For updating the agent")
     } else {
       createAgent(payload);
     }
@@ -67,7 +68,6 @@ function Agent(props) {
     agent,
     agentName,
     description,
-    updateAgent,
     createAgent,
     agentPool,
     organization,
@@ -81,7 +81,7 @@ function Agent(props) {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
-      console.log("screen action ID = ", screenId)
+      console.log("screen action ID = ", screenId) //change log
       screenActions.closeScreen("create-agent-modal"); // screenId
     }
   };
@@ -98,7 +98,7 @@ function Agent(props) {
         setAgentPools(agentPoolsData);
       })
       .catch(error => {
-        console.error('There was an error!', error);
+        console.error('There was an error!', error); //change error msg
     });
   };
 
@@ -118,31 +118,32 @@ function Agent(props) {
     fetchOrganizations()
       .then((res) => {
         const orgResult = res.data;
-        const OrganizationData =  _.orderBy(orgResult).map((item) => (item.spec));
-        setOrganizations(OrganizationData);
+        const organizationData =  _.orderBy(orgResult).map((item) => (item.spec));
+        setOrganizations(organizationData);
       })
       .catch(error => {
-        console.error('There was an error!', error);
+        console.error('There was an error!', error);//change error msg.
     });
   }, []);
 
   const formatOrganizationData = (orgs) => {
-    const formatedData = orgs.map((org) => ({
+    return orgs.map((org) => ({
       name: org.Name,
       id: org.ExternalID}));
-    return formatedData;
+    // return formatedData;
+    
   }
 
   const formatedOrganizationData = formatOrganizationData(organizations);
 
-  const formatAgentPoolData = (agentPools) => {
-    const formatedData = agentPools.map((agentPools) => ({
-      name: agentPools.name,
-      id: agentPools.id}));
-    return formatedData;
-  }
+  // const formatAgentPoolData = (agentPools) => {
+  //   const formatedData = agentPools.map((agentPools) => ({
+  //     name: agentPools.name,
+  //     id: agentPools.id}));
+  //   return formatedData;
+  // }
 
-  const formatedAgentPoolData = formatAgentPoolData(agentPools);
+  // const formatedAgentPoolData = agentPools;
 
   const onCreateObjectPickerNewAgentPool = useCallback(() => {
     action.openScreen(CreateNewAgentPool,{
@@ -214,7 +215,7 @@ function Agent(props) {
               </div>
               <div className="row p-5" style={{ paddingBottom: "30px" }}>
                 <ObjectPicker required disabled={!(organization !== null && Object.keys(organization).length !== 0)}
-                  data={formatedAgentPoolData}
+                  data={agentPools}
                   multiSelect={false}
                   filterBy={(item, str) => item.name.indexOf(str) !== -1}
                   labelSuffix={'Agent Pool'}
