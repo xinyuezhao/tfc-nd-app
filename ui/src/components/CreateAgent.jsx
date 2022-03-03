@@ -22,8 +22,6 @@ function Agent(props) {
     screenId,
     screenActions,
     title,
-    agent,
-    updateAgent,
     createAgent,
   } = props;
 
@@ -38,15 +36,7 @@ function Agent(props) {
   const [organizations, setOrganizations] = useState([]);
   const [agentPools, setAgentPools] = useState([]);
 
-// in case of update
-  useEffect(() => {
-    if (agent) {
-      setName(agent.agentName);
-      setDescription(agent.description);
-      setAgentPool(agent.agentPool);
-      setOrganization(agent.organization);
-    }
-  }, [agent]);
+
 
   const updateDetails = useCallback(() => {
     let payload = {
@@ -57,15 +47,8 @@ function Agent(props) {
         organization: organization.name,
       }
     }
-
-    if (agent) {
-      // updateAgent(agent?.sys_id, payload);
-      console.log("For updating the agent")
-    } else {
       createAgent(payload);
-    }
   }, [
-    agent,
     agentName,
     description,
     createAgent,
@@ -130,20 +113,10 @@ function Agent(props) {
     return orgs.map((org) => ({
       name: org.Name,
       id: org.ExternalID}));
-    // return formatedData;
-    
   }
 
   const formatedOrganizationData = formatOrganizationData(organizations);
 
-  // const formatAgentPoolData = (agentPools) => {
-  //   const formatedData = agentPools.map((agentPools) => ({
-  //     name: agentPools.name,
-  //     id: agentPools.id}));
-  //   return formatedData;
-  // }
-
-  // const formatedAgentPoolData = agentPools;
 
   const onCreateObjectPickerNewAgentPool = useCallback(() => {
     action.openScreen(CreateNewAgentPool,{
@@ -167,7 +140,7 @@ function Agent(props) {
       onAction={onAction}
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
-      applyButtonLabel={`${agent ? "Update" : "Save"}`}
+      applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
     >
       <div style={{ paddingLeft: "10%" }}>
@@ -183,7 +156,6 @@ function Agent(props) {
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Description
                 <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
@@ -193,7 +165,6 @@ function Agent(props) {
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Organization
                 <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
@@ -209,7 +180,6 @@ function Agent(props) {
                   idBy='id'
                 />
               </div>
-              {/* ========================================== */}
               <div className="row" style={{ paddingTop: "30px" }}>Agent Pool
                 <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
               </div>
@@ -226,7 +196,6 @@ function Agent(props) {
                   onCreate={onCreateObjectPickerNewAgentPool}
                 />
               </div>
-              {/* ========================================== */}
             </div>
         </Card>
       </div>

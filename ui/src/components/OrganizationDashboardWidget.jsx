@@ -17,8 +17,8 @@ function OrganizationDashboardWidget(props) {
 
   return (
     <div className="panel panel--loose base-margin-bottom">
-			<div class="row">
-				<div class="row half-margin-left">
+			<div className="row">
+				<div className="row half-margin-left">
 					<Avatar
 						key="one"
 						size={Avatar.SIZE.MEDIUM}
@@ -29,7 +29,7 @@ function OrganizationDashboardWidget(props) {
 					/>
 					<h4 className="qtr-padding-top half-padding-left">{name}</h4>
 				</div>
-					<div class="row max-width rc-calendar-week-number-cell">
+					<div className="row max-width rc-calendar-week-number-cell">
 						<div className="col-3 ">
 							<div className="scoreboard__subtitle">Active Agents ({maxActiveAgents})</div>
 							<div className="scoreboard__title">{activeAgents}</div>

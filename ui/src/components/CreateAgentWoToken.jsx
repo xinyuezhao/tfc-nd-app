@@ -1,40 +1,24 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState } from "react";
 import {
   DetailScreen,
   Input,
   Card,
-  // useScreenActions,
   InfoAlert,
   LABELS,
 } from "blueprint-react";
-// import _ from 'lodash';
 import './CiscoObjectPicker.scss';
 
 function Agent(props) {
   const {
-    screenId,
     screenActions,
     title,
-    agent,
-    updateAgent,
     createAgent,
   } = props;
-
-  // const action = useScreenActions();
 
   const [agentName, setName] = useState("");
   const [description, setDescription] = useState("");
   const [agentToken, setAgentToken] = useState("");
   const [isOpen, setIsOpen] = useState(true);
-
-  useEffect(() => {
-    if (agent) {
-      setName(agent.agentName);
-      setDescription(agent.description);
-      setAgentToken(agent.agentToken);
-    }
-    console.log("INFO: Create agent without user token");
-  }, [agent]);
 
   const updateDetails = useCallback(() => {
     let payload = {
@@ -42,17 +26,10 @@ function Agent(props) {
       description: description,
       token: agentToken,
     }
-
-    if (agent) {
-      updateAgent(agent?.sys_id, payload);
-    } else {
-      createAgent(payload);
-    }
+    createAgent(payload);
   }, [
-    agent,
     agentName,
     description,
-    updateAgent,
     createAgent,
     agentToken,
   ]);
@@ -80,16 +57,13 @@ function Agent(props) {
     applyButtonProps = {};
   }
 
-
-
-//  Name is not required, description is.
   return (
     <DetailScreen
       title={title}
       onAction={onAction}
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
-      applyButtonLabel={`${agent ? "Update" : "Save"}`}
+      applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
       isOpen={isOpen}
     >
