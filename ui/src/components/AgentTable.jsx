@@ -120,6 +120,7 @@ function AgentTable(props) {
           {
             label: "Delete",
             action: () => {
+              setSelectedAgents([row.original]);
               openDeleteConfirm();
             }
           },
@@ -145,11 +146,11 @@ function AgentTable(props) {
   const [showConfirm, setShowConfirm] = useState(false);
   const [fetchingData, setFetchingData] = useState(false);
   const [agents, setAgents] = useState([]);
-  const [viewAgent, setViewAgent] = useState({});
+  const [viewSecondarySidebarData, setViewSecondarySidebarData] = useState({});
   const [warningAlert, setWarningAlert] = useState("");
   const [infoAlert, setInfoAlert] = useState("");
   const [successAlert, setSuccessAlert] = useState("");
-  const [openSidebar, setOpenSidebar] = useState(false);
+  const [openSecondarySidebar, setOpenSecondarySidebar] = useState(false);
   // const [filterRemove, setfilterRemove] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(
@@ -247,12 +248,12 @@ function AgentTable(props) {
       authConfig,
     ]
   );
-// change handleSidebar -> handleSceondarySidebar
+
   const handleSidebar = useCallback(
     (data) => {
-      setViewAgent(data); //setViewAgent-> setSecondarySidebarData
-      setOpenSidebar(!openSidebar);
-    }, [openSidebar]);
+      setViewSecondarySidebarData(data); //setViewSecondarySidebarData-> setSecondarySidebarData
+      setOpenSecondarySidebar(!openSecondarySidebar);
+    }, [openSecondarySidebar]);
 
   const menuItems = [
     {
@@ -273,7 +274,7 @@ function AgentTable(props) {
   });
 
   const secondarySidebarHeaderContent = {
-    title: "Agent", subtitle: `${viewAgent.name}`,
+    title: "Agent", subtitle: `${viewSecondarySidebarData.name}`,
   }
 
 
@@ -281,26 +282,26 @@ function AgentTable(props) {
     <div className="background-container">
 
     {checkComponentRender(
-        openSidebar,
+        openSecondarySidebar,
         <SecondarySidebar
           closable={true}
           key="sidebar-key"
-          opened={openSidebar}
+          opened={openSecondarySidebar}
           headerContent={secondarySidebarHeaderContent}
           footerContent={<div style={{textAlign: 'center'}}>Footer content</div>}
         >
         <Card>
           <h3 style={{ textAlign:"center"}}>
-            {statuses[`${viewAgent.status}`.toLowerCase()]} {`${viewAgent.status}`}
+            {statuses[`${viewSecondarySidebarData.status}`.toLowerCase()]} {`${viewSecondarySidebarData.status}`}
           </h3>
         </Card>
         <div className="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
           <div style={{ paddingTop: "30px", color: "gray" }}>Description</div>
-          <div>{`${viewAgent.description}`}</div>
+          <div>{`${viewSecondarySidebarData.description}`}</div>
           <div style={{ paddingTop: "30px", color: "gray" }}>Organization</div>
-          <div>{`${viewAgent.organization}`}</div>
+          <div>{`${viewSecondarySidebarData.organization}`}</div>
           <div style={{ paddingTop: "30px", color: "gray" }}>Agent Pool</div>
-          <div>{`${viewAgent.agentpool}`}</div>
+          <div>{`${viewSecondarySidebarData.agentpool}`}</div>
         </SecondarySidebar>
       )}
 
