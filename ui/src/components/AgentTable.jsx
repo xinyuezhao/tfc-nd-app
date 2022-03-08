@@ -12,7 +12,8 @@ import {
   IconConstants,
   SecondarySidebar,
   Card,
-  IconButton
+  IconButton,
+  Loader
 } from "blueprint-react";
 import {
   fetchAgents,
@@ -37,28 +38,16 @@ function AgentTable(props) {
   } = props;
 
   const statuses = {
-    running: <span className="status-tile-icon status-success icon-check-outline" style={{color: "#6ebe4a"}}></span>,
-    created: <span className="status-tile-icon status-success icon-add-outline" style={{color: "#64bbe3"}}></span>,
-    enabling: <span className="status-tile-icon status-success icon-animation" style={{color: "#ffcc00"}}></span>,
-    errored: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#e2231a"}}></span>,
-    exited: <span className="status-tile-icon status-success icon-leave-meeting" style={{color: "#888"}}></span>,
-    idle: <span className="status-tile-icon status-success  icon-clock" style={{color: "#98d280"}}></span>,
-    busy: <span className="status-tile-icon status-success  icon-diagnostics" style={{color: "#487b32"}}></span>,
-    unknown: <span className="status-tile-icon status-success icon-exclamation-triangle" style={{color: "#fbab18"}}></span>,
-    failed: <span className="status-tile-icon status-success icon-error-outline" style={{color: "#9d2b2f"}}></span>,
+    running: <span className="status-tile-icon text-success icon-check-outline" ></span>,
+    created: <span className="status-tile-icon text-info icon-add-outline"></span>,
+    enabling: <span className="status-tile-icon text-warning-alt icon-animation"></span>,
+    errored: <span className="status-tile-icon text-danger icon-error-outline"></span>,
+    exited: <span className="status-tile-icon text-dkgray-4 icon-leave-meeting" ></span>,
+    idle: <span className="status-tile-icon text-success icon-clock"></span>,
+    busy: <span className="status-tile-icon text-darkgreen  icon-diagnostics" ></span>,
+    unknown: <span className="status-tile-icon text-warning icon-exclamation-triangle"></span>,
+    failed: <span className="status-tile-icon text-danger icon-error-outline"></span>,
   }
-
-  // let colors = [
-  //   'Success',
-  //   'Info',
-  //   'WarningAlt',
-  //   'Danger',
-  //   'Gray',
-  //   'Success',
-  //   'Success',
-  //   'Warning',
-  //   'Danger',
-  // ]
 
 
 
@@ -360,12 +349,18 @@ function AgentTable(props) {
                 </span>
               </header>
             </div>
-            <div align="center">
-              <img src={emptyImage} alt="empty" width="15%" height="15%"/>
-              <h4 align="center">No results found</h4>
-              <p align="center">Create a new Agent</p>
-              <Button theme={"btn--primary"} onClick={() => handleOpenAgent()}>Create Agent</Button>
-            </div>
+            {agents?
+              <div className="screen flex-center dbl-padding-top">
+                <Loader theme={Loader.THEME.LIGHT_GRAY} />
+              </div>
+              :
+              <div align="center">
+                <img src={emptyImage} alt="empty" width="15%" height="15%"/>
+                <h4 align="center">No results found</h4>
+                <p align="center">Create a new Agent</p>
+                <Button theme={"btn--primary"} onClick={() => handleOpenAgent()}>Create Agent</Button>
+              </div>
+            }
           </div>
           : <FilterableTable
           loading={fetchingData}

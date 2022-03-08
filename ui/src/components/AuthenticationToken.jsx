@@ -11,10 +11,11 @@ import {
 } from 'blueprint-react';
 import './CiscoObjectPicker.scss';
 import { createAuthenticationToken } from "../service/api_service";
-import { Link } from 'react-router-dom';
 
 /**
- * Add what this component does and add the desc for other components too
+ * Authentication Token component gives user an option to either use the user authentication token from HasiCorp Terraform cloud or not.
+ * By selecting the user authentication token option, the token is implicitly added during agent creation.
+ * By selecting no token option, the user has to explicitly specify the token during agent creation.
  */
 
 function AuthenticationToken(props) {
@@ -58,7 +59,7 @@ function AuthenticationToken(props) {
     }
     createAuthenticationToken(payload)
       .then((res) => {
-        setSuccessAlert("Configured Token Successfully");
+        setSuccessAlert("Configured Token Successfully", res.data.configured);
         refreshAuthConfig();
       })
       .catch((error) => {
@@ -76,59 +77,45 @@ function AuthenticationToken(props) {
     screenActions.closeScreen("authentication-token");
   }, [userToken, screenActions, handleCreateAuthenticationToken]);
 
-  const displayTokenInput = () => {
-    setSelectedToken(true);
-  }
-
-  const hideTokenInput = () => {
-    setSelectedToken(false);
-    setUserToken("");
-  }
-
   let cards =[
     {
       headerContent: {
-        title: 'Terraform API access',
+        title: <h4 className="qtr-padding-bottom">Terraform API access</h4>,
         subtitle: <MoreLessPanel
           key="more-less-1a"
           persistCollapsed={true}
-          collapsedLines={2}
+          collapsedLines={4}
           moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-          By providing a User Authentication Token, Nexus Dashboard users will be able to create agents without
-          needing to provide a unique Terraform Cloud Agent Token for each agent deployed.
-          The Nexus Dashboard Connector for Terraform will automatically create the required configuration on
-          Terraform Cloud and will also be able to display usage statistics about your subscription.
+          <div className="text-medium" style={{lineHeight: "20px !important"}}>
+            By providing a User Authentication Token, Nexus Dashboard users will be able to create agents without
+            needing to provide a unique Terraform Cloud Agent Token for each agent deployed.
+            The Nexus Dashboard Connector for Terraform will automatically create the required configuration on
+            Terraform Cloud and will also be able to display usage statistics about your subscription.
+          </div>
         </MoreLessPanel>,
       },
       uid: 'token-present',
-      // onAction: displayTokenInput,
       selected: selectedToken,
     },
     {
       headerContent: {
-        title: 'No Terraform API access',
+        title: <h4 className="qtr-padding-bottom">No Terraform API access</h4>,
         subtitle: <MoreLessPanel
           key="more-less-1a"
           persistCollapsed={true}
-          collapsedLines={2}
+          collapsedLines={4}
           moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-          A Terraform Cloud Agent Token will need to be provided for every agent deployed through the
-          Nexus Dashboard Connector for Terraform and we will display only local information on the
-          status of the deployed agents.
+          <div className="text-medium" style={{lineHeight: "20px !important"}}>
+            A Terraform Cloud Agent Token will need to be provided for every agent deployed through the
+            Nexus Dashboard Connector for Terraform and we will display only local information on the
+            status of the deployed agents.
+          </div>
         </MoreLessPanel>,
       },
       uid: 'token-absent',
-      // onAction: hideTokenInput,
       selected: !selectedToken,
     }
   ];
-
-  // if (selectedToken) {
-  //   cards[0].selected = true;
-  // }
-  // else {
-  //   cards[1].selected = true;
-  // }
 
   if((selectedToken && !userToken)){
     applyButtonProps = {disabled: true};
@@ -142,16 +129,16 @@ function AuthenticationToken(props) {
       applyButtonProps={applyButtonProps}
     >
     <div style={{ paddingLeft: "10%", paddingRight: "10%" }}>
-      <div style={{ paddingTop: "25px", paddingBottom: "25px", paddingLeft: "3%" }}>
+      <div className="dbl-padding-bottom dbl-padding-top dbl-padding-left">
         <h1>
           Let's Configure the basics
         </h1>
-        <p style={{ color: "gray" }}>
+        <div className=" base-padding-top text-muted text-large">
           There are a few things you need to configure before you get started with Nexus Dashboard Connector for Terraform
-        </p>
+        </div>
       </div>
       <Panel border={Panel.BORDER.ALL} padding={Panel.PADDING.NONE}>
-        <div className="cards__header">Connection Type</div>
+        <div className="cards__header text-large">Connection Type</div>
         <Cards
           selectionMode={Cards.SELECTION_MODE.SINGLE}
           selectionControl={Cards.SELECTION_CONTROL.COMPONENT}
@@ -173,8 +160,8 @@ function AuthenticationToken(props) {
             }
           } }
         />
-        {!selectedToken ? null : <div className="cards__header"
-          style={{ margin: "2px" }}>
+        {!selectedToken ? null
+          : <div className="cards__header">
             <InfoAlert
               title="Alert Title"
               children={<div>To generate a Terraform Cloud User Token to use with the Nexus Dashboard Connector for
@@ -186,10 +173,10 @@ function AuthenticationToken(props) {
               <i>Note:</i> We recommend the creation of a dedicated user account for the integration as this will allow you
               to limit which organizations the Nexus Dashboard Connector for Terraform is able to interact with.</div>}
             />
-            <div className="cards__header" style={{ paddingLeft: "0px", paddingTop: "35px" }}>Authentication Token
-              <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+            <div className="cards__header no-padding-left dbl-padding-top text-large" >Authentication Token
+              <span className="text-danger qtr-padding-left icon-">*</span>
             </div>
-            <div className="cards__header" style={{ paddingBottom: "25px", paddingRight: "75%", paddingLeft: "0px"}}>
+            <div className="cards__header no-padding-left dbl-padding-bottom" style={{paddingRight: "75%"}}>
               <Input required=""
                 value={userToken}
                 onChange={(e) => setUserToken(e.target.value)}

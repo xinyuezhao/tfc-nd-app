@@ -11,20 +11,20 @@ const OrgDetailRenderer = (props) => {
   } = props;
 
   return (
-    <Card className="col d-flex justify-content-center" style={{ position: "relative", display: "inline-block"}}>
+    <Card className="col d-flex justify-content-center relative visible-inline-xs">
     <CardHeader>
       <div>
-        <div className="icon-communities icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}></div>
-        <div style={{float: "right", marginLeft: "10px"}}>
-          <div className="text-bold" style={{  fontSize: "12px", padding: "2px"}}>Organization</div>
-          <div style={{ padding: "2px"}}>{item.name }</div>
+        <div className="icon-communities icon-medium-large half-padding text-primary" ></div>
+        <div className="pull-right half-margin-left">
+          <div className="text-bold qtr-padding">Organization</div>
+          <div className="qtr-padding-left">{item.name }</div>
         </div>
       </div>
     </CardHeader>
     <CardBody className="dbl-padding">
-      <div className="text-bold"  style={{  fontSize: "15px"}}>General</div>
-      <div style={{ paddingTop: "10px", color: "gray"}}>Description</div>
-      <div className="base-padding">{item.description? item.description: "-"}</div>
+      <div className="text-bold text-large base-padding-top">General</div>
+      <div className="text-muted base-padding-top">Description</div>
+      <div>{item.description? item.description: "-"}</div>
     </CardBody>
     </Card>
   );

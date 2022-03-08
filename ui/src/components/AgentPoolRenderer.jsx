@@ -10,17 +10,17 @@ const PoolDetailRenderer = (props) => {
     item
   } = props;
   return (
-    <Card className="col d-flex justify-content-center" style={{ position: "relative", display: "inline-block"}}>
+    <Card className="col d-flex justify-content-center relative visible-inline-xs">
     <CardHeader>
       <div>
-        <div className="icon-insights icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px"}}></div>
-        <div style={{float: "right", marginLeft: "10px"}}>
-          <div style={{ fontWeight: "bold", fontSize: "12px", padding: "2px"}}>Agent Pool</div>
-          <div style={{ padding: "2px"}}>{item.name }</div>
+        <div className="icon-communities icon-medium-large half-padding text-primary"></div>
+        <div className="pull-right half-margin-left">
+          <div className="text-bold qtr-padding">Agent Pool</div>
+          <div className="qtr-padding-left">{item.name }</div>
         </div>
       </div>
     </CardHeader>
-    <CardBody style={{ paddingTop: "25px", paddingBottom: "10px"}}>
+    <CardBody className="half-padding-bottom base-padding-top">
     </CardBody>
     </Card>
   );

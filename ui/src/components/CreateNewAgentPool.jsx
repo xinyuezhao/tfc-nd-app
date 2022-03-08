@@ -19,7 +19,6 @@ import {
 
 function CreateNewAgentPool(props) {
   const {
-    screenId,
     screenActions,
     organization,
     getAgentPools,
@@ -67,13 +66,13 @@ function CreateNewAgentPool(props) {
       isOpen={isOpen}
     >
     <div style={{ paddingLeft: "10%" }}>
-      <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
-        <Card className="col" style={{ width: "50%", paddingLeft: "30px", paddingTop: "0px", paddingBottom: "25px" }}>
+      <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
+        <Card className="col-6 no-padding-top base-padding-left">
             <div className="agent-container justify-content-center">
-              <div className="row">Agent Pool Name
-                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              <div className="row text-large base-padding-bottom">Agent Pool Name
+                <span className="text-danger qtr-padding-left icon-">*</span>
               </div>
-              <div className="row p-5" style={{ paddingTop: "10px" }}>
+              <div className="row text-large qtr-padding-bottom">
                 <Input required=""
                   value={poolName}
                   onChange={(e) => setPoolName(e.target.value)}

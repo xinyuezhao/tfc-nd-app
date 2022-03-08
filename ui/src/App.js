@@ -7,7 +7,7 @@ import {
     Loader,
 } from "blueprint-react";
 
-import {Header} from "./components/Header";
+import Header from "./components/Header";
 import About from "./components/About";
 import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";

@@ -68,36 +68,35 @@ function Agent(props) {
       isOpen={isOpen}
     >
       <div style={{ paddingLeft: "10%" }}>
-      <div style={{ fontSize: "20px", paddingTop: "25px",paddingBottom: "25px", }}>General</div>
-        <Card className="col" style={{ width: "90%", paddingLeft: "30px", paddingTop: "0px" }}>
-          <InfoAlert
+      <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
+        <Card className="col-11 no-padding-top base-padding-left">
+          <InfoAlert className="dbl-marginLeft"
           title="Alert Title"
           children="Instruction on how to use authentication. Get terraform user token."
-          style={{ marginLeft: "25px" }}
           />
             <div className="agent-container justify-content-center">
-              <div className="row">Agent Name
-                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              <div className="row text-large qtr-padding-bottom">Agent Name
+                <span className="text-danger qtr-padding-left icon-">*</span>
               </div>
-              <div className="row p-5">
+              <div className="row text-large qtr-padding-bottom">
                 <Input required=""
                   value={agentName}
                   onChange={(e) => setName(e.target.value)}
                 />
               </div>
-              <div className="row" style={{ paddingTop: "30px" }}>Description
-                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              <div className="row base-padding-top text-large qtr-padding-bottom">Description
+                <span className="text-danger qtr-padding-left icon-">*</span>
               </div>
-              <div className="row p-5">
+              <div className="row text-large qtr-padding-bottom">
                 <Input required=""
                   value={description}
                   onChange={(e) => setDescription(e.target.value)}
                 />
               </div>
-              <div className="row" style={{ paddingTop: "30px" }}>Agent Token
-                <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>
+              <div className="row base-padding-top text-large qtr-padding-bottom">Agent Token
+                <span className="text-danger qtr-padding-left icon-">*</span>
               </div>
-              <div className="row p-5">
+              <div className="row text-large qtr-padding-bottom">
                 <Input required=""
                   value={agentToken}
                   onChange={(e) => setAgentToken(e.target.value)}
