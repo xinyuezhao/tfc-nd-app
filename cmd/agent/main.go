@@ -83,20 +83,21 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 			er := fmt.Errorf("error from queryAgents")
 			return nil, http.StatusInternalServerError, core.NewError(er, err)
 		}
-		agentId := conf.QueryAgentId(ctx, agents, name)
-
-		// query status
-		status := payloadObject.Spec().Status()
-		if status == "Running" {
-			if agentId != "" {
-				log.Info("id used to query status " + agentId)
-				status, err := conf.QueryAgentStatus(ctx, agentId)
-				if err != nil {
-					er := fmt.Errorf("error from queryAgentStatus")
-					return nil, http.StatusInternalServerError, core.NewError(er, err)
-				}
-				if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
-					return nil, http.StatusInternalServerError, err
+		if agents != nil {
+			agentId := conf.QueryAgentId(ctx, agents, name)
+			// query status
+			status := payloadObject.Spec().Status()
+			if status == "Running" {
+				if agentId != "" {
+					log.Info("id used to query status " + agentId)
+					status, err := conf.QueryAgentStatus(ctx, agentId)
+					if err != nil {
+						er := fmt.Errorf("error from queryAgentStatus")
+						return nil, http.StatusInternalServerError, core.NewError(er, err)
+					}
+					if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+						return nil, http.StatusInternalServerError, err
+					}
 				}
 			}
 		}
@@ -145,22 +146,23 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 				er := fmt.Errorf("error during querying agents")
 				return nil, http.StatusInternalServerError, core.NewError(er, err)
 			}
-
-			agentId := conf.QueryAgentId(ctx, agents, name)
-
-			status := payloadObject.Spec().Status()
-			log.Info("status before query status by id " + status)
-			if status == "Running" {
-				if agentId != "" {
-					log.Info("query agents' status " + agentId)
-					status, err := conf.QueryAgentStatus(ctx, agentId)
-					if err != nil {
-						er := fmt.Errorf("error during querying agent status")
-						return nil, http.StatusInternalServerError, core.NewError(er, err)
-					}
-					if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
-						er := fmt.Errorf("error during set status")
-						return nil, http.StatusInternalServerError, core.NewError(er, err)
+			// only if agents exist, query agentId
+			if agents != nil {
+				agentId := conf.QueryAgentId(ctx, agents, name)
+				status := payloadObject.Spec().Status()
+				log.Info("status before query status by id " + status)
+				if status == "Running" {
+					if agentId != "" {
+						log.Info("query agents' status " + agentId)
+						status, err := conf.QueryAgentStatus(ctx, agentId)
+						if err != nil {
+							er := fmt.Errorf("error during querying agent status")
+							return nil, http.StatusInternalServerError, core.NewError(er, err)
+						}
+						if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+							er := fmt.Errorf("error during set status")
+							return nil, http.StatusInternalServerError, core.NewError(er, err)
+						}
 					}
 				}
 			}

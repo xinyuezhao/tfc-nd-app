@@ -90,6 +90,10 @@ func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client
 		return nil, core.NewError(errParseQuery, err)
 	}
 	log.Info("response " + string(responseBody))
+	if resp.StatusCode == 404 {
+		// when it returns 404, whether usertoken doesn't have access to agentpool or the agentpool doesn't exist
+		return nil, nil
+	}
 	if resp.StatusCode != 200 {
 		err := core.NewError(fmt.Errorf("error while querying agents. Response content: %s", string(responseBody)))
 		return nil, err
