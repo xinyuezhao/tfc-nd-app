@@ -33,6 +33,8 @@ spec:
       type: bool
     - prop: Usage
       type: v1.OrganizationUsage
+    - prop: Subscription
+      type: v1.OrganizationSubscription
 ---
 kind: Struct
 metadata:
@@ -78,6 +80,22 @@ spec:
     - prop: TotalApplies
       type: float64
     - prop: WorkspaceCount
+      type: float64
+---
+kind: Struct
+metadata:
+  name: OrganizationSubscription
+  group: terraform.cisco.com
+  version: v1
+spec:
+  props:
+    - prop: RunsCeiling
+      type: float64
+    - prop: ContractUserLimit
+      type: float64
+    - prop: ContractApplyLimit
+      type: float64
+    - prop: AgentsCeiling
       type: float64
 ---
 kind: Resource

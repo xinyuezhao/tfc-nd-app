@@ -207,10 +207,6 @@ spec:
     listenPaths:
     - path: "api/v1/organizations"
       targetSubPath: "api/terraform.cisco.com/v1/organizations" 
-      # urlRewrites:
-      # - path: "{id}"
-      #   method: "GET"
-      #   rewriteTo: "api/terraform.cisco.com/"
 
   - target: agentmgr
     service:
@@ -219,8 +215,6 @@ spec:
       port: 80
     authType: open
     listenPaths:
-    # - path: "api/v1/agents/"
-    #   targetSubPath: "api/terraform.cisco.com/v1/agents/"
     - path: "api/v1/agents"
       targetSubPath: "api/terraform.cisco.com/v1/agents"
     - path: "api/v1/agentpool/{agentpool}/tokens"
