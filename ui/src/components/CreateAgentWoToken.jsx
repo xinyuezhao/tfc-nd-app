@@ -67,7 +67,7 @@ function Agent(props) {
       applyButtonProps={applyButtonProps}
       isOpen={isOpen}
     >
-      <div style={{ paddingLeft: "10%" }}>
+      <div className="div_padding_left">
       <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
         <Card className="col-11 no-padding-top base-padding-left">
           <InfoAlert className="dbl-marginLeft"

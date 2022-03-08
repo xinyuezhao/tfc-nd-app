@@ -86,12 +86,10 @@ function AuthenticationToken(props) {
           persistCollapsed={true}
           collapsedLines={4}
           moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-          <div className="text-medium" style={{lineHeight: "20px !important"}}>
             By providing a User Authentication Token, Nexus Dashboard users will be able to create agents without
             needing to provide a unique Terraform Cloud Agent Token for each agent deployed.
             The Nexus Dashboard Connector for Terraform will automatically create the required configuration on
             Terraform Cloud and will also be able to display usage statistics about your subscription.
-          </div>
         </MoreLessPanel>,
       },
       uid: 'token-present',
@@ -105,11 +103,9 @@ function AuthenticationToken(props) {
           persistCollapsed={true}
           collapsedLines={4}
           moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-          <div className="text-medium" style={{lineHeight: "20px !important"}}>
             A Terraform Cloud Agent Token will need to be provided for every agent deployed through the
             Nexus Dashboard Connector for Terraform and we will display only local information on the
             status of the deployed agents.
-          </div>
         </MoreLessPanel>,
       },
       uid: 'token-absent',
@@ -128,7 +124,7 @@ function AuthenticationToken(props) {
       applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
     >
-    <div style={{ paddingLeft: "10%", paddingRight: "10%" }}>
+    <div className='div_padding_right div_padding_left'>
       <div className="dbl-padding-bottom dbl-padding-top dbl-padding-left">
         <h1>
           Let's Configure the basics
@@ -176,7 +172,7 @@ function AuthenticationToken(props) {
             <div className="cards__header no-padding-left dbl-padding-top text-large" >Authentication Token
               <span className="text-danger qtr-padding-left icon-">*</span>
             </div>
-            <div className="cards__header no-padding-left dbl-padding-bottom" style={{paddingRight: "75%"}}>
+            <div className="cards__header no-padding-left dbl-padding-bottom div_padding_right_75">
               <Input required=""
                 value={userToken}
                 onChange={(e) => setUserToken(e.target.value)}

@@ -161,3 +161,15 @@ html {
   background-color: #fff !important;
   border: 0px solid transparent !important;
 }
+
+.div_padding_left {
+  padding-left: 10% !important;
+}
+
+.div_padding_right {
+  padding-right: 10% !important;
+}
+
+.div_padding_right_75 {
+  padding-right: 75% !important;
+}
