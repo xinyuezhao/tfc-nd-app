@@ -58,11 +58,10 @@ function App() {
       <ErrorBoundary>
         <ScreenManager>
           <About show={showAbout} onClose={() => setShowAbout(false)}/>
-          <div id="content-container" style={{ background: "#dfdfdfa1" }}>
+          <div id="content-container">
             <div
               id="main-content"
-              style={{ overflowX: "auto" }}
-              className="content-fluid relative"
+              className="content-fluid relative textarea bg-color-gray"
             >
               <AppSidebar />
               <div className="content-header" >

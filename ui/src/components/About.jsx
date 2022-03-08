@@ -11,7 +11,7 @@ function About(props) {
   } = props;
 
   return (
-    <Modal className="about modal-container"
+    <Modal className="about"
     title=" "
       isOpen={show}
       onClose={onClose}

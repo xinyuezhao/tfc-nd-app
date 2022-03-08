@@ -173,3 +173,23 @@ html {
 .div_padding_right_75 {
   padding-right: 75% !important;
 }
+.text-idle {
+  color: #98d280 !important;
+}
+
+.text-failed {
+  color: #9d2b2f !important;
+}
+
+.secondary-sidebar-subtitles {
+  padding-top: 30px !important;
+  color: gray !important;
+}
+
+.bg-color-white {
+  background-color: white !important;
+}
+
+.bg-color-gray {
+  background: #dfdfdfa1 !important;
+}

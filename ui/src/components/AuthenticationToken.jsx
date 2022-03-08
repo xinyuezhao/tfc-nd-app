@@ -119,12 +119,13 @@ function AuthenticationToken(props) {
 
   return (
     <DetailScreen
+    className="bg-color-gray"
       onAction={authTokenScreenOnAction}
       title={"Connector for Terraform  - Setup"}
       applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
     >
-    <div className='div_padding_right div_padding_left'>
+    <div className="div_padding_right div_padding_left">
       <div className="dbl-padding-bottom dbl-padding-top dbl-padding-left">
         <h1>
           Let's Configure the basics
@@ -133,54 +134,56 @@ function AuthenticationToken(props) {
           There are a few things you need to configure before you get started with Nexus Dashboard Connector for Terraform
         </div>
       </div>
-      <Panel border={Panel.BORDER.ALL} padding={Panel.PADDING.NONE}>
-        <div className="cards__header text-large">Connection Type</div>
-        <Cards
-          selectionMode={Cards.SELECTION_MODE.SINGLE}
-          selectionControl={Cards.SELECTION_CONTROL.COMPONENT}
-          groupName="cards-criteria-group-single-name-00"
-          styles={{
-            cardsContainer: {
-              display: 'grid',
-              gridTemplateColumns: 'auto auto auto'
-            }
-          }}
-          cards={cards}
-          onChange={(s) => {
-            if(s["token-present"]["selected"] === true && s["token-absent"]["selected"] === false) {
-              setSelectedToken(true);
-            }
-            else {
-              setSelectedToken(false);
-              setUserToken("");
-            }
-          } }
-        />
-        {!selectedToken ? null
-          : <div className="cards__header">
-            <InfoAlert
-              title="Alert Title"
-              children={<div>To generate a Terraform Cloud User Token to use with the Nexus Dashboard Connector for
-              Terraform, see: <a
-              href="https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens" target="_blank" rel="noreferrer">
-              https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens</a>.
-              <br />
-              <br />
-              <i>Note:</i> We recommend the creation of a dedicated user account for the integration as this will allow you
-              to limit which organizations the Nexus Dashboard Connector for Terraform is able to interact with.</div>}
-            />
-            <div className="cards__header no-padding-left dbl-padding-top text-large" >Authentication Token
-              <span className="text-danger qtr-padding-left icon-">*</span>
-            </div>
-            <div className="cards__header no-padding-left dbl-padding-bottom div_padding_right_75">
-              <Input required=""
-                value={userToken}
-                onChange={(e) => setUserToken(e.target.value)}
+      <div className="bg-color-gray qtr-padding">
+        <Panel border={Panel.BORDER.ALL} padding={Panel.PADDING.NONE}>
+          <div className="cards__header text-large">Connection Type</div>
+          <Cards
+            selectionMode={Cards.SELECTION_MODE.SINGLE}
+            selectionControl={Cards.SELECTION_CONTROL.COMPONENT}
+            groupName="cards-criteria-group-single-name-00"
+            styles={{
+              cardsContainer: {
+                display: 'grid',
+                gridTemplateColumns: 'auto auto auto'
+              }
+            }}
+            cards={cards}
+            onChange={(s) => {
+              if(s["token-present"]["selected"] === true && s["token-absent"]["selected"] === false) {
+                setSelectedToken(true);
+              }
+              else {
+                setSelectedToken(false);
+                setUserToken("");
+              }
+            } }
+          />
+          {!selectedToken ? null
+            : <div className="cards__header">
+              <InfoAlert
+                title="Alert Title"
+                children={<div>To generate a Terraform Cloud User Token to use with the Nexus Dashboard Connector for
+                Terraform, see: <a
+                href="https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens" target="_blank" rel="noreferrer">
+                https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens</a>.
+                <br />
+                <br />
+                <i>Note:</i> We recommend the creation of a dedicated user account for the integration as this will allow you
+                to limit which organizations the Nexus Dashboard Connector for Terraform is able to interact with.</div>}
               />
+              <div className="cards__header no-padding-left dbl-padding-top text-large" >Authentication Token
+                <span className="text-danger qtr-padding-left icon-">*</span>
+              </div>
+              <div className="cards__header no-padding-left dbl-padding-bottom div_padding_right_75">
+                <Input required=""
+                  value={userToken}
+                  onChange={(e) => setUserToken(e.target.value)}
+                />
+              </div>
             </div>
-          </div>
-        }
-      </Panel>
+          }
+        </Panel>
+      </div>
     </div>
     </DetailScreen>
   );

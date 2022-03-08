@@ -43,10 +43,10 @@ function AgentTable(props) {
     enabling: <span className="status-tile-icon text-warning-alt icon-animation"></span>,
     errored: <span className="status-tile-icon text-danger icon-error-outline"></span>,
     exited: <span className="status-tile-icon text-dkgray-4 icon-leave-meeting" ></span>,
-    idle: <span className="status-tile-icon text-success icon-clock"></span>,
+    idle: <span className="status-tile-icon text-idle icon-clock"></span>,
     busy: <span className="status-tile-icon text-darkgreen  icon-diagnostics" ></span>,
     unknown: <span className="status-tile-icon text-warning icon-exclamation-triangle"></span>,
-    failed: <span className="status-tile-icon text-danger icon-error-outline"></span>,
+    failed: <span className="status-tile-icon text-failed icon-error-outline"></span>,
   }
 
 
@@ -63,7 +63,7 @@ function AgentTable(props) {
         return (
         <div className="StatusTile">
           {statuses[row.value.toLowerCase()]}
-          <label className="status-tile-text" style={{marginLeft: "5px", paddingTop: "2px"}}>{`${row.value}`}</label>
+          <label className="status-tile-text qtr-margin-left">{`${row.value}`}</label>
         </div>
       )},
     },
@@ -277,19 +277,18 @@ function AgentTable(props) {
           key="sidebar-key"
           opened={openSecondarySidebar}
           headerContent={secondarySidebarHeaderContent}
-          footerContent={<div style={{textAlign: 'center'}}>Footer content</div>}
         >
         <Card>
-          <h3 style={{ textAlign:"center"}}>
+          <h2 className="text-center base-padding-bottom">
             {statuses[`${viewSecondarySidebarData.status}`.toLowerCase()]} {`${viewSecondarySidebarData.status}`}
-          </h3>
+          </h2>
         </Card>
-        <div className="title" style={{ paddingTop: "25px", fontWeight: "bold" }}>General</div>
-          <div style={{ paddingTop: "30px", color: "gray" }}>Description</div>
+        <div className="title text-bold dbl-padding-top text-large">General</div>
+          <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Description</div>
           <div>{`${viewSecondarySidebarData.description}`}</div>
-          <div style={{ paddingTop: "30px", color: "gray" }}>Organization</div>
+          <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Organization</div>
           <div>{`${viewSecondarySidebarData.organization}`}</div>
-          <div style={{ paddingTop: "30px", color: "gray" }}>Agent Pool</div>
+          <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Agent Pool</div>
           <div>{`${viewSecondarySidebarData.agentpool}`}</div>
         </SecondarySidebar>
       )}
@@ -316,20 +315,20 @@ function AgentTable(props) {
 
       <div className="row">
         <div className="col-xl-12">
-          <div  style={{ paddingTop: "30px", paddingBottom: "15px", display: "flex", justifyContent: "space-between" }}>
-            <h2 style={{ fontWeight: "350" }}>Agents</h2>
+          <div className="dbl-padding-top half-padding-bottom flex justify-content-sm-between">
+            <h2 className="font-weight-light base-padding-left">Agents</h2>
             <div>
-              <IconButton className=""
+              <IconButton
+                className="base-margin-right"
                 size={IconButton.SIZE.SMALL}
                 icon={IconButton.ICON.REFRESH}
                 onClick={getAgents}
-                style={{ marginRight:"20px"}}
               />
             </div>
           </div>
         </div>
       </div>
-      <div className="filter-table" style={{ backgroundColor: "white", padding: "20px" }}>
+      <div className="filter-table base-padding bg-color-white">
         {TableData.length === 0 ?
           <div className="no-data-container">
             <div className="filterable-table">
