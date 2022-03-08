@@ -31,7 +31,7 @@ function fetchAuthenticationToken() {
 }
 
 function createAuthenticationToken(payload) {
-  return axios.post("/credentials/v1/credentials", payload);
+  return axios.post("/v1/credentials", payload);
 }
 
 export {

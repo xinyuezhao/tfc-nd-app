@@ -19,7 +19,6 @@ import {
 
 function Agent(props) {
   const {
-    screenId,
     screenActions,
     title,
     createAgent,
@@ -64,7 +63,6 @@ function Agent(props) {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
-      console.log("screen action ID = ", screenId) //change log
       screenActions.closeScreen("create-agent-modal"); // screenId
     }
   };

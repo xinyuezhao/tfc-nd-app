@@ -11,6 +11,7 @@ import {
 } from 'blueprint-react';
 import './CiscoObjectPicker.scss';
 import { createAuthenticationToken } from "../service/api_service";
+import { Link } from 'react-router-dom';
 
 /**
  * Add what this component does and add the desc for other components too
@@ -88,45 +89,50 @@ function AuthenticationToken(props) {
     {
       headerContent: {
         title: 'Terraform API access',
-        subtitle: (<MoreLessPanel key="more-less-1a"
+        subtitle: <MoreLessPanel
+          key="more-less-1a"
           persistCollapsed={true}
           collapsedLines={2}
           moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-          By providing the one time user authentication token, users will be able to create agents
-          without needing to provide unique agent token. Terraform Connect will also be able to display subscription
-          details and utilization overview.
-        </MoreLessPanel>),
+          By providing a User Authentication Token, Nexus Dashboard users will be able to create agents without
+          needing to provide a unique Terraform Cloud Agent Token for each agent deployed.
+          The Nexus Dashboard Connector for Terraform will automatically create the required configuration on
+          Terraform Cloud and will also be able to display usage statistics about your subscription.
+        </MoreLessPanel>,
       },
-      uid: 'token-present-1',
-      onAction: displayTokenInput,
-
+      uid: 'token-present',
+      // onAction: displayTokenInput,
+      selected: selectedToken,
     },
     {
       headerContent: {
         title: 'No Terraform API access',
-        subtitle: (<MoreLessPanel key="more-less-1a"
+        subtitle: <MoreLessPanel
+          key="more-less-1a"
           persistCollapsed={true}
           collapsedLines={2}
           moreIndicatorStyle={MoreLessPanel.MORE_INDICATOR_STYLE.ELLIPSES}>
-          Agent token will be required for every agent creation. There will be no visibility into subscription details and utilization overview.
-        </MoreLessPanel>),
+          A Terraform Cloud Agent Token will need to be provided for every agent deployed through the
+          Nexus Dashboard Connector for Terraform and we will display only local information on the
+          status of the deployed agents.
+        </MoreLessPanel>,
       },
-      uid: 'token-absent-0',
-      onAction: hideTokenInput,
+      uid: 'token-absent',
+      // onAction: hideTokenInput,
+      selected: !selectedToken,
     }
   ];
 
-  if (selectedToken) {
-    cards[0].selected = true;
-  }
-  else {
-    cards[1].selected = true;
-  }
+  // if (selectedToken) {
+  //   cards[0].selected = true;
+  // }
+  // else {
+  //   cards[1].selected = true;
+  // }
 
   if((selectedToken && !userToken)){
     applyButtonProps = {disabled: true};
   }
-
 
   return (
     <DetailScreen
@@ -146,7 +152,8 @@ function AuthenticationToken(props) {
       </div>
       <Panel border={Panel.BORDER.ALL} padding={Panel.PADDING.NONE}>
         <div className="cards__header">Connection Type</div>
-        <Cards selectionMode={Cards.SELECTION_MODE.SINGLE}
+        <Cards
+          selectionMode={Cards.SELECTION_MODE.SINGLE}
           selectionControl={Cards.SELECTION_CONTROL.COMPONENT}
           groupName="cards-criteria-group-single-name-00"
           styles={{
@@ -156,12 +163,28 @@ function AuthenticationToken(props) {
             }
           }}
           cards={cards}
+          onChange={(s) => {
+            if(s["token-present"]["selected"] === true && s["token-absent"]["selected"] === false) {
+              setSelectedToken(true);
+            }
+            else {
+              setSelectedToken(false);
+              setUserToken("");
+            }
+          } }
         />
         {!selectedToken ? null : <div className="cards__header"
           style={{ margin: "2px" }}>
             <InfoAlert
               title="Alert Title"
-              children="Instruction on how to use authentication. Get terraform user token."
+              children={<div>To generate a Terraform Cloud User Token to use with the Nexus Dashboard Connector for
+              Terraform, see: <a
+              href="https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens" target="_blank" rel="noreferrer">
+              https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens</a>.
+              <br />
+              <br />
+              <i>Note:</i> We recommend the creation of a dedicated user account for the integration as this will allow you
+              to limit which organizations the Nexus Dashboard Connector for Terraform is able to interact with.</div>}
             />
             <div className="cards__header" style={{ paddingLeft: "0px", paddingTop: "35px" }}>Authentication Token
               <span className="text-danger" style={{lineHeight: "0.7em", verticalAlign: "middle"}}>*</span>

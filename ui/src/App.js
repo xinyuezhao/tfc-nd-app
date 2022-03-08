@@ -4,11 +4,11 @@ import { withRouter } from "react-router";
 import {
     ScreenManager,
     ErrorBoundary,
-    Modal,
     Loader,
 } from "blueprint-react";
 
 import {Header} from "./components/Header";
+import About from "./components/About";
 import AgentTable from "./components/AgentTable";
 import AppSidebar from "./components/AppSidebar";
 import Dashboard from "./components/Dashboard";
@@ -19,28 +19,19 @@ import { fetchAuthenticationToken } from "./service/api_service";
 
 export const pathPrefix = "/appcenter/cisco/terraform/ui";
 
-function App(props) {
+function App() {
 
   const [showAbout, setShowAbout] = useState(false);
   const [authConfig, setAuthConfig] = useState("");
-
-  useEffect(() => {
-    const payload = {
-      nd_url: window.location.origin,
-    };
-
-  }, [props.history]);
-
-  // check if we need 26-31
 
   const getAuthConfig = useCallback(() => {
       fetchAuthenticationToken()
       .then((res) => {
         setAuthConfig(res.data.spec);
-        console.log(res.data.spec)
+        console.log("Successfully fetched Authentication token from Terraform Cloud.")
       })
       .catch((err) => {
-        console.error(err);
+        console.error("Failed getting Authentication token from Terraform Cloud.",err);
       });
     },
     []
@@ -66,7 +57,7 @@ function App(props) {
     <div>
       <ErrorBoundary>
         <ScreenManager>
-          <AboutModal show={showAbout} onClose={() => setShowAbout(false)}/>
+          <About show={showAbout} onClose={() => setShowAbout(false)}/>
           <div id="content-container" style={{ background: "#dfdfdfa1" }}>
             <div
               id="main-content"
@@ -82,7 +73,7 @@ function App(props) {
                   <main className="main-con">
                     <Header setShowAbout={setShowAbout} authConfig={authConfig} refreshAuthConfig={getAuthConfig}/>
                     <div>
-                      <div className="container-fluid" style={{ margin: "0" }}>
+                      <div className="container-fluid no-margin">
                         <Switch>
                           <Route
                             exact
@@ -114,27 +105,3 @@ function App(props) {
 }
 
 export default withRouter(App);
-
-
-const AboutModal = (props) => {
-  const {
-    show,
-    onClose,
-  } = props;
-
-  return (
-    <Modal className="about-modal"
-    title=" "
-      isOpen={show}
-      onClose={onClose}
-      cancelButtonLabel={null} // prevent cancel button from being added to footer.
-      applyButtonLabel={null} // prevent OK button from being added to footer.
-      style={{ color: "white"}}
-      >
-      <div className="icon-cisco icon-medium-large" style={{ background: "white", color: "#049fd9", padding: "10px", marginBottom: "15px"}}/>
-      <h3>Nexus Dashboard Connector for Terraform</h3>
-      <p>Version ##.#(#)</p>
-      <p>Cisco Systems, Inc. All rights reserved.</p>
-    </Modal>
-  )
-}
