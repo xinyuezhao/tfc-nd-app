@@ -461,15 +461,33 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization,
 }
 
 func QueryOrgUsage(org *tfe.Organization) (map[string]interface{}, error) {
+	usage, err := QueryOrgProperty(org, "usage")
+	if err != nil {
+		errQueryUsage := fmt.Errorf("error from QueryOrgProperty in func QueryOrgUsage")
+		return nil, core.NewError(err, errQueryUsage)
+	}
+	return usage, nil
+}
+
+func QueryOrgSubscription(org *tfe.Organization) (map[string]interface{}, error) {
+	subscription, err := QueryOrgProperty(org, "subscription")
+	if err != nil {
+		errQuerySubscription := fmt.Errorf("error from QueryOrgProperty in func QueryOrgSubscription")
+		return nil, core.NewError(err, errQuerySubscription)
+	}
+	return subscription, nil
+}
+
+func QueryOrgProperty(org *tfe.Organization, propertyName string) (map[string]interface{}, error) {
 	client := ConfigTLSClient()
 	client.Transport = &http.Transport{
 		TLSClientConfig: &tls.Config{InsecureSkipVerify: false},
 		Proxy:           http.ProxyFromEnvironment,
 	}
-	usageUrl := fmt.Sprintf("%s/%s/usage", OrgURL, org.Name)
+	usageUrl := fmt.Sprintf("%s/%s/%s", OrgURL, org.Name, propertyName)
 	req, err := http.NewRequest(http.MethodGet, usageUrl, nil)
 	if err != nil {
-		err = fmt.Errorf("error while building request to query organization usage report: %v", err)
+		err = fmt.Errorf("error while building request to query organization %v: %v", propertyName, err)
 		return nil, err
 	}
 	tokenExist, userToken, err := CheckUserTokenExist()
@@ -481,17 +499,17 @@ func QueryOrgUsage(org *tfe.Organization) (map[string]interface{}, error) {
 	req.Header.Set("Authorization", auth)
 	resp, err := client.Do(req)
 	if err != nil {
-		errSendQuery := fmt.Errorf("error while sending request to query organization usage report")
+		errSendQuery := fmt.Errorf("error while sending request to query organization %v", propertyName)
 		return nil, core.NewError(errSendQuery, err)
 	}
 	defer resp.Body.Close()
 	responseBody, err := httputil.DumpResponse(resp, true)
 	if err != nil {
-		errParseQuery := fmt.Errorf("error while dumping response of querying organization usage report")
+		errParseQuery := fmt.Errorf("error while dumping response of querying organization %v", propertyName)
 		return nil, core.NewError(errParseQuery, err)
 	}
 	if resp.StatusCode != 200 {
-		err := core.NewError(fmt.Errorf("error while querying organization usage report. Response content: %s", string(responseBody)))
+		err := core.NewError(fmt.Errorf("error while querying organization %v. Response content: %s", propertyName, string(responseBody)))
 		return nil, err
 	}
 	resBody, _ := ioutil.ReadAll(resp.Body)
@@ -507,9 +525,13 @@ func QueryOrgUsage(org *tfe.Organization) (map[string]interface{}, error) {
 
 func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) error {
 	errors := make([]error, 0)
-	usage, err := QueryOrgUsage(org)
-	if err != nil {
-		errors = append(errors, err)
+	usage, errUsage := QueryOrgUsage(org)
+	if errUsage != nil {
+		errors = append(errors, errUsage)
+	}
+	subscription, errSub := QueryOrgSubscription(org)
+	if errSub != nil {
+		errors = append(errors, errSub)
 	}
 	errors = append(errors, newOrg.SpecMutable().SetName(org.Name),
 		newOrg.SpecMutable().SetEmail(org.Email),
@@ -551,7 +573,15 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
 			SetTotalApplies(usage["total-applies"].(float64)),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetWorkspaceCount(usage["workspace-count"].(float64)))
+			SetWorkspaceCount(usage["workspace-count"].(float64)),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetAgentsCeiling(subscription["agents-ceiling"].(float64)),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetContractApplyLimit(subscription["contract-apply-limit"].(float64)),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetContractUserLimit(subscription["contract-user-limit"].(float64)),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetRunsCeiling(subscription["runs-ceiling"].(float64)))
 	if err := core.NewError(errors...); err != nil {
 		return err
 	}
@@ -612,7 +642,6 @@ func GetProxyConfig() (map[string]string, error) {
 					ignore_hosts = append(ignore_hosts, ignore_host.(string))
 				}
 			}
-			//os.Setenv("no_proxy", strings.Join(ignore_hosts, ","))
 			result["no_proxy"] = strings.Join(ignore_hosts, ",")
 			if servers, ok := proxy["servers"]; ok {
 				for _, server := range servers.([]interface{}) {
@@ -626,7 +655,6 @@ func GetProxyConfig() (map[string]string, error) {
 							proxy_string = fmt.Sprintf("%v://%v:%v@%v", proxy_split[0], username, password, proxy_split[1])
 						}
 					}
-					// os.Setenv(strings.ToLower(fmt.Sprintf("%v_PROXY", server_map["proxyType"])), proxy_string)
 					result[strings.ToLower(fmt.Sprintf("%v_PROXY", server_map["proxyType"]))] = proxy_string
 				}
 			}

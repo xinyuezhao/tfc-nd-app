@@ -2,7 +2,7 @@ package conf
 
 const (
 	Vendor            = "cisco"
-	Version           = "0.0.2"
+	Version           = "0.1.2"
 	App               = "terraform"
 	FeatureName       = "tfc-agent"
 	AgentPoolURL      = "https://app.terraform.io/api/v2/agent-pools"

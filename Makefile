@@ -91,28 +91,28 @@ credentials: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v58 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v58 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v58 .
-	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v58 .
-	docker build --file deployment/docker/ui/Dockerfile --tag ui:v1 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v0.1.2 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v0.1.2 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v0.1.2 .
+	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v0.1.2 .
+# 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v0.1.2 .
 
 docker-nap: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.0.1 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.0.1 .
-	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.0.1 .
-	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.0.1 .
-#	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.2 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.1.2 .
+	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.1.2 .
+	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.1.2 .
+#	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.2 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v58 agentmgr:v58 agentpoolmgr:v58 credentialsmgr:v58 hashicorp/tfc-agent:latest containers.cisco.com/cn-ecosystem/tf-nd-app-ui:latest  | gzip > images.tar.gz
+	docker save organizationmgr:v0.1.2 agentmgr:v0.1.2 agentpoolmgr:v0.1.2 credentialsmgr:v0.1.2 hashicorp/tfc-agent:1.0.2 containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.2  | gzip > images.tar.gz
 
 docker-push: docker-nap
-	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.0.1
-	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.0.1
-	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.0.1
-	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.0.1
-#	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.2
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.1.2
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.1.2
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.1.2
+#	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.2
 
 zap-build:
 	./zap-dynamic build src:zap-config/ oci:build --sign-pki-key ~/.ssh/dcappcenter_staging_key.pem --author dev
