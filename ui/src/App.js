@@ -15,7 +15,10 @@ import Dashboard from "./components/Dashboard";
 import DashboardWoToken from "./components/DashboardWoToken";
 import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
-import { fetchAuthenticationToken } from "./service/api_service";
+import {
+  fetchAuthenticationToken,
+  fetchVersion,
+} from "./service/api_service";
 
 export const pathPrefix = "/appcenter/cisco/terraform/ui";
 
@@ -23,8 +26,10 @@ function App() {
 
   const [showAbout, setShowAbout] = useState(false);
   const [authConfig, setAuthConfig] = useState("");
+  const [versionData, setVersionData] = useState([]);
 
   const getAuthConfig = useCallback(() => {
+    // getVersion();
       fetchAuthenticationToken()
       .then((res) => {
         setAuthConfig(res.data.spec);
@@ -37,6 +42,25 @@ function App() {
     []
   );
   useEffect(getAuthConfig, [getAuthConfig]);
+
+  const getVersion = useCallback(() => {
+    fetchVersion()
+    .then((res) => {
+      const ndAppsData = res.data;
+      ndAppsData.map(
+        (app) => {
+          if(app.name === "cisco-terraform"){
+            setVersionData(app.version);
+          }
+          return null;
+      });
+      console.log("Successfully fetched the version.")
+    })
+    .catch((err) => {
+      console.error("Failed getting the version.",err);
+    });
+  },[]);
+  useEffect(getVersion, [getVersion]);
 
   let dashboardComponent = DashboardWoToken;
 
@@ -57,7 +81,7 @@ function App() {
     <div>
       <ErrorBoundary>
         <ScreenManager>
-          <About show={showAbout} onClose={() => setShowAbout(false)}/>
+          <About show={showAbout} version={versionData} onClose={() => setShowAbout(false)}/>
           <div id="content-container">
             <div
               id="main-content"

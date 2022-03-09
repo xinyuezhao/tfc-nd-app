@@ -34,6 +34,9 @@ function createAuthenticationToken(payload) {
   return axios.post("/v1/credentials", payload);
 }
 
+function fetchVersion() {
+  return axios.get("/v1/firmwared/api/applications", {baseURL: "/sedgeapi"});
+}
 export {
   fetchAgents,
   createAgent,
@@ -43,4 +46,5 @@ export {
   createAgentPool,
   fetchAuthenticationToken,
   createAuthenticationToken,
+  fetchVersion,
 };

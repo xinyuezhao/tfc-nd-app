@@ -7,6 +7,7 @@ import {
 function About(props) {
   const {
     show,
+    version,
     onClose,
   } = props;
 
@@ -20,7 +21,7 @@ function About(props) {
       >
       <div className="header-bar__logo dbl-padding"><span className="icon-cisco icon-large"></span></div>
       <h1 data-test="serialNumber-Label">Nexus Dashboard Connector for HashiCorp Terraform</h1>
-      <h6 className="dbl-padding">Version ##.#(#)</h6>
+      <h6 className="dbl-padding">Version {version}</h6>
       <h6>© 2022 Cisco Systems, Inc. All rights reserved.</h6>
     </Modal>
   )
