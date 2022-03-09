@@ -203,7 +203,7 @@ spec:
       scheme: http
       name: organizationmgr
       port: 80
-    authType: open
+    authType: jwt
     listenPaths:
     - path: "api/v1/organizations"
       targetSubPath: "api/terraform.cisco.com/v1/organizations" 
@@ -213,7 +213,7 @@ spec:
       scheme: http
       name: agentmgr
       port: 80
-    authType: open
+    authType: jwt
     listenPaths:
     - path: "api/v1/agents"
       targetSubPath: "api/terraform.cisco.com/v1/agents"
@@ -229,7 +229,7 @@ spec:
       scheme: http
       name: agentpoolmgr
       port: 80
-    authType: open
+    authType: jwt
     listenPaths:
     - path: "api/v1/agentpool/"
       targetSubPath: "api/terraform.cisco.com/v1/agentpools/id/"
@@ -257,7 +257,7 @@ spec:
       scheme: http
       name: credentialsmgr
       port: 80
-    authType: open
+    authType: jwt
     listenPaths:
     - path: "api/v1/credentials"
       targetSubPath: "api/terraform.cisco.com/v1/credentials"
@@ -266,7 +266,7 @@ spec:
       scheme: http
       name: ui
       port: 3000
-    authType: open
+    authType: jwt
     listenPaths:
     - path: "ui/"
     rewrite: ""
