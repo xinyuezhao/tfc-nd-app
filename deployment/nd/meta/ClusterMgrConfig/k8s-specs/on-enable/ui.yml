@@ -33,7 +33,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: ui
-        image: cn-ecosystem/tf-nd-app-ui:v0.1.2
+        image: cn-ecosystem/tf-nd-app-ui:v0.1.4
         imagePullPolicy: IfNotPresent
         ports:
         - containerPort: 3000
