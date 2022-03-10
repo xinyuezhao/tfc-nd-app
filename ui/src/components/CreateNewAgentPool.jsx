@@ -4,7 +4,8 @@ import {
   DetailScreen,
   Input,
   Card,
-  LABELS
+  LABELS,
+  Modal
 } from 'blueprint-react';
 import './CiscoObjectPicker.scss';
 import {
@@ -28,22 +29,24 @@ function CreateNewAgentPool(props) {
   const [poolName, setPoolName] = useState("");
   const [isOpen, setIsOpen] = useState(true);
 
-  const onAction = () => {
-    let payload = {
-      "spec": {
-        organization: organization.name,
-        name: poolName,
+  const onAction = (sourceId) => {
+    if(sourceId === Modal.BUTTON_IDS.APPLY){
+      let payload = {
+        "spec": {
+          organization: organization.name,
+          name: poolName,
+        }
       }
+      createAgentPool(payload)
+      .then((res) => {
+        getAgentPools(organization);
+        setAgentPool(res.data.spec);
+        screenActions.closeScreen("create-agent-pool-modal"); // screenId
+      })
+      .catch((error) => {
+        console.log(error); //change error message
+      });
     }
-    createAgentPool(payload)
-    .then((res) => {
-      getAgentPools(organization);
-      setAgentPool(res.data.spec);
-      screenActions.closeScreen("create-agent-pool-modal"); // screenId
-    })
-    .catch((error) => {
-      console.log(error); //change error message
-    });
   };
 
 
@@ -62,7 +65,7 @@ function CreateNewAgentPool(props) {
       onMinimize={onMinimize}
       title={"Create Agent Pool"}
       cancelButtonLabel={LABELS.cancel}
-      applyButtonLabel={"Create"}
+      applyButtonLabel={LABELS.create}
       isOpen={isOpen}
     >
     <div className="div_padding_left">

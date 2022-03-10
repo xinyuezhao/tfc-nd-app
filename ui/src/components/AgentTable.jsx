@@ -39,7 +39,8 @@ function AgentTable(props) {
 
   const statuses = {
     running: <span className="status-tile-icon text-success icon-check-outline" ></span>,
-    created: <span className="status-tile-icon text-info icon-add-outline"></span>,
+    creating: <span className="status-tile-icon text-info icon-add-outline"></span>,
+    initializing: <span className="status-tile-icon text-initialize icon-spinner"></span>,
     enabling: <span className="status-tile-icon text-warning-alt icon-animation"></span>,
     errored: <span className="status-tile-icon text-danger icon-error-outline"></span>,
     exited: <span className="status-tile-icon text-dkgray-4 icon-leave-meeting" ></span>,
@@ -48,8 +49,6 @@ function AgentTable(props) {
     unknown: <span className="status-tile-icon text-warning icon-exclamation-triangle"></span>,
     failed: <span className="status-tile-icon text-failed icon-error-outline"></span>,
   }
-
-
 
   const allColumns = [
     {
@@ -390,7 +389,10 @@ function AgentTable(props) {
           }} // *** get which item is selected
           total={parseInt(TableData.length)}
           showPageJump={true}
-          onPageSizeChange={(data) => setPageSize(data)}
+          onPageSizeChange={(data) => {
+            setPageSize(data);
+            localStorage.setItem("per_page_value", data);
+          }}
           pageSize={checkForTernary(pageSize, pageSize, 10)}
         />}
       </div>

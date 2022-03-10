@@ -181,6 +181,10 @@ html {
   color: #9d2b2f !important;
 }
 
+.text-initialize {
+  color: #faba64 !important;
+}
+
 .secondary-sidebar-subtitles {
   padding-top: 30px !important;
   color: gray !important;

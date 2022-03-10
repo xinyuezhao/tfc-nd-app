@@ -24,7 +24,8 @@ function DashboardWoToken(props) {
 
   const colorByStatus = {
     running: '#6ebe4a',
-    created: '#64bbe3',
+    creating: '#64bbe3',
+    initializing: '#faba64',
     enabling: '#ffcc00',
     errored: '#e2231a',
     exited: '#888',
@@ -36,7 +37,8 @@ function DashboardWoToken(props) {
 
   let ndCreatedAgentsStatusData = {
     running: 0,
-    created: 0,
+    creating: 0,
+    initializing: 0,
     enabling: 0,
     errored: 0,
     exited: 0,
