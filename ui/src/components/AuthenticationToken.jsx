@@ -7,13 +7,12 @@ import {
   Cards,
   MoreLessPanel,
   InfoAlert,
-  useScreenActions,
 } from 'blueprint-react';
 import './CiscoObjectPicker.scss';
 import { createAuthenticationToken } from "../service/api_service";
 
 /**
- * Authentication Token component gives user an option to either use the user authentication token from HasiCorp Terraform cloud or not.
+ * Authentication Token component gives user an option to either use the user authentication token from HashiCorp Terraform cloud or not.
  * By selecting the user authentication token option, the token is implicitly added during agent creation.
  * By selecting no token option, the user has to explicitly specify the token during agent creation.
  */
@@ -46,8 +45,6 @@ function AuthenticationToken(props) {
   const [warningAlert, setWarningAlert] = useState("");
   const [infoAlert, setInfoAlert] = useState("");
   const [successAlert, setSuccessAlert] = useState("");
-  const action = useScreenActions();
-
   let applyButtonProps = {};
 
   const handleCreateAuthenticationToken = useCallback((userToken) => {
@@ -63,7 +60,7 @@ function AuthenticationToken(props) {
         refreshAuthConfig();
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Authentication was not configured.", error);
         setInfoAlert("");
         setSuccessAlert("");
         error.response?.data?.detail?.detail &&
@@ -72,7 +69,7 @@ function AuthenticationToken(props) {
   }, [refreshAuthConfig]);
 
 
-  const authTokenScreenOnAction = useCallback(() => {
+  const handleAuthTokenScreenOnAction = useCallback(() => {
     handleCreateAuthenticationToken(userToken);
     screenActions.closeScreen("authentication-token");
   }, [userToken, screenActions, handleCreateAuthenticationToken]);
@@ -120,7 +117,7 @@ function AuthenticationToken(props) {
   return (
     <DetailScreen
     className="bg-color-gray"
-      onAction={authTokenScreenOnAction}
+      onAction={handleAuthTokenScreenOnAction}
       title={"Connector for Terraform  - Setup"}
       applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}

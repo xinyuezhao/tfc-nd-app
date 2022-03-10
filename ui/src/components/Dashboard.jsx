@@ -16,10 +16,10 @@ function Dashboard(props) {
     fetchOrganizations()
       .then((res) => {
         setOrgData(res.data);
-        console.log("ORG DATA", res.data)
+        console.log("Successfully fetched organization(s).",)
       })
       .catch(error => {
-        console.error('There was an error!', error);
+        console.error("Failed to fetch organization(s) from HashiCorp Terraform cloud.", error);
     });
   }, []);
 
@@ -27,10 +27,10 @@ function Dashboard(props) {
       fetchAgents()
       .then((res) => {
         setAgentsData(res.data);
-        console.log("AGENTS res.data", res.data)
+        console.log("Successfully fetched agent(s).",)
       })
-      .catch((err) => {
-        console.error("error is: ",err)
+      .catch((error) => {
+        console.error("Failed to fetch agent(s) from HashiCorp Terraform cloud.",error)
       });
     },
     []

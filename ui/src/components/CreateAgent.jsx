@@ -59,7 +59,7 @@ function Agent(props) {
     return true;
   },[]);
 
-  const onAction = () => {
+  const handleCreateAgent = () => {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
@@ -77,9 +77,10 @@ function Agent(props) {
         const agentPoolResult = res.data.spec.agentpools;
         const agentPoolsData =  _.orderBy(agentPoolResult);
         setAgentPools(agentPoolsData);
+        console.log("Successfully fetched agent pool(s).")
       })
       .catch(error => {
-        console.error('There was an error!', error); //change error msg
+        console.error("Failed to fetch agent pool(s) from HashiCorp Terraform cloud.", error);
     });
   };
 
@@ -103,7 +104,7 @@ function Agent(props) {
         setOrganizations(organizationData);
       })
       .catch(error => {
-        console.error('There was an error!', error);//change error msg.
+        console.error("Failed to fetch organization(s) from HashiCorp Terraform cloud.", error);
     });
   }, []);
 
@@ -135,11 +136,12 @@ function Agent(props) {
   return (
     <DetailScreen
       title={title}
-      onAction={onAction}
+      onAction={handleCreateAgent}
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
+      isOpen={isOpen}
     >
       <div className="div_padding_left">
       <div className="base-padding-top base-padding-bottom text-xlarge">General</div>

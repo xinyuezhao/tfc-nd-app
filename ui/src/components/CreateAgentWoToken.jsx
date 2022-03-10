@@ -38,7 +38,7 @@ function Agent(props) {
     return true;
   },[]);
 
-  const onAction = useCallback(() => {
+  const handleCreateAgentWoToken = useCallback(() => {
     const result = checkBeforeSubmit();
     if (result) {
       updateDetails();
@@ -60,7 +60,7 @@ function Agent(props) {
   return (
     <DetailScreen
       title={title}
-      onAction={onAction}
+      onAction={handleCreateAgentWoToken}
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Save"}

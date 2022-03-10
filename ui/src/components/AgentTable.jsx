@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useRef } from "react";
+import React, { useState, useEffect, useCallback} from "react";
 import _ from "lodash";
 import {
   FilterableTable,
@@ -23,7 +23,6 @@ import {
 import Agent from "./CreateAgent";
 import AgentWoToken from "./CreateAgentWoToken";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
-import { pathPrefix } from "../App";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
 
 const stopClick = (e) => {
@@ -139,7 +138,6 @@ function AgentTable(props) {
   const [infoAlert, setInfoAlert] = useState("");
   const [successAlert, setSuccessAlert] = useState("");
   const [openSecondarySidebar, setOpenSecondarySidebar] = useState(false);
-  // const [filterRemove, setfilterRemove] = useState(true);
   const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(
     checkForTernary(
@@ -166,10 +164,11 @@ function AgentTable(props) {
         setAgents(res.data);
         setFetchingData(false);
       })
-      .catch((err) => {
-          err.response?.data?.detail?.message &&
-            setWarningAlert(err.response.data?.detail?.message);
-          setFetchingData(false);
+      .catch((error) => {
+        console.error("Failed to fetch agent(s) from HashiCorp Terraform cloud.", error);
+        error.response?.data?.detail?.message &&
+          setWarningAlert(error.response.data?.detail?.message);
+        setFetchingData(false);
       });
     },
     []
@@ -186,11 +185,11 @@ function AgentTable(props) {
     Promise.all(selectedAgents.map(
       (agentsData) => deleteAgent(agentsData.name)
     )).then(() => {
-        setSuccessAlert("Deleted Agents Successfully");
+        setSuccessAlert("Deleted Agent(s) Successfully");
         getAgents();
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Failed to delete the agent(s).", error);
         setInfoAlert("");
         setSuccessAlert("");
         error.response?.data?.detail?.detail &&
@@ -207,7 +206,7 @@ function AgentTable(props) {
         getAgents();
       })
       .catch((error) => {
-        console.log(error);
+        console.error("Failed to create agent.", error);
         setInfoAlert("");
         setSuccessAlert("");
         error.response?.data?.detail?.detail &&
@@ -237,7 +236,7 @@ function AgentTable(props) {
     ]
   );
 
-  const handleSidebar = useCallback(
+  const handleSecondarySidebar = useCallback(
     (data) => {
       setViewSecondarySidebarData(data); //setViewSecondarySidebarData-> setSecondarySidebarData
       setOpenSecondarySidebar(!openSecondarySidebar);
@@ -380,7 +379,7 @@ function AgentTable(props) {
           onPageChange={(pageNumber) => {
             setCurrentPage(pageNumber + 1);
           }}
-          onRowClick={handleSidebar}
+          onRowClick={handleSecondarySidebar}
           getSelected={(agentsData) => {
             console.table("Agents selected for deletion: ", agentsData);
             agentsData &&

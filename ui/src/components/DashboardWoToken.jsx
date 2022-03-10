@@ -5,7 +5,7 @@ import {
   fetchAgents,
 } from "../service/api_service";
 
-function DashboardWoToken(props) {
+function DashboardWoToken() {
 
   const [agentsData, setAgentsData] = useState([]);
 
@@ -13,9 +13,10 @@ function DashboardWoToken(props) {
       fetchAgents()
       .then((res) => {
         setAgentsData(res.data);
+        console.log("Successfully fetched agent(s).",)
       })
-      .catch((err) => {
-        console.error("error is: ",err)
+      .catch((error) => {
+        console.error("Failed to fetch agent(s) from HashiCorp Terraform cloud.",error)
       });
     },
     []

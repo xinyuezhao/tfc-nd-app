@@ -35,8 +35,8 @@ function App() {
         setAuthConfig(res.data.spec);
         console.log("Successfully fetched Authentication token from Terraform Cloud.")
       })
-      .catch((err) => {
-        console.error("Failed getting Authentication token from Terraform Cloud.",err);
+      .catch((error) => {
+        console.error("Failed to fetch Authentication token from Terraform Cloud.",error);
       });
     },
     []
@@ -56,8 +56,8 @@ function App() {
       });
       console.log("Successfully fetched the version.")
     })
-    .catch((err) => {
-      console.error("Failed getting the version.",err);
+    .catch((error) => {
+      console.error("Failed to fetch the version.",error);
     });
   },[]);
   useEffect(getVersion, [getVersion]);

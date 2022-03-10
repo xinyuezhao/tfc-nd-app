@@ -29,7 +29,7 @@ function CreateNewAgentPool(props) {
   const [poolName, setPoolName] = useState("");
   const [isOpen, setIsOpen] = useState(true);
 
-  const onAction = (sourceId) => {
+  const handleCreateNewAgentPool = (sourceId) => {
     if(sourceId === Modal.BUTTON_IDS.APPLY){
       let payload = {
         "spec": {
@@ -44,7 +44,7 @@ function CreateNewAgentPool(props) {
         screenActions.closeScreen("create-agent-pool-modal"); // screenId
       })
       .catch((error) => {
-        console.log(error); //change error message
+        console.error("Failed to create new agent pool.",error); //change error message
       });
     }
   };
@@ -60,7 +60,7 @@ function CreateNewAgentPool(props) {
 
   return (
     <DetailScreen
-      onAction={onAction}
+      onAction={handleCreateNewAgentPool}
       onClose={onClose}
       onMinimize={onMinimize}
       title={"Create Agent Pool"}
