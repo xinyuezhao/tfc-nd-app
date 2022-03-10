@@ -4,6 +4,7 @@ import (
 	"context"
 	"fmt"
 	"net/http"
+	"strings"
 
 	"golang.cisco.com/argo/pkg/core"
 	"golang.cisco.com/argo/pkg/mo"
@@ -95,7 +96,7 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 						er := fmt.Errorf("error from queryAgentStatus")
 						return nil, http.StatusInternalServerError, core.NewError(er, err)
 					}
-					if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+					if err := core.NewError(payloadObject.SpecMutable().SetStatus(strings.Title(status))); err != nil {
 						return nil, http.StatusInternalServerError, err
 					}
 				}
@@ -159,7 +160,7 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 							er := fmt.Errorf("error during querying agent status")
 							return nil, http.StatusInternalServerError, core.NewError(er, err)
 						}
-						if err := core.NewError(payloadObject.SpecMutable().SetStatus(status)); err != nil {
+						if err := core.NewError(payloadObject.SpecMutable().SetStatus(strings.Title(status))); err != nil {
 							er := fmt.Errorf("error during set status")
 							return nil, http.StatusInternalServerError, core.NewError(er, err)
 						}
@@ -176,7 +177,12 @@ func onStart(ctx context.Context, changer mo.Changer) error {
 	log := core.LoggerFromContext(ctx)
 
 	log.Info("agent service starts")
-
+	agents := changer.ResolveByKind(ctx, terraformv1.AgentMeta().MetaKey())
+	errRestart := conf.RestartAgents(ctx, agents)
+	if errRestart != nil {
+		errOnStart := fmt.Errorf("error while starting agent service")
+		return core.NewError(errOnStart, errRestart)
+	}
 	return nil
 }
 

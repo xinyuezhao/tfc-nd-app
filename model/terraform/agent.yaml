@@ -21,6 +21,7 @@ spec:
       type: string
     - prop: status
       type: string
+      default: Creating
     - prop: agentId
       type: string
 ---

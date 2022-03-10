@@ -15,11 +15,11 @@
       "hostversion": "2.1.0"
     }
   },
-  "shortdescr": "The Nexus Dashboard Connector for HashiCorp Terraform adds the ability to manage HashiCorp Terraform Cloud Agent directly from Nexus Dashboard.",
+  "shortdescr": "The Nexus Dashboard Connector for HashiCorp Terraform adds the ability to manage HashiCorp Terraform Cloud Agent lifecircle directly from Nexus Dashboard.",
   "signature": 666666,
   "vendor": "Cisco",
   "vendordomain": "Cisco",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "se-info": {
     "images-location": "Image",
     "specs-location": {

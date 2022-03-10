@@ -1,12 +1,8 @@
 package handlers
 
 import (
-	"bytes"
 	"context"
-	"encoding/json"
 	"fmt"
-	"net/http"
-	"net/http/httputil"
 	"time"
 
 	"golang.cisco.com/argo/pkg/core"
@@ -20,83 +16,13 @@ func AgentHandler(ctx context.Context, event mo.Event) error {
 	log := core.LoggerFromContext(ctx)
 	log.Info("handling Agent", "resource", event.Resource())
 	agent := event.Resource().(terraformv1.Agent)
-	agentPool := agent.Spec().Agentpool()
-	org := agent.Spec().Organization()
 	name := agent.Spec().Name()
 	if event.Operation() == model.CREATE {
-		if agent.Spec().Token() == "" {
-			log.Info("create agent without agent token")
-			ctxTfe, client, err := conf.ConfigTFC()
-			if err != nil {
-				er := fmt.Errorf("error from ConfigTFC when creating agent")
-				return core.NewError(er, err)
-			}
-			agentToken, agentPoolID, err := conf.CreateAgentToken(ctxTfe, client, agentPool, org, agent.Spec().Description())
-			if err != nil {
-				er := fmt.Errorf("error from CreateAgentToken")
-				return core.NewError(er, err)
-			}
-			log.Info("description for agent token generated: " + agentToken.Description)
-			log.Info("agentPlID generated: " + agentPoolID)
-			log.Info("agent token generated " + agentToken.Token)
-
-			if err := core.NewError(agent.SpecMutable().SetToken(agentToken.Token),
-				agent.SpecMutable().SetTokenId(agentToken.ID),
-				agent.SpecMutable().SetAgentpoolId(agentPoolID)); err != nil {
-				return err
-			}
-		}
-		token := agent.Spec().Token()
-		agent.SpecMutable().SetStatus("Created")
-		// api call creating feature instance to deploy agent
-		tlsClient := conf.ConfigTLSClient()
-		configMap, err := conf.GetProxyConfig()
+		agent, err := conf.StartAgent(ctx, false, agent)
 		if err != nil {
-			er := fmt.Errorf("error while querying proxy configuration")
-			return core.NewError(er, err)
+			errStartAgent := fmt.Errorf("error from StartAgent while starting an agent")
+			return core.NewError(err, errStartAgent)
 		}
-		param := map[string]string{"token": token, "name": name, "http_proxy": configMap["http_proxy"], "https_proxy": configMap["https_proxy"]}
-		body := map[string]interface{}{
-			"vendor":           conf.Vendor,
-			"version":          conf.Version,
-			"app":              conf.App,
-			"featureName":      conf.FeatureName,
-			"instance":         name,
-			"configParameters": param,
-		}
-
-		payloadBuf := new(bytes.Buffer)
-		json.NewEncoder(payloadBuf).Encode(body)
-		req, e := http.NewRequest(http.MethodPost, conf.FeatureCreateURL, payloadBuf)
-		if e != nil {
-			er := fmt.Errorf("error while building createfeatureinstance request")
-			return core.NewError(er, e)
-		}
-		req.Header.Set("Content-Type", "application/json")
-		log.Info("before request post")
-		resp, e := tlsClient.Do(req)
-		log.Info("after request post")
-		if e != nil {
-			er := fmt.Errorf("error while making request to create feature instance")
-			return core.NewError(er, e)
-		}
-		log.Info("err after request post")
-		defer resp.Body.Close()
-		// parse resp.Body
-		b, err := httputil.DumpResponse(resp, true)
-		log.Info("parsing response data")
-		if err != nil {
-			er := fmt.Errorf("error while dumping response data")
-			return core.NewError(er, err)
-		}
-		log.Info("after parse response data")
-		log.Info("response " + string(b))
-		log.Info("respose status " + resp.Status)
-		if resp.StatusCode != 200 {
-			err := core.NewError(fmt.Errorf("error while creating feature instance. Response content: %s", string(b)))
-			return err
-		}
-
 		if err := event.Store().Record(ctx, agent); err != nil {
 			core.LoggerFromContext(ctx).Error(err, "failed to record Agent")
 			return err

@@ -14,6 +14,7 @@ import (
 
 	"github.com/hashicorp/go-tfe"
 	"golang.cisco.com/argo/pkg/core"
+	"golang.cisco.com/argo/pkg/mo"
 	"golang.cisco.com/terraform/gen/terraformv1"
 )
 
@@ -665,4 +666,95 @@ func GetProxyConfig() (map[string]string, error) {
 		}
 	}
 	return result, nil
+}
+
+func StartAgent(ctx context.Context, restart bool, agent terraformv1.Agent) (terraformv1.Agent, error) {
+	log := core.LoggerFromContext(ctx)
+	var action string
+	if restart {
+		action = "restarting"
+	} else {
+		action = "starting"
+	}
+	agentPool := agent.Spec().Agentpool()
+	org := agent.Spec().Organization()
+	name := agent.Spec().Name()
+	if agent.Spec().Token() == "" {
+		log.Info(action + " agent without agent token")
+		ctxTfe, client, err := ConfigTFC()
+		if err != nil {
+			er := fmt.Errorf("error from ConfigTFC while " + action + "agent")
+			return nil, core.NewError(er, err)
+		}
+		agentToken, agentPoolID, err := CreateAgentToken(ctxTfe, client, agentPool, org, agent.Spec().Description())
+		if err != nil {
+			errCreateToken := fmt.Errorf("error from CreateAgentToken while " + action + "agent")
+			return nil, core.NewError(errCreateToken, err)
+		}
+
+		if err := core.NewError(agent.SpecMutable().SetToken(agentToken.Token),
+			agent.SpecMutable().SetTokenId(agentToken.ID),
+			agent.SpecMutable().SetAgentpoolId(agentPoolID)); err != nil {
+			return nil, err
+		}
+	}
+	token := agent.Spec().Token()
+	agent.SpecMutable().SetStatus("Initializing")
+	// api call creating feature instance to deploy agent
+	tlsClient := ConfigTLSClient()
+	configMap, err := GetProxyConfig()
+	if err != nil {
+		er := fmt.Errorf("error while querying proxy configuration")
+		return nil, core.NewError(er, err)
+	}
+	param := map[string]string{"token": token, "name": name, "http_proxy": configMap["http_proxy"], "https_proxy": configMap["https_proxy"]}
+	body := map[string]interface{}{
+		"vendor":           Vendor,
+		"version":          Version,
+		"app":              App,
+		"featureName":      FeatureName,
+		"instance":         name,
+		"configParameters": param,
+	}
+
+	payloadBuf := new(bytes.Buffer)
+	json.NewEncoder(payloadBuf).Encode(body)
+	req, e := http.NewRequest(http.MethodPost, FeatureCreateURL, payloadBuf)
+	if e != nil {
+		er := fmt.Errorf("error while building createfeatureinstance request")
+		return nil, core.NewError(er, e)
+	}
+	req.Header.Set("Content-Type", "application/json")
+	resp, errSendReq := tlsClient.Do(req)
+	if errSendReq != nil {
+		errReq := fmt.Errorf("error while making request to create feature instance")
+		return nil, core.NewError(errReq, errSendReq)
+	}
+	defer resp.Body.Close()
+	// parse resp.Body
+	resBody, err := httputil.DumpResponse(resp, true)
+	log.Info("parsing response data for " + action + " agent")
+	if err != nil {
+		errDump := fmt.Errorf("error while dumping response data for " + action + "agent")
+		return nil, core.NewError(errDump, err)
+	}
+	if resp.StatusCode != 200 {
+		err := core.NewError(fmt.Errorf("error while creating feature instance. Response content: %s", string(resBody)))
+		return nil, err
+	}
+	return agent, nil
+}
+
+func RestartAgents(ctx context.Context, objs []mo.Object) error {
+	for _, obj := range objs {
+		agent := obj.(terraformv1.Agent)
+		if agent.Spec().Status() == "Initializing" {
+			agent, err := StartAgent(ctx, true, agent)
+			if err != nil {
+				errRestart := fmt.Errorf("error while restarting agent " + agent.Spec().Name())
+				return core.NewError(err, errRestart)
+			}
+		}
+	}
+	return nil
 }
