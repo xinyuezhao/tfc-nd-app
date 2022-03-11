@@ -58,7 +58,7 @@ func QueryAgentTokens(ctx context.Context, client *tfe.Client, agentPoolId strin
 	return res, nil
 }
 
-func QueryAgents(ctx context.Context, client *http.Client, tfeClient *tfe.Client, agentPoolId string) ([]Agent, error) {
+func QueryAgents(ctx context.Context, client *http.Client, agentPoolId string) ([]Agent, error) {
 	log := core.LoggerFromContext(ctx)
 
 	client.Transport = &http.Transport{
