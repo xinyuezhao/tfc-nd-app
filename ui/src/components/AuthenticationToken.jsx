@@ -9,7 +9,7 @@ import {
   InfoAlert,
 } from 'blueprint-react';
 import './CiscoObjectPicker.scss';
-import { createAuthenticationToken } from "../service/api_service";
+import { createCredentials } from "../service/api_service";
 
 /**
  * Authentication Token component gives user an option to either use the user authentication token from HashiCorp Terraform cloud or not.
@@ -47,16 +47,16 @@ function AuthenticationToken(props) {
   const [successAlert, setSuccessAlert] = useState("");
   let applyButtonProps = {};
 
-  const handleCreateAuthenticationToken = useCallback((userToken) => {
+  const handleCreateCredentials = useCallback((userToken) => {
     const payload = {
       "spec": {
         "name": "terraform",
         "token": userToken
       }
     }
-    createAuthenticationToken(payload)
+    createCredentials(payload)
       .then((res) => {
-        setSuccessAlert("Configured Token Successfully", res.data.configured);
+        setSuccessAlert("Configured Authentication Successfully", res.data.configured);
         refreshAuthConfig();
       })
       .catch((error) => {
@@ -70,11 +70,11 @@ function AuthenticationToken(props) {
 
 
   const handleAuthTokenScreenOnAction = useCallback(() => {
-    handleCreateAuthenticationToken(userToken);
+    handleCreateCredentials(userToken);
     screenActions.closeScreen("authentication-token");
-  }, [userToken, screenActions, handleCreateAuthenticationToken]);
+  }, [userToken, screenActions, handleCreateCredentials]);
 
-  let cards =[
+  let cards = [
     {
       headerContent: {
         title: <h4 className="qtr-padding-bottom">Terraform API access</h4>,
@@ -110,19 +110,17 @@ function AuthenticationToken(props) {
     }
   ];
 
-  if((selectedToken && !userToken) && userToken === ""){
+  if ((selectedToken && !userToken) && userToken === ""){
     applyButtonProps = {disabled: true};
-  } else {
-    if (userToken.startsWith("*")) {
+  } else if (userToken.startsWith("*")){
       applyButtonProps = {disabled: true};
-    }
   }
 
   return (
     <DetailScreen
     className="bg-color-gray"
       onAction={handleAuthTokenScreenOnAction}
-      title={"Connector for Terraform  - Setup"}
+      title={"Connector for Terraform - Setup"}
       applyButtonLabel={"Save"}
       applyButtonProps={applyButtonProps}
     >
@@ -132,7 +130,8 @@ function AuthenticationToken(props) {
           Let's Configure the basics
         </h1>
         <div className=" base-padding-top text-muted text-large">
-          There are a few things you need to configure before you get started with Nexus Dashboard Connector for Terraform
+          There are a few things you need to configure before you get
+          started with the Nexus Dashboard Connector for Terraform.
         </div>
       </div>
       <div className="bg-color-gray qtr-padding">
@@ -162,7 +161,6 @@ function AuthenticationToken(props) {
           {!selectedToken ? null
             : <div className="cards__header">
               <InfoAlert
-                title="Alert Title"
                 children={<div>To generate a Terraform Cloud User Token to use with the Nexus Dashboard Connector for
                 Terraform, see: <a
                 href="https://www.terraform.io/cloud-docs/users-teams-organizations/users#api-tokens" target="_blank" rel="noreferrer">

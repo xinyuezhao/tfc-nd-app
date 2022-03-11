@@ -163,9 +163,10 @@ function AgentTable(props) {
       .then((res) => {
         setAgents(res.data);
         setFetchingData(false);
+        console.info("Fetch agent(s) from backend agent service.")
       })
       .catch((error) => {
-        console.error("Failed to fetch agent(s) from HashiCorp Terraform cloud.", error);
+        console.error("Failed to fetch agent(s) from backend agent service.", error);
         error.response?.data?.detail?.message &&
           setWarningAlert(error.response.data?.detail?.message);
         setFetchingData(false);
@@ -179,7 +180,7 @@ function AgentTable(props) {
     setShowConfirm(true);
   }
 
-  function handleDeleteAgent() {
+  function handleDeleteAgents() {
     setShowConfirm(false);
     setInfoAlert("Deleting Agents");
     Promise.all(selectedAgents.map(
@@ -216,7 +217,7 @@ function AgentTable(props) {
 
   const handleOpenAgent = useCallback(
     (data) => {
-      console.log("INFO: User token exists: ", authConfig.tokenExist);
+      console.info("Verifying the user token: ", authConfig.tokenExist);
       let agentComponent = AgentWoToken;
       if(authConfig.tokenExist){
         agentComponent = Agent;
@@ -254,62 +255,56 @@ function AgentTable(props) {
     },
   ];
 
-  const TableData = _.orderBy(
-    agents
-  ).map((item) => {
-    return {id: item.meta.id, ...item.spec}
-  });
+  const TableData = _.orderBy(agents).map((item) => {return {id: item.meta.id, ...item.spec}});
 
   const secondarySidebarHeaderContent = {
     title: "Agent", subtitle: `${viewSecondarySidebarData.name}`,
   }
 
-
   return (
     <div className="background-container">
+      {checkComponentRender(
+          openSecondarySidebar,
+          <SecondarySidebar
+            closable={true}
+            key="sidebar-key"
+            opened={openSecondarySidebar}
+            headerContent={secondarySidebarHeaderContent}
+          >
+          <Card>
+            <h2 className="text-center base-padding-bottom">
+              {statuses[`${viewSecondarySidebarData.status}`.toLowerCase()]} {`${viewSecondarySidebarData.status}`}
+            </h2>
+          </Card>
+          <div className="title text-bold dbl-padding-top text-large">General</div>
+            <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Description</div>
+            <div>{`${viewSecondarySidebarData.description}`}</div>
+            <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Organization</div>
+            <div>{`${viewSecondarySidebarData.organization}`}</div>
+            <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Agent Pool</div>
+            <div>{`${viewSecondarySidebarData.agentpool}`}</div>
+          </SecondarySidebar>
+        )}
 
-    {checkComponentRender(
-        openSecondarySidebar,
-        <SecondarySidebar
-          closable={true}
-          key="sidebar-key"
-          opened={openSecondarySidebar}
-          headerContent={secondarySidebarHeaderContent}
+      {checkComponentRender(
+        showConfirm,
+        <Modal
+          title={`Delete ${selectedAgents.length} agent(s)`}
+          isOpen={showConfirm}
+          applyButtonLabel="Delete"
+          contentTextAlign={Modal.CONTENT_TEXT_ALIGN.LEFT}
+          onClose={() => {
+            setShowConfirm(false);
+          }}
+          onAction={(data) => {
+            data === "component-modal-apply-button" && handleDeleteAgents();
+          }}
         >
-        <Card>
-          <h2 className="text-center base-padding-bottom">
-            {statuses[`${viewSecondarySidebarData.status}`.toLowerCase()]} {`${viewSecondarySidebarData.status}`}
-          </h2>
-        </Card>
-        <div className="title text-bold dbl-padding-top text-large">General</div>
-          <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Description</div>
-          <div>{`${viewSecondarySidebarData.description}`}</div>
-          <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Organization</div>
-          <div>{`${viewSecondarySidebarData.organization}`}</div>
-          <div className="secondary-sidebar-subtitles text-large qtr-padding-bottom">Agent Pool</div>
-          <div>{`${viewSecondarySidebarData.agentpool}`}</div>
-        </SecondarySidebar>
+          {`Are you sure want to delete the agent(s) ${selectedAgents.map(
+            (items) => ' ' + items.name
+          )} ?`}
+        </Modal>
       )}
-
-    {checkComponentRender(
-      showConfirm,
-      <Modal
-        title={`Delete ${selectedAgents.length} agent(s)`}
-        isOpen={showConfirm}
-        applyButtonLabel="Delete"
-        contentTextAlign={Modal.CONTENT_TEXT_ALIGN.LEFT}
-        onClose={() => {
-          setShowConfirm(false);
-        }}
-        onAction={(data) => {
-          data === "component-modal-apply-button" && handleDeleteAgent();
-        }}
-      >
-        {`Are you sure want to delete agent(s) ${selectedAgents.map(
-          (items) => ' ' + items.name
-        )} ?`}
-      </Modal>
-    )}
 
       <div className="row">
         <div className="col-xl-12">

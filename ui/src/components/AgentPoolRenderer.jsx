@@ -5,7 +5,7 @@ import {
   CardBody
 } from "blueprint-react";
 
-const PoolDetailRenderer = (props) => {
+function PoolDetailRenderer(props) {
   const {
     item
   } = props;
@@ -26,7 +26,6 @@ const PoolDetailRenderer = (props) => {
   );
 }
 
-export {
-  PoolDetailRenderer
-}
+export default PoolDetailRenderer;
+
 

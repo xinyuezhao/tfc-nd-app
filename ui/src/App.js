@@ -16,7 +16,7 @@ import DashboardWoToken from "./components/DashboardWoToken";
 import AuthenticationToken from "./components/AuthenticationToken"
 import "./App.css";
 import {
-  fetchAuthenticationToken,
+  fetchCredentials,
   fetchVersion,
 } from "./service/api_service";
 
@@ -26,17 +26,17 @@ function App() {
 
   const [showAbout, setShowAbout] = useState(false);
   const [authConfig, setAuthConfig] = useState("");
-  const [versionData, setVersionData] = useState([]);
+  const [version, setVersion] = useState([]);
 
   const getAuthConfig = useCallback(() => {
     // getVersion();
-      fetchAuthenticationToken()
+      fetchCredentials()
       .then((res) => {
         setAuthConfig(res.data.spec);
-        console.log("Successfully fetched Authentication token from Terraform Cloud.")
+        console.info("Successfully fetched Authentication token from backend credential API.")
       })
       .catch((error) => {
-        console.error("Failed to fetch Authentication token from Terraform Cloud.",error);
+        console.error("Failed to fetch Authentication token from backend credential API.",error);
       });
     },
     []
@@ -50,14 +50,14 @@ function App() {
       ndAppsData.map(
         (app) => {
           if(app.name === "cisco-terraform"){
-            setVersionData(app.version);
+            setVersion(app.version);
           }
           return null;
       });
-      console.log("Successfully fetched the version.")
+      console.info("Successfully fetched the application version.")
     })
     .catch((error) => {
-      console.error("Failed to fetch the version.",error);
+      console.error("Failed to fetch the application version.",error);
     });
   },[]);
   useEffect(getVersion, [getVersion]);
@@ -70,26 +70,18 @@ function App() {
         <Loader theme={Loader.THEME.INFO} message="Loading" />
       </div>
     )
-  } else{
-    if (authConfig.tokenExist){
+  } else if (authConfig.tokenExist) {
       dashboardComponent = Dashboard;
-    }
-
   }
 
   return (
     <div>
       <ErrorBoundary>
         <ScreenManager>
-          <About show={showAbout} version={versionData} onClose={() => setShowAbout(false)}/>
+          <About show={showAbout} version={version} onClose={() => setShowAbout(false)}/>
           <div id="content-container">
-            <div
-              id="main-content"
-              className="content-fluid relative textarea bg-color-gray"
-            >
+            <div id="main-content" className="content-fluid relative textarea bg-color-gray">
               <AppSidebar />
-              <div className="content-header" >
-              </div>
                 {!authConfig.configured
                   ? <AuthenticationToken authConfig={authConfig} refreshAuthConfig={getAuthConfig}/>
                 : (

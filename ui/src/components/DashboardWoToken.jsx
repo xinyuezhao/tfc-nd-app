@@ -17,10 +17,10 @@ function DashboardWoToken() {
       fetchAgents()
       .then((res) => {
         setAgentsData(res.data);
-        console.log("Successfully fetched agent(s).", res.data)
+        console.info("Successfully fetched agent(s).", res.data)
       })
       .catch((error) => {
-        console.error("Failed to fetch agent(s) from HashiCorp Terraform cloud.",error)
+        console.error("Failed to fetch agent(s) from from backend agent service.",error)
       });
     },
     []

@@ -5,7 +5,7 @@ import {
   CardBody
 } from "blueprint-react";
 
-const OrgDetailRenderer = (props) => {
+function OrgDetailRenderer(props) {
   const {
     item
   } = props;
@@ -24,13 +24,11 @@ const OrgDetailRenderer = (props) => {
     <CardBody className="dbl-padding">
       <div className="text-bold text-large base-padding-top">General</div>
       <div className="text-muted base-padding-top">Description</div>
-      <div>{item.description? item.description: "-"}</div>
+      <div>{item.description? item.description : "-"}</div>
     </CardBody>
     </Card>
   );
 }
 
-export {
-  OrgDetailRenderer
-}
+export default OrgDetailRenderer;
 

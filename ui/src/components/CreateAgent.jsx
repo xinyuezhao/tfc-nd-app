@@ -9,8 +9,8 @@ import {
   Modal,
 } from "blueprint-react";
 import _ from 'lodash';
-import {PoolDetailRenderer} from './AgentPoolRenderer';
-import {OrgDetailRenderer} from './OrganizationRenderer';
+import PoolDetailRenderer from './AgentPoolRenderer';
+import OrgDetailRenderer from './OrganizationRenderer';
 import CreateNewAgentPool from './CreateNewAgentPool';
 import './CiscoObjectPicker.scss';
 import {
@@ -27,7 +27,7 @@ function Agent(props) {
 
   const action = useScreenActions();
 
-  const [agentName, setName] = useState("");
+  const [agentName, setAgentName] = useState("");
   const [description, setDescription] = useState("");
   const [agentPool, setAgentPool] = useState({});
   const [organization, setOrganization] = useState({});
@@ -74,10 +74,10 @@ function Agent(props) {
         const agentPoolResult = res.data.spec.agentpools;
         const agentPoolsData =  _.orderBy(agentPoolResult);
         setAgentPools(agentPoolsData);
-        console.log("Successfully fetched agent pool(s).")
+        console.info("Successfully fetched agent pool(s).")
       })
       .catch(error => {
-        console.error("Failed to fetch agent pool(s) from HashiCorp Terraform cloud.", error);
+        console.error("Failed to fetch agent pool(s) from from backend agentpool service.", error);
     });
   };
 
@@ -99,23 +99,20 @@ function Agent(props) {
         const orgResult = res.data;
         const organizationData =  _.orderBy(orgResult).map((item) => (item.spec));
         setOrganizations(organizationData);
+        console.info("Successfully fetched organization(s).")
       })
       .catch(error => {
-        console.error("Failed to fetch organization(s) from HashiCorp Terraform cloud.", error);
+        console.error("Failed to fetch organization(s) from backend organization service.", error);
     });
   }, []);
 
-  const formatOrganizationData = (orgs) => {
-    return orgs.map((org) => ({
-      name: org.Name,
-      id: org.ExternalID}));
-  }
-
-  const formatedOrganizationData = formatOrganizationData(organizations);
-
+  const formatedOrganizationData = organizations.map((org) => ({
+    name: org.Name,
+    id: org.ExternalID
+  }));
 
   const onCreateObjectPickerNewAgentPool = useCallback(() => {
-    action.openScreen(CreateNewAgentPool,{
+    action.openScreen(CreateNewAgentPool, {
       screenId: "create-agent-pool-modal",
       organization: organization,
       getAgentPools: getAgentPools,
@@ -150,7 +147,7 @@ function Agent(props) {
               <div className="row text-large qtr-padding-bottom">
                 <Input required=""
                   value={agentName}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setAgentName(e.target.value)}
                 />
               </div>
               <div className="row base-padding-top text-large qtr-padding-bottom">Description

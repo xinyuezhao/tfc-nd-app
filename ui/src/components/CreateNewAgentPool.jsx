@@ -49,20 +49,10 @@ function CreateNewAgentPool(props) {
     }
   };
 
-
-  const onClose = () => {
-    setIsOpen(false);
-  };
-
-  const onMinimize = (a) => {
-    props.close();
-  };
-
   return (
     <DetailScreen
       onAction={handleCreateNewAgentPool}
-      onClose={onClose}
-      onMinimize={onMinimize}
+      onClose={() => { setIsOpen(false); }}
       title={"Create Agent Pool"}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={LABELS.create}

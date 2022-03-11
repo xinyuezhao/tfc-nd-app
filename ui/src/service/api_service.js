@@ -12,7 +12,7 @@ function createAgent(payload) {
 }
 
 function deleteAgent(name) {
-  return axios.delete("/v1/agents/"+ name );
+  return axios.delete("/v1/agents/{name}", name );
 }
 
 function fetchOrganizations() {
@@ -20,17 +20,17 @@ function fetchOrganizations() {
 }
 
 function fetchAgentPools(organization) {
-  return axios.get(`/v1/organization/${organization}/agentpools`, organization);
+  return axios.get("/v1/organization/{organization}/agentpools", organization);
 }
 
 function createAgentPool(payload) {
   return axios.post("/v1/agentpools", payload);
 }
-function fetchAuthenticationToken() {
+function fetchCredentials() {
   return axios.get("/v1/credentials/terraform");
 }
 
-function createAuthenticationToken(payload) {
+function createCredentials(payload) {
   return axios.post("/v1/credentials", payload);
 }
 
@@ -44,7 +44,7 @@ export {
   fetchOrganizations,
   fetchAgentPools,
   createAgentPool,
-  fetchAuthenticationToken,
-  createAuthenticationToken,
+  fetchCredentials,
+  createCredentials,
   fetchVersion,
 };

@@ -2,17 +2,17 @@ import React from "react";
 import {  Avatar, BasePalette } from "blueprint-react";
 
 function OrganizationDashboardWidget(props) {
-    const {
-			name,
-			activeAgents,
-			concurrencyLimitReached,
-			averageAppliesPerMonth,
-			adminUserCount,
-			maxConcurrencyLimitReached,
-			maxAverageAppliesPerMonth,
-			maxAdminUserCount,
-			maxActiveAgents,
-      } = props;
+  const {
+    name,
+    activeAgents,
+    concurrencyLimitReached,
+    averageAppliesPerMonth,
+    adminUserCount,
+    maxConcurrencyLimitReached,
+    maxAverageAppliesPerMonth,
+    maxAdminUserCount,
+    maxActiveAgents,
+  } = props;
 
 
   return (
@@ -20,7 +20,7 @@ function OrganizationDashboardWidget(props) {
 			<div className="row">
 				<div className="row half-margin-left">
 					<Avatar
-						key="one"
+						key="org-dashboard-widget"
 						size={Avatar.SIZE.MEDIUM}
 						backgroundColor={BasePalette.White}
 						color={BasePalette.DarkGray2}

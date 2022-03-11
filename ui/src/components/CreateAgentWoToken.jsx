@@ -16,7 +16,7 @@ function Agent(props) {
     createAgent,
   } = props;
 
-  const [agentName, setName] = useState("");
+  const [agentName, setAgentName] = useState("");
   const [description, setDescription] = useState("");
   const [agentToken, setAgentToken] = useState("");
   const [isOpen, setIsOpen] = useState(true);
@@ -36,10 +36,9 @@ function Agent(props) {
   ]);
 
   const handleCreateAgentWoToken = useCallback((sourceId) => {
-    if(sourceId === Modal.BUTTON_IDS.APPLY)
-    {
-        updateDetails();
-        screenActions.closeScreen("create-agent-modal");
+    if(sourceId === Modal.BUTTON_IDS.APPLY) {
+      updateDetails();
+      screenActions.closeScreen("create-agent-modal");
     }
   }, [updateDetails, screenActions]);
 
@@ -67,8 +66,7 @@ function Agent(props) {
       <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
         <Card className="col-11 no-padding-top base-padding-left">
           <InfoAlert className="dbl-marginLeft"
-          title="Alert Title"
-          children= {<div>To generate a Terraform Cloud Agent Token to associate with this agent you will
+            children= {<div>To generate a Terraform Cloud Agent Token to associate with this agent you will
             need to create an Agent Pool on Terraform Cloud, see:
             <a
                 href="https://www.terraform.io/cloud-docs/agents#create-a-new-agent-pool"
@@ -86,7 +84,7 @@ function Agent(props) {
               <div className="row text-large qtr-padding-bottom">
                 <Input required=""
                   value={agentName}
-                  onChange={(e) => setName(e.target.value)}
+                  onChange={(e) => setAgentName(e.target.value)}
                 />
               </div>
               <div className="row base-padding-top text-large qtr-padding-bottom">Description

@@ -11,8 +11,7 @@ import {
 } from "../service/api_service";
 import OrganizationDashboardWidget from "./OrganizationDashboardWidget";
 
-function Dashboard(props) {
-
+function Dashboard() {
   const [agentsData, setAgentsData] = useState([]);
   const [orgData, setOrgData] = useState([]);
 
@@ -20,10 +19,10 @@ function Dashboard(props) {
     fetchOrganizations()
       .then((res) => {
         setOrgData(res.data);
-        console.log("Successfully fetched organization(s).",)
+        console.info("Successfully fetched organization(s).",)
       })
       .catch(error => {
-        console.error("Failed to fetch organization(s) from HashiCorp Terraform cloud.", error);
+        console.error("Failed to fetch organization(s) from backend organization service.", error);
     });
   }, []);
 
@@ -31,10 +30,10 @@ function Dashboard(props) {
       fetchAgents()
       .then((res) => {
         setAgentsData(res.data);
-        console.log("Successfully fetched agent(s).",)
+        console.info("Successfully fetched agent(s).",)
       })
       .catch((error) => {
-        console.error("Failed to fetch agent(s) from HashiCorp Terraform cloud.",error)
+        console.error("Failed to fetch agent(s) from backend agent service.",error)
       });
     },
     []
@@ -113,14 +112,7 @@ function Dashboard(props) {
 
   const sumTotalApplies = totalAppliesChartData.reduce((total, org) => total + org.value, 0);
 
-  if(!agentsData){
-    return(
-      <div className="screen-container flex-center">
-        <Loader theme={Loader.THEME.INFO} message="Loading" />
-      </div>
-    )
-  }
-  if(!orgData){
+  if(!agentsData || !orgData){
     return(
       <div className="screen-container flex-center">
         <Loader theme={Loader.THEME.INFO} message="Loading" />
@@ -139,7 +131,10 @@ function Dashboard(props) {
                 <IconButton
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
-                  onClick={getAgents}
+                  onClick={() => {
+                    getAgents();
+                    getOrganizations();
+                  }}
                 />
               </div>
             </div>

@@ -5,8 +5,8 @@ function Header(props) {
   const {
     setShowAbout,
     authConfig,
-    refreshAuthConfig
-    } = props;
+    refreshAuthConfig,
+  } = props;
 
   const actions = useScreenActions();
 
