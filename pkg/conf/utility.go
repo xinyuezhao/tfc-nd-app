@@ -48,8 +48,8 @@ func DeleteAgentPool(ctx context.Context, client *tfe.Client, agentID string) er
 }
 
 // Query AgentTokens in an agentPool
-func QueryAgentTokens(ctx context.Context, client *tfe.Client, agentPlID string) ([]*tfe.AgentToken, error) {
-	agentTokens, err := client.AgentTokens.List(ctx, agentPlID)
+func QueryAgentTokens(ctx context.Context, client *tfe.Client, agentPoolId string) ([]*tfe.AgentToken, error) {
+	agentTokens, err := client.AgentTokens.List(ctx, agentPoolId)
 	if err != nil {
 		er := fmt.Errorf("error while listing agentTokens")
 		return nil, core.NewError(er, err)
@@ -325,8 +325,8 @@ func QueryAgentStatus(ctx context.Context, agentId string) (string, error) {
 }
 
 // Delete an existing agentPool
-func RemoveAgentPool(ctx context.Context, client *tfe.Client, agentPlID string) error {
-	err := client.AgentPools.Delete(ctx, agentPlID)
+func RemoveAgentPool(ctx context.Context, client *tfe.Client, agentPoolId string) error {
+	err := client.AgentPools.Delete(ctx, agentPoolId)
 	if err != nil {
 		er := fmt.Errorf("error while deleting agentpool")
 		return core.NewError(er, err)
