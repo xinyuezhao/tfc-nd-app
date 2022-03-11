@@ -73,13 +73,8 @@ func GETAgentOverride(ctx context.Context, event *terraformv1.AgentDbReadEvent) 
 	}
 	agentPoolId := payloadObject.Spec().AgentpoolId()
 	if agentPoolId != "" && exist {
-		_, tfcClient, err := conf.ConfigTFC()
-		if err != nil {
-			er := fmt.Errorf("error from configTFC")
-			return nil, http.StatusInternalServerError, core.NewError(err, er)
-		}
 		// get agentId by agentPoolId & agentName when userToken was provided by user
-		agents, err := conf.QueryAgents(ctx, tlsClient, tfcClient, agentPoolId)
+		agents, err := conf.QueryAgents(ctx, tlsClient, agentPoolId)
 		if err != nil {
 			er := fmt.Errorf("error from queryAgents")
 			return nil, http.StatusInternalServerError, core.NewError(er, err)
@@ -136,13 +131,8 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 			return nil, http.StatusInternalServerError, core.NewError(er, err)
 		}
 		if agentPoolId != "" && exist {
-			_, tfcClient, err := conf.ConfigTFC()
-			if err != nil {
-				er := fmt.Errorf("error during config TFC")
-				return nil, http.StatusInternalServerError, core.NewError(er, err)
-			}
 			// get agentId by agentPoolId & agentName
-			agents, err := conf.QueryAgents(ctx, tlsClient, tfcClient, agentPoolId)
+			agents, err := conf.QueryAgents(ctx, tlsClient, agentPoolId)
 			if err != nil {
 				er := fmt.Errorf("error during querying agents")
 				return nil, http.StatusInternalServerError, core.NewError(er, err)
