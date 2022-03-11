@@ -110,8 +110,12 @@ function AuthenticationToken(props) {
     }
   ];
 
-  if((selectedToken && !userToken)){
+  if((selectedToken && !userToken) && userToken === ""){
     applyButtonProps = {disabled: true};
+  } else {
+    if (userToken.startsWith("*")) {
+      applyButtonProps = {disabled: true};
+    }
   }
 
   return (

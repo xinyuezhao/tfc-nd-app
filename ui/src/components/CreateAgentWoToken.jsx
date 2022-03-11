@@ -5,6 +5,7 @@ import {
   Card,
   InfoAlert,
   LABELS,
+  Modal,
 } from "blueprint-react";
 import './CiscoObjectPicker.scss';
 
@@ -34,18 +35,13 @@ function Agent(props) {
     agentToken,
   ]);
 
-  const checkBeforeSubmit = useCallback(() => {
-    return true;
-  },[]);
-
-  const handleCreateAgentWoToken = useCallback(() => {
-    const result = checkBeforeSubmit();
-    if (result) {
-      updateDetails();
-      screenActions.closeScreen("create-agent-modal");
+  const handleCreateAgentWoToken = useCallback((sourceId) => {
+    if(sourceId === Modal.BUTTON_IDS.APPLY)
+    {
+        updateDetails();
+        screenActions.closeScreen("create-agent-modal");
     }
-  }, [checkBeforeSubmit, updateDetails, screenActions]);
-
+  }, [updateDetails, screenActions]);
 
   const onClose = () => {
     setIsOpen(false);
@@ -72,7 +68,16 @@ function Agent(props) {
         <Card className="col-11 no-padding-top base-padding-left">
           <InfoAlert className="dbl-marginLeft"
           title="Alert Title"
-          children="Instruction on how to use authentication. Get terraform user token."
+          children= {<div>To generate a Terraform Cloud Agent Token to associate with this agent you will
+            need to create an Agent Pool on Terraform Cloud, see:
+            <a
+                href="https://www.terraform.io/cloud-docs/agents#create-a-new-agent-pool"
+                target="_blank" rel="noreferrer">
+                https://www.terraform.io/cloud-docs/agents#create-a-new-agent-pool</a> for details.
+                <br />
+                <br />
+                <i>Note: </i> This integration can do those steps for you if you configure a User Authentication Token.
+                To change the current configuration, go back and click <span className="icon-cog"></span> &gt; Setup.</div>}
           />
             <div className="agent-container justify-content-center">
               <div className="row text-large qtr-padding-bottom">Agent Name

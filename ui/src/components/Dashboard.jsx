@@ -1,5 +1,9 @@
 import React, { useEffect, useCallback, useState } from "react";
-import { Button, Charts, Loader } from "blueprint-react";
+import { Button,
+  Charts,
+  Loader,
+  IconButton,
+} from "blueprint-react";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
 import {
   fetchOrganizations,
@@ -55,33 +59,33 @@ function Dashboard(props) {
 
 
   const colorByStatus = {
-    running: '#6ebe4a',
-    creating: '#64bbe3',
-    initializing: '#faba64',
-    enabling: '#ffcc00',
-    errored: '#e2231a',
-    exited: '#888',
-    idle: '#98d280',
-    busy: '#487b32',
-    unknown: '#fbab18',
-    failed: '#9d2b2f',
+    Running: '#6ebe4a',
+    Creating: '#64bbe3',
+    Initializing: '#faba64',
+    Enabling: '#ffcc00',
+    Errored: '#e2231a',
+    Exited: '#888',
+    Idle: '#98d280',
+    Busy: '#487b32',
+    Unknown: '#fbab18',
+    Failed: '#9d2b2f',
   }
 
   let ndCreatedAgentsStatusData = {
-    running: 0,
-    creating: 0,
-    initializing: 0,
-    enabling: 0,
-    errored: 0,
-    exited: 0,
-    idle: 0,
-    busy: 0,
-    unknown: 0,
-    failed: 0,
+    Running: 0,
+    Creating: 0,
+    Initializing: 0,
+    Enabling: 0,
+    Errored: 0,
+    Exited: 0,
+    Idle: 0,
+    Busy: 0,
+    Unknown: 0,
+    Failed: 0,
   };
 
   agentsData.forEach((agent) => {
-    ndCreatedAgentsStatusData[agent.spec.status.toLowerCase()] += 1;
+    ndCreatedAgentsStatusData[agent.spec.status] += 1;
   })
 
   const ndCreatedAgentsChartData = Object.keys(ndCreatedAgentsStatusData).map((key, index) => ({
@@ -126,12 +130,19 @@ function Dashboard(props) {
 
   return (
     <div className="background-container">
-      <div className="header-bar container no-padding-left">
-        <div className="header-bar__main no-margin-left">
+      <div className="row">
+        <div className="header-bar__main no-margin-left col-xl-12">
           <div className="section">
-            <h1 className="page-title base-padding">
-              Overview
-            </h1>
+            <div className=" dbl-padding-left flex justify-content-sm-between">
+              <h1 className="page-title ">Overview</h1>
+              <div>
+                <IconButton
+                  size={IconButton.SIZE.SMALL}
+                  icon={IconButton.ICON.REFRESH}
+                  onClick={getAgents}
+                />
+              </div>
+            </div>
             <div className="container-fluid">
               <div className="row">
                 <div className="col-xl-4">

@@ -6,6 +6,7 @@ import {
   ObjectPicker,
   useScreenActions,
   LABELS,
+  Modal,
 } from "blueprint-react";
 import _ from 'lodash';
 import {PoolDetailRenderer} from './AgentPoolRenderer';
@@ -55,13 +56,9 @@ function Agent(props) {
     organization,
   ]);
 
-  const checkBeforeSubmit = useCallback(() => {
-    return true;
-  },[]);
-
-  const handleCreateAgent = () => {
-    const result = checkBeforeSubmit();
-    if (result) {
+  const handleCreateAgent = (sourceId) => {
+    if(sourceId === Modal.BUTTON_IDS.APPLY)
+    {
       updateDetails();
       screenActions.closeScreen("create-agent-modal"); // screenId
     }
