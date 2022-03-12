@@ -104,7 +104,7 @@ func DELETEOverride(ctx context.Context, event *terraformv1.AgentpoolDbDeleteEve
 		agentPools, _ := conf.QueryAgentPools(ctxTfe, client, payloadObject.Spec().Organization())
 		agentPl, queryErr := conf.QueryAgentPoolByName(agentPools, payloadObject.Spec().Name())
 		if queryErr != nil {
-			er := fmt.Errorf("error form QueryAgentPoolByName")
+			er := fmt.Errorf("error from QueryAgentPoolByName")
 			return http.StatusInternalServerError, core.NewError(er, queryErr)
 		}
 		err := conf.DeleteAgentPool(ctxTfe, client, agentPl.ID)
