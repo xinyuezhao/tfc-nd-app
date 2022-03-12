@@ -12,7 +12,7 @@ function createAgent(payload) {
 }
 
 function deleteAgent(name) {
-  return axios.delete("/v1/agents/{name}", name );
+  return axios.delete("/v1/agents/"+ name );
 }
 
 function fetchOrganizations() {
@@ -20,7 +20,7 @@ function fetchOrganizations() {
 }
 
 function fetchAgentPools(organization) {
-  return axios.get("/v1/organization/{organization}/agentpools", organization);
+  return axios.get("/v1/organization/"+ organization +"/agentpools");
 }
 
 function createAgentPool(payload) {
