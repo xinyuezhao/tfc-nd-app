@@ -20,7 +20,7 @@ import (
 func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv1.Organization, int, error) {
 	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
-		er := fmt.Errorf("error from configTFC")
+		er := fmt.Errorf("error from configTFC while querying organizations")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 	// Query all organizations and filter orgs by entitlement
