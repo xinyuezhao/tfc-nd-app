@@ -122,7 +122,7 @@ function Agent(props) {
 
   let applyButtonProps = {disabled: true};
 
-  if(agentName && description && organization && agentPool){
+  if(agentName && description && !_.isEmpty(organization) && !_.isEmpty(agentPool)){
     applyButtonProps = {};
   }
 
@@ -137,52 +137,51 @@ function Agent(props) {
       applyButtonProps={applyButtonProps}
       isOpen={isOpen}
     >
-      <div className="div_padding_left">
-      <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
-        <Card className="col-11 no-padding-top base-padding-left">
-            <div className="agent-container justify-content-center">
-              <div className="row text-large qtr-padding-bottom">Agent Name
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
-                <Input required=""
-                  value={agentName}
-                  onChange={(e) => setAgentName(e.target.value)}
-                />
-              </div>
-              <div className="row base-padding-top text-large qtr-padding-bottom">Description
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
-                <Input required=""
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="row base-padding-top text-large qtr-padding-bottom">Organization
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
+      <div className="col-xl-10 offset-xl-1">
+        <h5 className="base-padding-bottom">General</h5>
+        <Card className="no-padding-top base-padding-left base-padding-right base-padding-bottom">
+          <form onSubmit={(proxy, evt) => proxy.preventDefault()}>
+            <Input
+              required
+              label="Agent Name"
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+            />
+            <Input
+              required
+              label="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <div className="form-group">
+              <div className="form-group__text">
+                <label className="input-label">
+                  <span className="input-label-text" required>Organization</span>
+                </label>
                 <ObjectPicker required
                   data={formatedOrganizationData}
                   multiSelect={false}
                   filterBy={(item, str) => item.name.indexOf(str) !== -1}
                   labelSuffix={'Organizations'}
+                  buttonLabel="Select"
                   value={organization}
                   onSelect={handleOrgSelect}
                   detailItemRenderer={OrgDetailRenderer}
                   idBy='id'
                 />
               </div>
-              <div className="row base-padding-top text-large qtr-padding-bottom">Agent Pool
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row base-padding-bottom text-large qtr-padding-bottom">
+            </div>
+            <div className="form-group no-padding-bottom">
+              <div className="form-group__text">
+                <label className="input-label">
+                  <span className="input-label-text" required>Agent Pool</span>
+                </label>
                 <ObjectPicker required disabled={!(organization !== null && Object.keys(organization).length !== 0)}
                   data={agentPools}
                   multiSelect={false}
                   filterBy={(item, str) => item.name.indexOf(str) !== -1}
                   labelSuffix={'Agent Pool'}
+                  buttonLabel="Select"
                   value={agentPool}
                   onSelect={handlePoolSelect}
                   detailItemRenderer={PoolDetailRenderer}
@@ -191,6 +190,7 @@ function Agent(props) {
                 />
               </div>
             </div>
+          </form>
         </Card>
       </div>
     </DetailScreen>

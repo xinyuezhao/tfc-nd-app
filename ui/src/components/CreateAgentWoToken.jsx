@@ -23,9 +23,11 @@ function Agent(props) {
 
   const updateDetails = useCallback(() => {
     let payload = {
-      name: agentName,
-      description: description,
-      token: agentToken,
+      "spec": {
+        name: agentName,
+        description: description,
+        token: agentToken,
+      }
     }
     createAgent(payload);
   }, [
@@ -62,12 +64,12 @@ function Agent(props) {
       applyButtonProps={applyButtonProps}
       isOpen={isOpen}
     >
-      <div className="div_padding_left">
-      <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
-        <Card className="col-11 no-padding-top base-padding-left">
-          <InfoAlert className="dbl-marginLeft"
+      <div className="col-xl-10 offset-xl-1">
+        <h5 className="base-padding-bottom">General</h5>
+        <Card className="no-padding-top base-padding-left base-padding-right base-padding-bottom">
+          <InfoAlert
             children= {<div>To generate a Terraform Cloud Agent Token to associate with this agent you will
-            need to create an Agent Pool on Terraform Cloud, see:
+            need to create an Agent Pool on Terraform Cloud, see: 
             <a
                 href="https://www.terraform.io/cloud-docs/agents#create-a-new-agent-pool"
                 target="_blank" rel="noreferrer">
@@ -75,37 +77,29 @@ function Agent(props) {
                 <br />
                 <br />
                 <i>Note: </i> This integration can do those steps for you if you configure a User Authentication Token.
-                To change the current configuration, go back and click <span className="icon-cog"></span> &gt; Setup.</div>}
+                To change the current configuration, go back and click on the top right <span className="icon-cog"></span> &gt; Setup.</div>}
           />
-            <div className="agent-container justify-content-center">
-              <div className="row text-large qtr-padding-bottom">Agent Name
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
-                <Input required=""
-                  value={agentName}
-                  onChange={(e) => setAgentName(e.target.value)}
-                />
-              </div>
-              <div className="row base-padding-top text-large qtr-padding-bottom">Description
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
-                <Input required=""
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                />
-              </div>
-              <div className="row base-padding-top text-large qtr-padding-bottom">Agent Token
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
-                <Input required=""
-                  value={agentToken}
-                  onChange={(e) => setAgentToken(e.target.value)}
-                />
-              </div>
-            </div>
+          <form onSubmit={(proxy, evt) => proxy.preventDefault()} className="base-padding-top">
+            <Input
+              required
+              label="Agent Name"
+              value={agentName}
+              onChange={(e) => setAgentName(e.target.value)}
+            />
+            <Input
+              required
+              label="Description"
+              value={description}
+              onChange={(e) => setDescription(e.target.value)}
+            />
+            <Input required=""
+              required
+              classes={{root:'no-padding-bottom'}}
+              label="Agent Token"
+              value={agentToken}
+              onChange={(e) => setAgentToken(e.target.value)}
+            />
+          </form>
         </Card>
       </div>
     </DetailScreen>

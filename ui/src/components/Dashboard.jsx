@@ -12,7 +12,7 @@ import {
 import OrganizationDashboardWidget from "./OrganizationDashboardWidget";
 
 function Dashboard() {
-  const [agentsData, setAgentsData] = useState([]);
+  const [agentsData, setAgentsData] = useState(null);
   const [orgData, setOrgData] = useState([]);
 
   const getOrganizations = useCallback(() => {
@@ -83,9 +83,11 @@ function Dashboard() {
     Failed: 0,
   };
 
-  agentsData.forEach((agent) => {
-    ndCreatedAgentsStatusData[agent.spec.status] += 1;
-  })
+  if(agentsData !== null){
+    agentsData.forEach((agent) => {
+      ndCreatedAgentsStatusData[agent.spec.status] += 1;
+    })
+  }
 
   const ndCreatedAgentsChartData = Object.keys(ndCreatedAgentsStatusData).map((key, index) => ({
     name: key,
@@ -112,26 +114,28 @@ function Dashboard() {
 
   const sumTotalApplies = totalAppliesChartData.reduce((total, org) => total + org.value, 0);
 
-  if(!agentsData || !orgData){
-    return(
-      <div className="screen-container flex-center">
-        <Loader theme={Loader.THEME.INFO} message="Loading" />
-      </div>
-    )
-  }
+  // if(agentsData === null || !orgData){
+  //   return(
+  //     <div className="screen-container flex-center">
+  //       <Loader theme={Loader.THEME.INFO} message="Loading" />
+  //     </div>
+  //   )
+  // }
 
   return (
     <div className="background-container">
       <div className="row">
-        <div className="header-bar__main no-margin-left col-xl-12">
+        <div className="col-xl-12">
           <div className="section">
-            <div className=" dbl-padding-left flex justify-content-sm-between">
-              <h1 className="page-title ">Overview</h1>
+            <div className="base-padding-left base-padding-right flex justify-content-sm-between">
+              <h1 className="page-title">Overview</h1>
               <div>
                 <IconButton
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
                   onClick={() => {
+                    setAgentsData(null)
+                    setOrgData([])
                     getAgents();
                     getOrganizations();
                   }}
@@ -140,16 +144,16 @@ function Dashboard() {
             </div>
             <div className="container-fluid">
               <div className="row">
-                <div className="col-xl-4">
-                  <div className="section no-padding-bottom">
-                    <div className="panel panel--loose  base-margin-bottom">
+                <div className="col-xl-4 flex">
+                  <div className="section no-padding-bottom flex flex-fill">
+                    <div className="panel panel--loose  base-margin-bottom flex flex-column flex-fill">
                       <h4 className="subtitle text-bold" >ND Created Agents Status</h4>
-                      {agentsData.length === 0 ?
+                      { agentsData === null ?
                         <div className="base-padding flex-fill flex-center">
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
                       :
-                        agentsData?
+                        agentsData.length > 0 ?
                         <div className="base-padding dbl-margin-left">
                           <Charts.DonutChart
                             key={'donut-nd-created-agents'}
@@ -160,13 +164,12 @@ function Dashboard() {
                             colors={colors}
                           />
                         </div>
-                        :<div className="no-data-container">
-                          <div className="base-margin base-padding-top rc-calendar-week-number-cell">
-                            <img src={emptyImage} alt="empty" width="55%" height="55%"/>
-                            <h4 className="base-padding-top">No results found</h4>
-                            <p className="subtitle">Create a new Agent</p>
-                            <Button theme={"btn--primary"} onAction={() => {window.location.href = './agents';}}>Create Agent</Button>
-                          </div>
+                        :
+                        <div align="center" className="base-padding-top">
+                          <img src={emptyImage} alt="empty" width="205px" />
+                          <h4>No results found</h4>
+                          <p>Create a new Agent</p>
+                          <Button theme={"btn--primary"} onAction={() => {window.location.href = './agents';}}>Create Agent</Button>
                         </div>
                       }
                     </div>

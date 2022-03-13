@@ -157,11 +157,6 @@ html {
   font-size: 20px;
 }
 
-.modal__body {
-  background-color: #fff !important;
-  border: 0px solid transparent !important;
-}
-
 .div_padding_left {
   padding-left: 10% !important;
 }
@@ -196,4 +191,12 @@ html {
 
 .bg-color-gray {
   background: #dfdfdfa1 !important;
+}
+
+.cui .modal__body .card .card__body .form-group .form-group__text .input-label {
+  padding-bottom: 5px
+}
+
+.cui .modal__body .card .card__body .form-group {
+  padding-bottom: 10px
 }

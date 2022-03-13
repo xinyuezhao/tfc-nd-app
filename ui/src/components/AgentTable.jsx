@@ -132,7 +132,7 @@ function AgentTable(props) {
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
   const [fetchingData, setFetchingData] = useState(false);
-  const [agents, setAgents] = useState([]);
+  const [agents, setAgents] = useState(null);
   const [viewSecondarySidebarData, setViewSecondarySidebarData] = useState({});
   const [warningAlert, setWarningAlert] = useState("");
   const [infoAlert, setInfoAlert] = useState("");
@@ -308,11 +308,10 @@ function AgentTable(props) {
 
       <div className="row">
         <div className="col-xl-12">
-          <div className="dbl-padding-top half-padding-bottom flex justify-content-sm-between">
-            <h2 className="font-weight-light base-padding-left">Agents</h2>
+          <div className="base-padding-left base-padding-right base-padding-top flex justify-content-sm-between">
+            <h1 className="page-title ">Agents</h1>
             <div>
               <IconButton
-                className="base-margin-right"
                 size={IconButton.SIZE.SMALL}
                 icon={IconButton.ICON.REFRESH}
                 onClick={getAgents}
@@ -341,15 +340,15 @@ function AgentTable(props) {
                 </span>
               </header>
             </div>
-            {agents?
+            { agents === null ?
               <div className="screen flex-center dbl-padding-top">
                 <Loader theme={Loader.THEME.LIGHT_GRAY} />
               </div>
               :
               <div align="center">
-                <img src={emptyImage} alt="empty" width="15%" height="15%"/>
-                <h4 align="center">No results found</h4>
-                <p align="center">Create a new Agent</p>
+                <img src={emptyImage} alt="empty" width="205px" />
+                <h4>No results found</h4>
+                <p>Create a new Agent</p>
                 <Button theme={"btn--primary"} onClick={() => handleOpenAgent()}>Create Agent</Button>
               </div>
             }

@@ -49,6 +49,12 @@ function CreateNewAgentPool(props) {
     }
   };
 
+  let applyButtonProps = {disabled: true};
+
+  if(poolName){
+    applyButtonProps = {};
+  }
+
   return (
     <DetailScreen
       onAction={handleCreateNewAgentPool}
@@ -56,22 +62,20 @@ function CreateNewAgentPool(props) {
       title={"Create Agent Pool"}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={LABELS.create}
+      applyButtonProps={applyButtonProps}
       isOpen={isOpen}
     >
-    <div className="div_padding_left">
-      <div className="base-padding-top base-padding-bottom text-xlarge">General</div>
-        <Card className="col-6 no-padding-top base-padding-left">
-            <div className="agent-container justify-content-center">
-              <div className="row text-large base-padding-bottom">Agent Pool Name
-                <span className="text-danger qtr-padding-left icon-">*</span>
-              </div>
-              <div className="row text-large qtr-padding-bottom">
-                <Input required=""
-                  value={poolName}
-                  onChange={(e) => setPoolName(e.target.value)}
-                />
-              </div>
-            </div>
+    <div className="col-xl-10 offset-xl-1">
+        <h5 className="base-padding-bottom">General</h5>
+        <Card className="no-padding-top base-padding-left base-padding-right base-padding-bottom">
+          <form onSubmit={(proxy, evt) => proxy.preventDefault()}>
+            <Input
+              required
+              label="Agent Pool Name"
+              value={poolName}
+              onChange={(e) => setPoolName(e.target.value)}
+            />
+          </form>
         </Card>
       </div>
     </DetailScreen>
