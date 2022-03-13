@@ -266,7 +266,7 @@ spec:
       scheme: http
       name: ui
       port: 3000
-    authType: jwt
+    authType: open
     listenPaths:
     - path: "ui/"
     rewrite: ""
