@@ -26,7 +26,7 @@ RUN npm run build
 
 # Stage 2
 # set up production environment
-FROM nginx:1.17.9-alpine
+FROM nginx:1.21.6-alpine
 
 # expose port 80 to the outer world
 EXPOSE 3000
