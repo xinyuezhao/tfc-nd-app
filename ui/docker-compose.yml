@@ -6,3 +6,10 @@ services:
     image: containers.cisco.com/cn-ecosystem/tf-nd-app-ui:latest
     ports:
       - 3000:3000
+  proxy:
+    container_name: proxy
+    image: nginx
+    ports:
+      - 8000:8000
+    volumes:
+      - ./temp/nginx-proxy.conf:/etc/nginx/nginx.conf:ro
