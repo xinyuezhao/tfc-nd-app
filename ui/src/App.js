@@ -24,6 +24,10 @@ export const pathPrefix = "/appcenter/cisco/terraform/ui";
 
 function App() {
 
+  if (!(document.cookie && (document.cookie.split('; ').find(row => row.startsWith('AuthCookie')) || '').split('=')[1])) {
+    window.location.href = '/'
+  }
+
   const [showAbout, setShowAbout] = useState(false);
   const [authConfig, setAuthConfig] = useState("");
   const [version, setVersion] = useState([]);
