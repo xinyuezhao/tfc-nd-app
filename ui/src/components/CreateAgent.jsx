@@ -18,6 +18,13 @@ import {
   fetchAgentPools,
 } from "../service/api_service";
 
+/**
+ * CreateAgent component lets the user to create an agent
+ * when the user has already added the authentication token in the initial setup.
+ * It displays a set of organizations to users based on the authentication token given by them.
+ * Once the organization is selected, it displays all the agent pools within the selected organization.
+ */
+
 function Agent(props) {
   const {
     screenActions,

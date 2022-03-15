@@ -5,6 +5,11 @@ import {
   CardBody
 } from "blueprint-react";
 
+/**
+ * OrganizationRenderer component gives user the details on the selected organization.
+ * It displays organization details such as name and description.
+ */
+
 function OrgDetailRenderer(props) {
   const {
     item

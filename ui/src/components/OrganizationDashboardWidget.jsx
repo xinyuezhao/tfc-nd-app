@@ -1,6 +1,11 @@
 import React from "react";
 import {  Avatar, BasePalette } from "blueprint-react";
 
+/**
+ * OrganizationDashboardWidget component gives user the details on each organization.
+ * Organization info -> Active Agents, Concurrent Run Limit, Average Applies Per Month, Active Admin Users.
+ */
+
 function OrganizationDashboardWidget(props) {
   const {
     name,
@@ -20,7 +25,7 @@ function OrganizationDashboardWidget(props) {
 			<div className="row">
 				<div className="row half-margin-left">
 					<Avatar
-						key="org-dashboard-widget"
+						key={name}
 						size={Avatar.SIZE.MEDIUM}
 						backgroundColor={BasePalette.White}
 						color={BasePalette.DarkGray2}

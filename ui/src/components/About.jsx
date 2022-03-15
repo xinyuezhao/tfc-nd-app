@@ -4,6 +4,10 @@ import {
     Modal,
 } from "blueprint-react";
 
+/**
+ * About component gives user the details of the app along with the current version.
+ */
+
 function About(props) {
   const {
     show,
@@ -13,7 +17,7 @@ function About(props) {
 
   return (
     <Modal className="about"
-    title=" "
+      title=" "
       isOpen={show}
       onClose={onClose}
       cancelButtonLabel={null} // prevent cancel button from being added to footer.

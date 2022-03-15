@@ -33,7 +33,6 @@ function App() {
   const [version, setVersion] = useState([]);
 
   const getAuthConfig = useCallback(() => {
-    // getVersion();
       fetchCredentials()
       .then((res) => {
         setAuthConfig(res.data.spec);
@@ -94,11 +93,6 @@ function App() {
                     <div>
                       <div className="container-fluid no-margin">
                         <Switch>
-                          <Route
-                            exact
-                            path={pathPrefix + "/dashboard"}
-                            component={dashboardComponent}
-                          />
                           <Route
                             exact
                             path={pathPrefix + "/agents"}

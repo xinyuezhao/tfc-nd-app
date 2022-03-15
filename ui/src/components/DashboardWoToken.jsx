@@ -9,6 +9,12 @@ import {
   fetchAgents,
 } from "../service/api_service";
 
+/**
+ * DashboardWoToken component gives user the summary on the agents.
+ * It displays the total number of agents created by the user,
+ * or displays a create agent button if there are no existing agents.
+*/
+
 function DashboardWoToken() {
 
   const [agentsData, setAgentsData] = useState(null);

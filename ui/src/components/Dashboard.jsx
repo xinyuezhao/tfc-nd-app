@@ -11,6 +11,14 @@ import {
 } from "../service/api_service";
 import OrganizationDashboardWidget from "./OrganizationDashboardWidget";
 
+/**
+ * Dashboard component gives user the summary on the agents and organizations.
+ * It displays the total number of agents created by the user,
+ * or displays a create agent button if there are no existing agents.
+ * It displays the details with respect to each organization.
+ * Organization info -> Active Agents, Concurrent Run Limit, Average Applies Per Month, Active Admin Users.
+ */
+
 function Dashboard() {
   const [agentsData, setAgentsData] = useState(null);
   const [orgData, setOrgData] = useState([]);
@@ -113,14 +121,6 @@ function Dashboard() {
   })).sort((a, b) => a.value < b.value ? 1 : -1);
 
   const sumTotalApplies = totalAppliesChartData.reduce((total, org) => total + org.value, 0);
-
-  // if(agentsData === null || !orgData){
-  //   return(
-  //     <div className="screen-container flex-center">
-  //       <Loader theme={Loader.THEME.INFO} message="Loading" />
-  //     </div>
-  //   )
-  // }
 
   return (
     <div className="background-container">

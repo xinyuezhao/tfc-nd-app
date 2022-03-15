@@ -13,10 +13,10 @@ import {
 } from "../service/api_service";
 
 
-// /**
-//  * A sample of create new renderer function component that is passed as createItemRenderer.
-//  * Please see the use of useObjectPickerSubmit to get the click event on Modal create button
-//  */
+/**
+ * CreateNewAgentPool component is used to create a new agent pool withing the selected organization.
+ * It is redirected from CreateAgent component.
+ */
 
 function CreateNewAgentPool(props) {
   const {

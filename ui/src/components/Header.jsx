@@ -1,5 +1,16 @@
-import {Dropdown, IconButton, LABELS, useScreenActions} from 'blueprint-react';
+import {Dropdown,
+  IconButton,
+  LABELS,
+  useScreenActions
+} from 'blueprint-react';
 import AuthenticationToken from './AuthenticationToken';
+
+/**
+ * Header component displays top section of the app.
+ * It contains a COG icon which give users two options.
+ * Setup -> to go to authentication page and
+ * About -> to get the current information of the app (like version).
+ */
 
 function Header(props) {
   const {

@@ -25,6 +25,13 @@ import AgentWoToken from "./CreateAgentWoToken";
 import { checkForTernary, checkComponentRender } from "../shared/utils";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
 
+/**
+ * AgentTable Token component displays all the agents created by the user.
+ * If there is no existing agents for the user, then it displays create agent button instead of the table.
+ * The filter table at top helps the user to filter the agents based on the conditions.
+ * The table contains Status, organization, Agent pool and Description of the agent created.
+ */
+
 const stopClick = (e) => {
   e.stopPropagation();
   e.preventDefault();
@@ -138,7 +145,6 @@ function AgentTable(props) {
   const [infoAlert, setInfoAlert] = useState("");
   const [successAlert, setSuccessAlert] = useState("");
   const [openSecondarySidebar, setOpenSecondarySidebar] = useState(false);
-  const [currentPage, setCurrentPage] = useState(1);
   const [pageSize, setPageSize] = useState(
     checkForTernary(
       localStorage.getItem("per_page_value"),
@@ -157,7 +163,7 @@ function AgentTable(props) {
   }, [warningAlert, successAlert]);
 
   const getAgents = useCallback(
-    (setLoading, pageSizeLimit, removefilter = true) => {
+    (setLoading) => {
       setFetchingData(setLoading === false ? false : true);
       fetchAgents()
       .then((res) => {
@@ -370,9 +376,6 @@ function AgentTable(props) {
           keyField="id" // *** this is for the checkbox to appear.
           columns={allColumns}
           selectable={true}
-          onPageChange={(pageNumber) => {
-            setCurrentPage(pageNumber + 1);
-          }}
           onRowClick={handleSecondarySidebar}
           getSelected={(agentsData) => {
             console.table("Agents selected for deletion: ", agentsData);

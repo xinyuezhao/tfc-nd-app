@@ -9,6 +9,12 @@ import {
 } from "blueprint-react";
 import './CiscoObjectPicker.scss';
 
+/**
+ * CreateAgentWoToken component lets the user to create an agent
+ * when the user has chosen not to add the authentication token in the initial setup.
+ * The user have to input the agent token every time a new agent is created.
+ */
+
 function Agent(props) {
   const {
     screenActions,

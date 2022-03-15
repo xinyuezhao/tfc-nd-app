@@ -118,7 +118,7 @@ function AuthenticationToken(props) {
 
   return (
     <DetailScreen
-    className="bg-color-gray"
+      className="bg-color-gray"
       onAction={handleAuthTokenScreenOnAction}
       title={"Connector for Terraform - Setup"}
       applyButtonLabel={"Save"}

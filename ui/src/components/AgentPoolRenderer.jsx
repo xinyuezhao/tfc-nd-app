@@ -5,6 +5,10 @@ import {
   CardBody
 } from "blueprint-react";
 
+/**
+ * AgentPoolRenderer component gives user the details on the selected agent pool.
+ */
+
 function PoolDetailRenderer(props) {
   const {
     item
