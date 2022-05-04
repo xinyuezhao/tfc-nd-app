@@ -532,11 +532,15 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 	errors := make([]error, 0)
 	usage, errUsage := QueryOrgUsage(org)
 	if errUsage != nil {
-		errors = append(errors, errUsage)
+		// errors = append(errors, errUsage)
+		err := fmt.Errorf("error from QueryOrgUsage in func NewOrganization")
+		return core.NewError(err, errUsage)
 	}
 	subscription, errSub := QueryOrgSubscription(org)
 	if errSub != nil {
-		errors = append(errors, errSub)
+		// errors = append(errors, errSub)
+		err := fmt.Errorf("error from QueryOrgSubscription in func NewOrganization")
+		return core.NewError(err, errSub)
 	}
 	errors = append(errors, newOrg.SpecMutable().SetName(org.Name),
 		newOrg.SpecMutable().SetEmail(org.Email),
