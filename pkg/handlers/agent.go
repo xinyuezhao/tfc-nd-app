@@ -3,6 +3,7 @@ package handlers
 import (
 	"context"
 	"fmt"
+	"regexp"
 	"time"
 
 	"golang.cisco.com/argo/pkg/core"
@@ -79,6 +80,13 @@ func AgentValidator(ctx context.Context, event mo.Validation) error {
 	if empty != "" {
 		err := core.NewError(fmt.Errorf("agent %s can't be blank", empty))
 		return err
+	}
+	featureDeploymentName := fmt.Sprintf("feature-%s-%s", conf.FeatureName, name)
+	re := regexp.MustCompile("^[a-z0-9]([-a-z0-9]*[a-z0-9])?$")
+	match := re.MatchString(featureDeploymentName)
+	if !match {
+		matchErr := core.NewError(fmt.Errorf("agent name must consist of lower case alphanumeric characters or '-', start with an alphabetic character, and end with an alphanumeric character"))
+		return matchErr
 	}
 	return nil
 }
