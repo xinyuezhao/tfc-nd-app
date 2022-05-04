@@ -91,8 +91,8 @@ credentials: generate
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))
 docker-images: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v0.1.5 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v0.1.3 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag organizationmgr:v0.1.6 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v0.1.4 .
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v0.1.3 .
 	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v0.1.3 .
 # 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v0.1.3 .
@@ -105,7 +105,7 @@ docker-nap: bundle services
 #	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.3 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v0.1.5 agentmgr:v0.1.3 agentpoolmgr:v0.1.3 credentialsmgr:v0.1.3 hashicorp/tfc-agent:1.0.2 containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.6  | gzip > images.tar.gz
+	docker save organizationmgr:v0.1.6 agentmgr:v0.1.4 agentpoolmgr:v0.1.3 credentialsmgr:v0.1.3 hashicorp/tfc-agent:1.0.2 containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.6  | gzip > images.tar.gz
 
 docker-push: docker-nap
 	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.3
