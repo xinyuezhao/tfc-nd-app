@@ -74,14 +74,12 @@ func AgentValidator(ctx context.Context, event mo.Validation) error {
 	token := agent.Spec().Token()
 	organization := agent.Spec().Organization()
 	agentPool := agent.Spec().Agentpool()
-	if agentPool == "" || organization == "" {
-		if token == "" {
-			fmt.Printf("must have token or agentPool and organization")
-		}
-	} else {
-		if token != "" {
-			fmt.Printf("only token or agentPool and organization needed")
-		}
+	if token == "" && (agentPool == "" || organization == "") {
+		err := core.NewError(fmt.Errorf("user token OR agentPool and organization required"))
+		return err
+	} else if token != "" && agentPool != "" && organization != "" {
+		err := core.NewError(fmt.Errorf("either user token OR agentPool and organization required"))
+		return err
 	}
 	empty := ""
 	if name == "" {
