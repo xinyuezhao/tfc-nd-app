@@ -71,6 +71,18 @@ func AgentValidator(ctx context.Context, event mo.Validation) error {
 	agent := event.Resource().(terraformv1.Agent)
 	desc := agent.Spec().Description()
 	name := agent.Spec().Name()
+	token := agent.Spec().Token()
+	organization := agent.Spec().Organization()
+	agentPool := agent.Spec().Agentpool()
+	if agentPool == "" || organization == "" {
+		if token == "" {
+			fmt.Printf("must have token or agentPool and organization")
+		}
+	} else {
+		if token != "" {
+			fmt.Printf("only token or agentPool and organization needed")
+		}
+	}
 	empty := ""
 	if name == "" {
 		empty = "name"
