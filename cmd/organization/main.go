@@ -34,8 +34,6 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 		orgObject := terraformv1.OrganizationFactory()
 		err := conf.NewOrganization(org, orgObject)
 		if err != nil {
-			// er := fmt.Errorf("error from newOrganizaton")
-			// return nil, http.StatusInternalServerError, core.NewError(er, err)
 			continue
 		}
 		organizationList = append(organizationList, orgObject)
