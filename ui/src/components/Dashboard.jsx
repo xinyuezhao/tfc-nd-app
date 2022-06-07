@@ -209,7 +209,7 @@ function Dashboard() {
                         <div className="base-padding flex-fill flex-center-vertical">
                           <Charts.DonutChart
                             key='donut-active-agents'
-                            centerContentTitle={'Agents'}
+                            centerContentTitle={'Applies'}
                             data={totalAppliesChartData}
                             centerContent={sumTotalApplies}
                             size={Charts.DonutChart.MEDIUM}
