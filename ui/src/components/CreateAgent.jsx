@@ -7,6 +7,7 @@ import {
   useScreenActions,
   LABELS,
   Modal,
+  Loader,
 } from "blueprint-react";
 import _ from 'lodash';
 import PoolDetailRenderer from './AgentPoolRenderer';
@@ -39,7 +40,7 @@ function Agent(props) {
   const [agentPool, setAgentPool] = useState({});
   const [organization, setOrganization] = useState({});
   const [isOpen, setIsOpen] = useState(true);
-
+  const [fetchingData, setFetchingData] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [agentPools, setAgentPools] = useState([]);
 
@@ -100,16 +101,20 @@ function Agent(props) {
     setAgentPool(item);
   }, []);
 
-  useEffect(() => {
+  useEffect(
+    (setLoading) => {
+      setFetchingData(setLoading === false ? false : true);
     fetchOrganizations()
       .then((res) => {
         const orgResult = res.data;
         const organizationData =  _.orderBy(orgResult).map((item) => (item.spec));
         setOrganizations(organizationData);
+        setFetchingData(false);
         console.info("Successfully fetched organization(s).")
       })
       .catch(error => {
         console.error("Failed to fetch organization(s) from backend organization service.", error);
+        setFetchingData(false);
     });
   }, []);
 
@@ -165,17 +170,21 @@ function Agent(props) {
                 <label className="input-label">
                   <span className="input-label-text" required>Organization</span>
                 </label>
+                {/* {fetchingData ? <Loader message="Loading Organizations" /> */}
+                {/* :  */}
                 <ObjectPicker required
-                  data={formatedOrganizationData}
-                  multiSelect={false}
-                  filterBy={(item, str) => item.name.indexOf(str) !== -1}
-                  labelSuffix={'Organizations'}
-                  buttonLabel="Select"
-                  value={organization}
-                  onSelect={handleOrgSelect}
-                  detailItemRenderer={OrgDetailRenderer}
-                  idBy='id'
-                />
+                    loading={fetchingData}  //  using this will run loader inside select org but will still the message no org available (default react msg)
+                    data={formatedOrganizationData}
+                    multiSelect={false}
+                    filterBy={(item, str) => item.name.indexOf(str) !== -1}
+                    labelSuffix={'Organizations'}
+                    buttonLabel="Select"
+                    value={organization}
+                    onSelect={handleOrgSelect}
+                    detailItemRenderer={OrgDetailRenderer}
+                    idBy='id'
+                  />
+                {/* } */}
               </div>
             </div>
             <div className="form-group no-padding-bottom">
