@@ -7,7 +7,6 @@ import {
   useScreenActions,
   LABELS,
   Modal,
-  Loader,
 } from "blueprint-react";
 import _ from 'lodash';
 import PoolDetailRenderer from './AgentPoolRenderer';
@@ -170,10 +169,8 @@ function Agent(props) {
                 <label className="input-label">
                   <span className="input-label-text" required>Organization</span>
                 </label>
-                {/* {fetchingData ? <Loader message="Loading Organizations" /> */}
-                {/* :  */}
                 <ObjectPicker required
-                    loading={fetchingData}  //  using this will run loader inside select org but will still the message no org available (default react msg)
+                    loading={fetchingData}
                     data={formatedOrganizationData}
                     multiSelect={false}
                     filterBy={(item, str) => item.name.indexOf(str) !== -1}

@@ -16,7 +16,6 @@ import {
   Loader
 } from "blueprint-react";
 import {
-  fetchAgents,
   deleteAgent,
   createAgent,
 } from "../service/api_service";
@@ -41,6 +40,9 @@ const stopClick = (e) => {
 function AgentTable(props) {
   const {
     authConfig,
+    agents,
+    refreshAgents,
+    fetchingData,
   } = props;
 
   const statuses = {
@@ -57,6 +59,23 @@ function AgentTable(props) {
   }
 
   const allColumns = [
+    // {
+    //   id: "selection",
+    //     // The header can use the table's getToggleAllRowsSelectedProps method
+    //     // to render a checkbox
+    //     Header: ({ getToggleAllRowsSelectedProps }) => (
+    //       <div>
+    //         <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
+    //       </div>
+    //     ),
+    //     // The cell can use the individual row's getToggleRowSelectedProps method
+    //     // to the render a checkbox
+    //     Cell: ({ row }) => (
+    //       <div>
+    //         <input type="checkbox" {...row.getToggleRowSelectedProps()} />
+    //       </div>
+    //     )
+    // },
     {
       id: "Status",
       Header: "Status",
@@ -138,8 +157,6 @@ function AgentTable(props) {
 
   const [selectedAgents, setSelectedAgents] = useState([]);
   const [showConfirm, setShowConfirm] = useState(false);
-  const [fetchingData, setFetchingData] = useState(false);
-  const [agents, setAgents] = useState(null);
   const [viewSecondarySidebarData, setViewSecondarySidebarData] = useState({});
   const [warningAlert, setWarningAlert] = useState("");
   const [infoAlert, setInfoAlert] = useState("");
@@ -162,26 +179,6 @@ function AgentTable(props) {
     }
   }, [warningAlert, successAlert]);
 
-  const getAgents = useCallback(
-    (setLoading) => {
-      setFetchingData(setLoading === false ? false : true);
-      fetchAgents()
-      .then((res) => {
-        setAgents(res.data);
-        setFetchingData(false);
-        console.info("Fetch agent(s) from backend agent service.")
-      })
-      .catch((error) => {
-        console.error("Failed to fetch agent(s) from backend agent service.", error);
-        error.response?.data?.detail?.message &&
-          setWarningAlert(error.response.data?.detail?.message);
-        setFetchingData(false);
-      });
-    },
-    []
-  );
-  useEffect(getAgents, [getAgents]);
-
   function openDeleteConfirm() {
     setShowConfirm(true);
   }
@@ -193,7 +190,7 @@ function AgentTable(props) {
       (agentsData) => deleteAgent(agentsData.name)
     )).then(() => {
         setSuccessAlert("Deleted Agent(s) Successfully");
-        getAgents();
+        refreshAgents();
       })
       .catch((error) => {
         console.error("Failed to delete the agent(s).", error);
@@ -210,7 +207,7 @@ function AgentTable(props) {
       .then((res) => {
         setInfoAlert("");
         setSuccessAlert("Created Agent Successfully", res);
-        getAgents();
+        refreshAgents();
       })
       .catch((error) => {
         console.error("Failed to create agent.", error);
@@ -219,7 +216,7 @@ function AgentTable(props) {
         error.response?.data?.detail?.detail &&
           setWarningAlert(error.response?.data?.detail?.detail);
       });
-  },[getAgents]);
+  },[refreshAgents]);
 
   const handleOpenAgent = useCallback(
     (data) => {
@@ -320,7 +317,7 @@ function AgentTable(props) {
               <IconButton
                 size={IconButton.SIZE.SMALL}
                 icon={IconButton.ICON.REFRESH}
-                onClick={getAgents}
+                onClick={refreshAgents}
               />
             </div>
           </div>
@@ -373,7 +370,7 @@ function AgentTable(props) {
             />,
           ]}
           data={TableData}
-          keyField="id" // *** this is for the checkbox to appear.
+          // keyField="id" // *** this is for the checkbox to appear in every row.
           columns={allColumns}
           selectable={true}
           onRowClick={handleSecondarySidebar}

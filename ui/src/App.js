@@ -18,6 +18,8 @@ import "./App.css";
 import {
   fetchCredentials,
   fetchVersion,
+  fetchAgents,
+  fetchOrganizations,
 } from "./service/api_service";
 
 export const pathPrefix = "/appcenter/cisco/terraform/ui";
@@ -31,10 +33,19 @@ function App() {
   const [showAbout, setShowAbout] = useState(false);
   const [authConfig, setAuthConfig] = useState("");
   const [version, setVersion] = useState([]);
-
+  // create state for org and agents
+  // const [agentConfig, setagentConfig] = useState("");
+  const [agents, setAgents] = useState(null);
+  const [orgData, setOrgData] = useState([]);
+  const [fetchingData, setFetchingData] = useState(false);
+  const [infoAlert, setInfoAlert] = useState("");
+  const [warningAlert, setWarningAlert] = useState("");
+  
+// 38-48 for org and agents
   const getAuthConfig = useCallback(() => {
       fetchCredentials()
       .then((res) => {
+        console.log("AUTH CONFIG IS ", res.data.spec);
         setAuthConfig(res.data.spec);
         console.info("Successfully fetched Authentication token from backend credential API.")
       })
@@ -45,6 +56,39 @@ function App() {
     []
   );
   useEffect(getAuthConfig, [getAuthConfig]);
+
+
+  const getAgents = useCallback(
+    (setLoading) => {
+      setFetchingData(setLoading === false ? false : true);
+      fetchAgents()
+      .then((res) => {
+        setAgents(res.data);
+        setFetchingData(false);
+        console.info("Fetch agent(s) from backend agent service.")
+      })
+      .catch((error) => {
+        console.error("Failed to fetch agent(s) from backend agent service.", error);
+        error.response?.data?.detail?.message &&
+          setWarningAlert(error.response.data?.detail?.message);
+        setFetchingData(false);
+      });
+    },
+    []
+  );
+  useEffect(getAgents, [getAgents]);
+
+  const getOrganizations = useCallback(() => {
+    fetchOrganizations()
+      .then((res) => {
+        setOrgData(res.data);
+        console.info("Successfully fetched organization(s).",)
+      })
+      .catch(error => {
+        console.error("Failed to fetch organization(s) from backend organization service.", error);
+    });
+  }, []);
+  useEffect(getOrganizations, [getOrganizations]);
 
   const getVersion = useCallback(() => {
     fetchVersion()
@@ -65,7 +109,7 @@ function App() {
   },[]);
   useEffect(getVersion, [getVersion]);
 
-  let dashboardComponent = DashboardWoToken;
+  let dashboardComponent = <DashboardWoToken agents={agents} refreshAgents={getAgents}/>;
 
   if(!authConfig){
     return(
@@ -74,7 +118,7 @@ function App() {
       </div>
     )
   } else if (authConfig.tokenExist) {
-      dashboardComponent = Dashboard;
+      dashboardComponent =  <Dashboard agents={agents} refreshAgents={getAgents} orgData={orgData} refreshOrgnizations={getOrganizations}/>;
   }
 
   return (
@@ -86,24 +130,25 @@ function App() {
             <div id="main-content" className="content-fluid relative textarea bg-color-gray">
               <AppSidebar />
                 {!authConfig.configured
-                  ? <AuthenticationToken authConfig={authConfig} refreshAuthConfig={getAuthConfig}/>
+                  ? <AuthenticationToken authConfig={authConfig} refreshAuthConfig={getAuthConfig}  refreshAgents={getAgents}/>
                 : (
                   <main className="main-con">
-                    <Header setShowAbout={setShowAbout} authConfig={authConfig} refreshAuthConfig={getAuthConfig}/>
+                    <Header setShowAbout={setShowAbout} authConfig={authConfig} refreshAuthConfig={getAuthConfig}  refreshAgents={getAgents}/>
                     <div>
                       <div className="container-fluid no-margin">
+                        {/* pass refreshOrg and refreshAgents in the below routes (refresh when close for auth) */}
                         <Switch>
                           <Route
                             exact
                             path={pathPrefix + "/agents"}
-                            render={() => <AgentTable authConfig={authConfig} />}
+                            render={() => <AgentTable authConfig={authConfig}  agents={agents} refreshAgents={getAgents} fetchingData={fetchingData}/>}
                           />
                           <Route
                             exact
                             path={pathPrefix + "/"}
-                            component={dashboardComponent}
+                            render={() => dashboardComponent}
                           />
-                          <Redirect exact from="*" to={pathPrefix} />
+                          <Redirect exact from="*" to={pathPrefix}/>
                         </Switch>
                       </div>
                     </div>

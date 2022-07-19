@@ -5,9 +5,6 @@ import { Button,
   IconButton
 } from "blueprint-react";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
-import {
-  fetchAgents,
-} from "../service/api_service";
 
 /**
  * DashboardWoToken component gives user the summary on the agents.
@@ -15,23 +12,11 @@ import {
  * or displays a create agent button if there are no existing agents.
 */
 
-function DashboardWoToken() {
-
-  const [agentsData, setAgentsData] = useState(null);
-
-  const getAgents = useCallback(() => {
-      fetchAgents()
-      .then((res) => {
-        setAgentsData(res.data);
-        console.info("Successfully fetched agent(s).", res.data)
-      })
-      .catch((error) => {
-        console.error("Failed to fetch agent(s) from from backend agent service.",error)
-      });
-    },
-    []
-  );
-  useEffect(getAgents, [getAgents]);
+function DashboardWoToken(props) {
+  const {
+    agents,
+    refreshAgents,
+  } = props;
 
   const colorByStatus = {
     Running: '#6ebe4a',
@@ -59,8 +44,8 @@ function DashboardWoToken() {
     Failed: 0,
   };
 
-  if(agentsData !== null){
-    agentsData.forEach((agent) => {
+  if(agents !== null){
+    agents.forEach((agent) => {
       ndCreatedAgentsStatusData[agent.spec.status] += 1;
     })
   }
@@ -88,8 +73,8 @@ function DashboardWoToken() {
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
                   onClick={() => {
-                    setAgentsData(null)
-                    getAgents()
+                    // setAgentsData(null)
+                    refreshAgents()
                   }}
                 />
               </div>
@@ -99,17 +84,17 @@ function DashboardWoToken() {
                   <div className="section max-width">
                     <div className="panel panel--fluid panel--loose base-margin-bottom">
                       <h4 className="subtitle text-bold" >ND Created Agents Status</h4>
-                      { agentsData === null ?
+                      { agents === null ?
                         <div className="base-padding flex-fill flex-center">
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
                       :
-                        agentsData.length > 0 ?
+                        agents.length > 0 ?
                         <div className="row base-padding-top base-padding-bottom flex-center">
                           <Charts.DonutChart key={'donut-nd-created-agents'}
                             centerContentTitle={'Agents'}
                             data={ndCreatedAgentsChartData}
-                            centerContent={agentsData.length}
+                            centerContent={agents.length}
                             size={Charts.DonutChart.MEDIUM}
                             colors={colors}
                           />

@@ -22,8 +22,8 @@ function AuthenticationToken(props) {
     screenActions,
     authConfig,
     refreshAuthConfig,
+    refreshAgents,
   } = props;
-
 
   let defaultUserToken = "";
   let defaultSelectedToken = true;
@@ -68,11 +68,11 @@ function AuthenticationToken(props) {
       });
   }, [refreshAuthConfig]);
 
-
   const handleAuthTokenScreenOnAction = useCallback(() => {
     handleCreateCredentials(userToken);
+    refreshAgents();
     screenActions.closeScreen("authentication-token");
-  }, [userToken, screenActions, handleCreateCredentials]);
+  }, [userToken, screenActions, handleCreateCredentials, refreshAgents]);
 
   let cards = [
     {

@@ -17,6 +17,7 @@ function Header(props) {
     setShowAbout,
     authConfig,
     refreshAuthConfig,
+    refreshAgents,
   } = props;
 
   const actions = useScreenActions();
@@ -30,6 +31,7 @@ function Header(props) {
           screenId: "authentication-token",
           authConfig: authConfig,
           refreshAuthConfig: refreshAuthConfig,
+          refreshAgents: refreshAgents,
         });
       }
     },

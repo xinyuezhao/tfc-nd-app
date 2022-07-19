@@ -5,10 +5,6 @@ import { Button,
   IconButton,
 } from "blueprint-react";
 import emptyImage from "blueprint-react/assets/images/empty-raining.svg";
-import {
-  fetchOrganizations,
-  fetchAgents,
-} from "../service/api_service";
 import OrganizationDashboardWidget from "./OrganizationDashboardWidget";
 
 /**
@@ -19,36 +15,13 @@ import OrganizationDashboardWidget from "./OrganizationDashboardWidget";
  * Organization info -> Active Agents, Concurrent Run Limit, Average Applies Per Month, Active Admin Users.
  */
 
-function Dashboard() {
-  const [agentsData, setAgentsData] = useState(null);
-  const [orgData, setOrgData] = useState([]);
-
-  const getOrganizations = useCallback(() => {
-    fetchOrganizations()
-      .then((res) => {
-        setOrgData(res.data);
-        console.info("Successfully fetched organization(s).",)
-      })
-      .catch(error => {
-        console.error("Failed to fetch organization(s) from backend organization service.", error);
-    });
-  }, []);
-
-  const getAgents = useCallback(() => {
-      fetchAgents()
-      .then((res) => {
-        setAgentsData(res.data);
-        console.info("Successfully fetched agent(s).",)
-      })
-      .catch((error) => {
-        console.error("Failed to fetch agent(s) from backend agent service.",error)
-      });
-    },
-    []
-  );
-
-  useEffect(getOrganizations, [getOrganizations]);
-  useEffect(getAgents, [getAgents]);
+function Dashboard(props) {
+  const {
+    agents,
+    refreshAgents,
+    orgData,
+    refreshOrgnizations,
+  } = props;
 
   const OrganizationDashboardWidgets = orgData.map((org) => {
     return <OrganizationDashboardWidget
@@ -91,8 +64,8 @@ function Dashboard() {
     Failed: 0,
   };
 
-  if(agentsData !== null){
-    agentsData.forEach((agent) => {
+  if(agents !== null){
+    agents.forEach((agent) => {
       ndCreatedAgentsStatusData[agent.spec.status] += 1;
     })
   }
@@ -134,10 +107,10 @@ function Dashboard() {
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
                   onClick={() => {
-                    setAgentsData(null)
-                    setOrgData([])
-                    getAgents();
-                    getOrganizations();
+                    // setAgentsData(null)
+                    // setOrgData([])
+                    refreshAgents();
+                    refreshOrgnizations();
                   }}
                 />
               </div>
@@ -148,18 +121,18 @@ function Dashboard() {
                   <div className="section no-padding-bottom flex flex-fill">
                     <div className="panel panel--loose  base-margin-bottom flex flex-column flex-fill">
                       <h4 className="subtitle text-bold" >ND Created Agents Status</h4>
-                      { agentsData === null ?
+                      { agents === null ?
                         <div className="base-padding flex-fill flex-center">
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
                       :
-                        agentsData.length > 0 ?
+                        agents.length > 0 ?
                         <div className="base-padding dbl-margin-left">
                           <Charts.DonutChart
                             key={'donut-nd-created-agents'}
                             centerContentTitle={'Agents'}
                             data={ndCreatedAgentsChartData}
-                            centerContent={agentsData.length}
+                            centerContent={agents.length}
                             size={Charts.DonutChart.MEDIUM}
                             colors={colors}
                           />
@@ -184,7 +157,7 @@ function Dashboard() {
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
                       :
-                        <div className="base-padding flex-fill flex-center-vertical">
+                        <div className="base-padding">
                           <Charts.DonutChart
                             key='donut-active-workspaces'
                             centerContentTitle={'Workspaces'}
@@ -206,7 +179,7 @@ function Dashboard() {
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
                       :
-                        <div className="base-padding flex-fill flex-center-vertical">
+                        <div className="base-padding">
                           <Charts.DonutChart
                             key='donut-active-agents'
                             centerContentTitle={'Applies'}
