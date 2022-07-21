@@ -62,23 +62,6 @@ function AgentTable(props) {
   }
 
   const allColumns = [
-    // {
-    //   id: "selection",
-    //     // The header can use the table's getToggleAllRowsSelectedProps method
-    //     // to render a checkbox
-    //     Header: ({ getToggleAllRowsSelectedProps }) => (
-    //       <div>
-    //         <input type="checkbox" {...getToggleAllRowsSelectedProps()} />
-    //       </div>
-    //     ),
-    //     // The cell can use the individual row's getToggleRowSelectedProps method
-    //     // to the render a checkbox
-    //     Cell: ({ row }) => (
-    //       <div>
-    //         <input type="checkbox" {...row.getToggleRowSelectedProps()} />
-    //       </div>
-    //     )
-    // },
     {
       id: "Status",
       Header: "Status",
@@ -95,7 +78,7 @@ function AgentTable(props) {
       )},
     },
     {
-      id: "Agent Name",
+      id: "AgentName",
       Header: "Agent Name",
       sortable: true,
       accessor: "name",
@@ -103,7 +86,7 @@ function AgentTable(props) {
       tooltips: true,
     },
     {
-      id: "Agent Pool",
+      id: "AgentPool",
       Header: "Agent pool",
       accessor: "agentpool",
       sortable: true,
@@ -379,7 +362,7 @@ function AgentTable(props) {
             />,
           ]}
           data={TableData}
-          // keyField="id" // *** this is for the checkbox to appear in every row.
+          keyField="id" // *** this is for the checkbox to appear in every row.
           columns={allColumns}
           selectable={true}
           onRowClick={handleSecondarySidebar}

@@ -200,3 +200,9 @@ html {
 .cui .modal__body .card .card__body .form-group {
   padding-bottom: 10px
 }
+
+.panel {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
