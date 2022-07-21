@@ -21,6 +21,8 @@ function Dashboard(props) {
     refreshAgents,
     orgData,
     refreshOrgnizations,
+    fetchingOrgData,
+    fetchingAgentData,
   } = props;
 
   const OrganizationDashboardWidgets = orgData.map((org) => {
@@ -107,8 +109,6 @@ function Dashboard(props) {
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
                   onClick={() => {
-                    // setAgentsData(null)
-                    // setOrgData([])
                     refreshAgents();
                     refreshOrgnizations();
                   }}
@@ -121,13 +121,13 @@ function Dashboard(props) {
                   <div className="section no-padding-bottom flex flex-fill">
                     <div className="panel panel--loose  base-margin-bottom flex flex-column flex-fill">
                       <h4 className="subtitle text-bold" >ND Created Agents Status</h4>
-                      { agents === null ?
+                      { agents === null || fetchingAgentData ?
                         <div className="base-padding flex-fill flex-center">
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
                       :
                         agents.length > 0 ?
-                        <div className="base-padding dbl-margin-left">
+                        <div className="base-padding">
                           <Charts.DonutChart
                             key={'donut-nd-created-agents'}
                             centerContentTitle={'Agents'}
@@ -152,9 +152,9 @@ function Dashboard(props) {
                   <div className="section no-padding-bottom flex flex-fill">
                     <div className="panel panel--loose  base-margin-bottom flex flex-column flex-fill">
                       <h4 className="subtitle text-bold">Active Workspaces</h4>
-                      {orgData.length === 0 ?
+                      {orgData.length === 0 || fetchingOrgData ?
                         <div className="base-padding flex-fill flex-center">
-                          <Loader theme={Loader.THEME.LIGHT_GRAY} />
+                          <Loader theme={Loader.THEME.LIGHT_GRAY}/>
                         </div>
                       :
                         <div className="base-padding">
@@ -174,7 +174,7 @@ function Dashboard(props) {
                   <div className="section no-padding-bottom flex flex-fill">
                     <div className="panel panel--loose base-margin-bottom flex flex-column flex-fill">
                       <h4 className="subtitle text-bold">Total Applies</h4>
-                      {orgData.length === 0 ?
+                      {orgData.length === 0 || fetchingOrgData ?
                         <div className="base-padding flex-fill flex-center">
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
@@ -193,7 +193,7 @@ function Dashboard(props) {
                   </div>
                 </div>
               </div>
-              {orgData.length === 0 ?
+              {orgData.length === 0 || fetchingOrgData ?
                 <div className="base-padding"><Loader theme={Loader.THEME.LIGHT_GRAY} /></div>
               :OrganizationDashboardWidgets}
             </div>

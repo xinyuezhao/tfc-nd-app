@@ -37,7 +37,8 @@ function App() {
   // const [agentConfig, setagentConfig] = useState("");
   const [agents, setAgents] = useState(null);
   const [orgData, setOrgData] = useState([]);
-  const [fetchingData, setFetchingData] = useState(false);
+  const [fetchingAgentData, setFetchingAgentData] = useState(false);
+  const [fetchingOrgData, setFetchingOrgData] = useState(false);
   const [infoAlert, setInfoAlert] = useState("");
   const [warningAlert, setWarningAlert] = useState("");
   
@@ -45,7 +46,6 @@ function App() {
   const getAuthConfig = useCallback(() => {
       fetchCredentials()
       .then((res) => {
-        console.log("AUTH CONFIG IS ", res.data.spec);
         setAuthConfig(res.data.spec);
         console.info("Successfully fetched Authentication token from backend credential API.")
       })
@@ -60,33 +60,39 @@ function App() {
 
   const getAgents = useCallback(
     (setLoading) => {
-      setFetchingData(setLoading === false ? false : true);
+      setFetchingAgentData(setLoading === false ? false : true);
       fetchAgents()
       .then((res) => {
         setAgents(res.data);
-        setFetchingData(false);
+        setFetchingAgentData(false);
         console.info("Fetch agent(s) from backend agent service.")
       })
       .catch((error) => {
         console.error("Failed to fetch agent(s) from backend agent service.", error);
         error.response?.data?.detail?.message &&
           setWarningAlert(error.response.data?.detail?.message);
-        setFetchingData(false);
+        setFetchingAgentData(false);
       });
     },
     []
   );
   useEffect(getAgents, [getAgents]);
 
-  const getOrganizations = useCallback(() => {
-    fetchOrganizations()
-      .then((res) => {
-        setOrgData(res.data);
-        console.info("Successfully fetched organization(s).",)
-      })
-      .catch(error => {
-        console.error("Failed to fetch organization(s) from backend organization service.", error);
-    });
+  const getOrganizations = useCallback(
+    (setLoading) => {
+      setFetchingOrgData(setLoading === false ? false : true);
+      fetchOrganizations()
+        .then((res) => {
+          setOrgData(res.data);
+          setFetchingOrgData(false);
+          console.info("Successfully fetched organization(s).",)
+        })
+        .catch(error => {
+          console.error("Failed to fetch organization(s) from backend organization service.", error);
+          error.response?.data?.detail?.message &&
+            setWarningAlert(error.response.data?.detail?.message);
+          setFetchingOrgData(false);
+      });
   }, []);
   useEffect(getOrganizations, [getOrganizations]);
 
@@ -109,7 +115,7 @@ function App() {
   },[]);
   useEffect(getVersion, [getVersion]);
 
-  let dashboardComponent = <DashboardWoToken agents={agents} refreshAgents={getAgents}/>;
+  let dashboardComponent = <DashboardWoToken agents={agents} refreshAgents={getAgents} fetchingAgentData={fetchingAgentData}/>;
 
   if(!authConfig){
     return(
@@ -118,7 +124,14 @@ function App() {
       </div>
     )
   } else if (authConfig.tokenExist) {
-      dashboardComponent =  <Dashboard agents={agents} refreshAgents={getAgents} orgData={orgData} refreshOrgnizations={getOrganizations}/>;
+      dashboardComponent = <Dashboard 
+        agents={agents}
+        refreshAgents={getAgents}
+        orgData={orgData}
+        refreshOrgnizations={getOrganizations}
+        fetchingOrgData={fetchingOrgData}
+        fetchingAgentData={fetchingAgentData}
+      />;
   }
 
   return (
@@ -141,7 +154,16 @@ function App() {
                           <Route
                             exact
                             path={pathPrefix + "/agents"}
-                            render={() => <AgentTable authConfig={authConfig}  agents={agents} refreshAgents={getAgents} fetchingData={fetchingData}/>}
+                            render={
+                              () => <AgentTable 
+                                authConfig={authConfig} 
+                                agents={agents}
+                                refreshAgents={getAgents}
+                                fetchingAgentData={fetchingAgentData}
+                                orgData={orgData}
+                                refreshOrgnizations={getOrganizations}
+                                fetchingOrgData={fetchingOrgData}
+                              />}
                           />
                           <Route
                             exact

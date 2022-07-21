@@ -13,10 +13,7 @@ import PoolDetailRenderer from './AgentPoolRenderer';
 import OrgDetailRenderer from './OrganizationRenderer';
 import CreateNewAgentPool from './CreateNewAgentPool';
 import './CiscoObjectPicker.scss';
-import {
-  fetchOrganizations,
-  fetchAgentPools,
-} from "../service/api_service";
+import { fetchAgentPools } from "../service/api_service";
 
 /**
  * CreateAgent component lets the user to create an agent
@@ -30,6 +27,9 @@ function Agent(props) {
     screenActions,
     title,
     createAgent,
+    orgData,
+    refreshOrgnizations,
+    fetchingOrgData,
   } = props;
 
   const action = useScreenActions();
@@ -39,7 +39,6 @@ function Agent(props) {
   const [agentPool, setAgentPool] = useState({});
   const [organization, setOrganization] = useState({});
   const [isOpen, setIsOpen] = useState(true);
-  const [fetchingData, setFetchingData] = useState(false);
   const [organizations, setOrganizations] = useState([]);
   const [agentPools, setAgentPools] = useState([]);
 
@@ -100,22 +99,13 @@ function Agent(props) {
     setAgentPool(item);
   }, []);
 
-  useEffect(
-    (setLoading) => {
-      setFetchingData(setLoading === false ? false : true);
-    fetchOrganizations()
-      .then((res) => {
-        const orgResult = res.data;
-        const organizationData =  _.orderBy(orgResult).map((item) => (item.spec));
-        setOrganizations(organizationData);
-        setFetchingData(false);
-        console.info("Successfully fetched organization(s).")
-      })
-      .catch(error => {
-        console.error("Failed to fetch organization(s) from backend organization service.", error);
-        setFetchingData(false);
-    });
-  }, []);
+  useEffect(() => {
+      if (orgData === []){
+        refreshOrgnizations();
+      }
+      const organizationData =  _.orderBy(orgData).map((item) => (item.spec));
+      setOrganizations(organizationData);
+  }, [orgData, refreshOrgnizations]);
 
   const formatedOrganizationData = organizations.map((org) => ({
     name: org.Name,
@@ -170,7 +160,7 @@ function Agent(props) {
                   <span className="input-label-text" required>Organization</span>
                 </label>
                 <ObjectPicker required
-                    loading={fetchingData}
+                    loading={fetchingOrgData}
                     data={formatedOrganizationData}
                     multiSelect={false}
                     filterBy={(item, str) => item.name.indexOf(str) !== -1}

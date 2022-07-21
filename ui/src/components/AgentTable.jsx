@@ -42,7 +42,10 @@ function AgentTable(props) {
     authConfig,
     agents,
     refreshAgents,
-    fetchingData,
+    fetchingAgentData,
+    orgData,
+    refreshOrgnizations,
+    fetchingOrgData,
   } = props;
 
   const statuses = {
@@ -231,12 +234,18 @@ function AgentTable(props) {
         screenId: "create-agent-modal",
         agent: data,
         createAgent: handleCreateAgent,
+        orgData: orgData,
+        refreshOrgnizations: refreshOrgnizations,
+        fetchingOrgData: fetchingOrgData,
       });
     },
     [
       action,
       handleCreateAgent,
       authConfig,
+      orgData,
+      refreshOrgnizations,
+      fetchingOrgData,
     ]
   );
 
@@ -357,7 +366,7 @@ function AgentTable(props) {
             }
           </div>
           : <FilterableTable
-          loading={fetchingData}
+          loading={fetchingAgentData}
           tools={[
             <Dropdown
               key={"dropdown-tool-key-2"}

@@ -16,6 +16,7 @@ function DashboardWoToken(props) {
   const {
     agents,
     refreshAgents,
+    fetchingAgentData,
   } = props;
 
   const colorByStatus = {
@@ -73,7 +74,6 @@ function DashboardWoToken(props) {
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
                   onClick={() => {
-                    // setAgentsData(null)
                     refreshAgents()
                   }}
                 />
@@ -84,7 +84,7 @@ function DashboardWoToken(props) {
                   <div className="section max-width">
                     <div className="panel panel--fluid panel--loose base-margin-bottom">
                       <h4 className="subtitle text-bold" >ND Created Agents Status</h4>
-                      { agents === null ?
+                      { agents === null  || fetchingAgentData ?
                         <div className="base-padding flex-fill flex-center">
                           <Loader theme={Loader.THEME.LIGHT_GRAY} />
                         </div>
