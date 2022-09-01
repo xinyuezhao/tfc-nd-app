@@ -135,52 +135,41 @@ function App() {
   }
 
   return (
-    <div>
       <ErrorBoundary>
         <ScreenManager>
+        <AppSidebar />
+        <Header setShowAbout={setShowAbout} authConfig={authConfig} refreshAuthConfig={getAuthConfig}  refreshAgents={getAgents}/>
           <About show={showAbout} version={version} onClose={() => setShowAbout(false)}/>
-          <div id="content-container">
-            <div id="main-content" className="content-fluid relative textarea bg-color-gray">
-              <AppSidebar />
+            <main className="bg-color-gray main-margin-top">
                 {!authConfig.configured
                   ? <AuthenticationToken authConfig={authConfig} refreshAuthConfig={getAuthConfig}  refreshAgents={getAgents}/>
                 : (
-                  <main className="main-con">
-                    <Header setShowAbout={setShowAbout} authConfig={authConfig} refreshAuthConfig={getAuthConfig}  refreshAgents={getAgents}/>
-                    <div>
-                      <div className="container-fluid no-margin">
-                        {/* pass refreshOrg and refreshAgents in the below routes (refresh when close for auth) */}
-                        <Switch>
-                          <Route
-                            exact
-                            path={pathPrefix + "/agents"}
-                            render={
-                              () => <AgentTable 
-                                authConfig={authConfig} 
-                                agents={agents}
-                                refreshAgents={getAgents}
-                                fetchingAgentData={fetchingAgentData}
-                                orgData={orgData}
-                                refreshOrgnizations={getOrganizations}
-                                fetchingOrgData={fetchingOrgData}
-                              />}
-                          />
-                          <Route
-                            exact
-                            path={pathPrefix + "/"}
-                            render={() => dashboardComponent}
-                          />
-                          <Redirect exact from="*" to={pathPrefix}/>
-                        </Switch>
-                      </div>
-                    </div>
-              </main>
+                  <Switch>
+                    <Route
+                      exact
+                      path={pathPrefix + "/agents"}
+                      render={
+                        () => <AgentTable 
+                          authConfig={authConfig} 
+                          agents={agents}
+                          refreshAgents={getAgents}
+                          fetchingAgentData={fetchingAgentData}
+                          orgData={orgData}
+                          refreshOrgnizations={getOrganizations}
+                          fetchingOrgData={fetchingOrgData}
+                        />}
+                    />
+                    <Route
+                      exact
+                      path={pathPrefix + "/"}
+                      render={() => dashboardComponent}
+                    />
+                    <Redirect exact from="*" to={pathPrefix}/>
+                  </Switch>
               )}
-            </div>
-          </div>
+            </main>
         </ScreenManager>
       </ErrorBoundary>
-    </div>
   );
 }
 

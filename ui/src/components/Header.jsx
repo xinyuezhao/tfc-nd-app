@@ -42,10 +42,10 @@ function Header(props) {
   ];
 
   return (
-    <header className="header header--compressed" >
+    <header className="header header--compressed">
       <div className="header-bar container">
         <div className="header-bar__main">
-          <div className="right-menu-icons pull-right no-margin-right qtr-padding-top qtr-margin-top" >
+          <div className="right-menu-icons pull-right no-margin-right no-padding-right qtr-padding-top qtr-margin-top" >
             <Dropdown
               type={Dropdown.TYPE.BUTTON}
               size={Dropdown.SIZE.SMALL}

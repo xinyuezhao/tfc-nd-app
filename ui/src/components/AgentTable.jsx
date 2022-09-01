@@ -305,7 +305,7 @@ function AgentTable(props) {
         <div className="col-xl-12">
           <div className="base-padding-left base-padding-right base-padding-top flex justify-content-sm-between">
             <h1 className="page-title ">Agents</h1>
-            <div>
+            <div className="refresh-icon-margin">
               <IconButton
                 size={IconButton.SIZE.SMALL}
                 icon={IconButton.ICON.REFRESH}

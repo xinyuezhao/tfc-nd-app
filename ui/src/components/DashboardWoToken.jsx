@@ -69,7 +69,7 @@ function DashboardWoToken(props) {
           <div className="section">
             <div className="base-padding-left base-padding-right flex justify-content-sm-between">
               <h1 className="page-title">Overview</h1>
-              <div>
+              <div className="refresh-icon-margin">
                 <IconButton
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}

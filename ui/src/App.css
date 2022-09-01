@@ -115,9 +115,9 @@ html {
   width: 195px !important;
 }
 
-.main-con > .header {
+/* .main-con > .header {
   background: #005073 !important;
-}
+} */
 
 .hidden {
   display: none !important;
@@ -206,3 +206,29 @@ html {
   text-overflow: ellipsis;
 }
 
+#plugin-header {
+  position: fixed !important;
+  width: 101%;
+  z-index: 500;
+
+}
+.header {
+  background: #005073 !important;
+  position: fixed;
+  left: 0;
+  top: 54px;
+  width: 100%;
+}
+
+.cui .sidebar {
+  position: fixed;
+  top: 54px;
+}
+
+.main-margin-top {
+  margin-top: 100px !important;
+}
+
+.refresh-icon-margin{
+  margin-right: 19px;
+}

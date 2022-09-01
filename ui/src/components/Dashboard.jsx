@@ -98,13 +98,13 @@ function Dashboard(props) {
   const sumTotalApplies = totalAppliesChartData.reduce((total, org) => total + org.value, 0);
 
   return (
-    <div className="background-container">
+    <div className="background-container data-page">
       <div className="row">
         <div className="col-xl-12">
           <div className="section">
             <div className="base-padding-left base-padding-right flex justify-content-sm-between">
               <h1 className="page-title">Overview</h1>
-              <div>
+              <div className="refresh-icon-margin">
                 <IconButton
                   size={IconButton.SIZE.SMALL}
                   icon={IconButton.ICON.REFRESH}
