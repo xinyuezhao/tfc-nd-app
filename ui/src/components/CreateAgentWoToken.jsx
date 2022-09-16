@@ -5,7 +5,7 @@ import {
   Card,
   InfoAlert,
   LABELS,
-  Modal,
+  DangerAlert
 } from "blueprint-react";
 import './CiscoObjectPicker.scss';
 
@@ -20,12 +20,14 @@ function Agent(props) {
     screenActions,
     title,
     createAgent,
+    refreshAgents,
   } = props;
 
   const [agentName, setAgentName] = useState("");
   const [description, setDescription] = useState("");
   const [agentToken, setAgentToken] = useState("");
   const [isOpen, setIsOpen] = useState(true);
+  const [warningAlert, setWarningAlert] = useState("");
 
   const updateDetails = useCallback(() => {
     let payload = {
@@ -35,20 +37,28 @@ function Agent(props) {
         token: agentToken,
       }
     }
-    createAgent(payload);
+    createAgent(payload)
+    .then((response) => {
+      console.log("CREATE AGENT ", + response.status)
+        refreshAgents();
+        console.log("CREATE AGENT ", + response.status)
+        screenActions.closeScreen("create-agent-modal");
+      },
+      ({response = {}}) => {
+        const {data = {}} = response;
+        const {errors = []} = data;
+        const [msg = "Unknow Error"] = errors;
+        console.log("CREATE AGENT ERROR", msg)
+        setWarningAlert(msg);
+      });
   }, [
     agentName,
     description,
     createAgent,
+    refreshAgents,
     agentToken,
+    screenActions
   ]);
-
-  const handleCreateAgentWoToken = useCallback((sourceId) => {
-    if(sourceId === Modal.BUTTON_IDS.APPLY) {
-      updateDetails();
-      screenActions.closeScreen("create-agent-modal");
-    }
-  }, [updateDetails, screenActions]);
 
   const onClose = () => {
     setIsOpen(false);
@@ -60,10 +70,12 @@ function Agent(props) {
     applyButtonProps = {};
   }
 
+  const show = warningAlert ? (<DangerAlert>{warningAlert}</DangerAlert>) : null;
+
   return (
     <DetailScreen
       title={title}
-      onAction={handleCreateAgentWoToken}
+      onAction={updateDetails}
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Save"}
@@ -72,6 +84,7 @@ function Agent(props) {
     >
       <div className="col-xl-10 offset-xl-1">
         <h5 className="base-padding-bottom">General</h5>
+        {show}
         <Card className="no-padding-top base-padding-left base-padding-right base-padding-bottom">
           <InfoAlert
             children= {<div>To generate a Terraform Cloud Agent Token to associate with this agent you will
@@ -98,7 +111,7 @@ function Agent(props) {
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
-            <Input required=""
+            <Input
               required
               classes={{root:'no-padding-bottom'}}
               label="Agent Token"

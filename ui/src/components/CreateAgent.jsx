@@ -1,4 +1,4 @@
-import React, { useCallback, useState, useEffect } from "react";
+import React, { useCallback, useState, useEffect, log } from "react";
 import {
   DetailScreen,
   Input,
@@ -6,7 +6,7 @@ import {
   ObjectPicker,
   useScreenActions,
   LABELS,
-  Modal,
+  DangerAlert
 } from "blueprint-react";
 import _ from 'lodash';
 import PoolDetailRenderer from './AgentPoolRenderer';
@@ -27,6 +27,7 @@ function Agent(props) {
     screenActions,
     title,
     createAgent,
+    refreshAgents,
     orgData,
     refreshOrgnizations,
     fetchingOrgData,
@@ -41,8 +42,7 @@ function Agent(props) {
   const [isOpen, setIsOpen] = useState(true);
   const [organizations, setOrganizations] = useState([]);
   const [agentPools, setAgentPools] = useState([]);
-
-
+  const [warningAlert, setWarningAlert] = useState("");
 
   const updateDetails = useCallback(() => {
     let payload = {
@@ -53,22 +53,30 @@ function Agent(props) {
         organization: organization.name,
       }
     }
-      createAgent(payload);
+
+    createAgent(payload)
+    .then((response) => {
+      console.log("CREATE AGENT ", + response.status)
+        refreshAgents();
+        console.log("CREATE AGENT ", + response.status)
+        screenActions.closeScreen("create-agent-modal");
+      },
+      ({response = {}}) => {
+        const {data = {}} = response;
+        const {errors = []} = data;
+        const [msg = "Unknow Error"] = errors;
+        console.log("CREATE AGENT ERROR", msg)
+        setWarningAlert(msg);
+      });
   }, [
     agentName,
     description,
     createAgent,
+    refreshAgents,
     agentPool,
     organization,
+    screenActions
   ]);
-
-  const handleCreateAgent = (sourceId) => {
-    if(sourceId === Modal.BUTTON_IDS.APPLY)
-    {
-      updateDetails();
-      screenActions.closeScreen("create-agent-modal"); // screenId
-    }
-  };
 
   const onClose = () => {
     setIsOpen(false);
@@ -127,11 +135,12 @@ function Agent(props) {
     applyButtonProps = {};
   }
 
+  const show = warningAlert ? (<DangerAlert>{warningAlert}</DangerAlert>) : null;
 
   return (
     <DetailScreen
       title={title}
-      onAction={handleCreateAgent}
+      onAction={updateDetails}
       onClose={onClose}
       cancelButtonLabel={LABELS.cancel}
       applyButtonLabel={"Save"}
@@ -140,6 +149,7 @@ function Agent(props) {
     >
       <div className="col-xl-10 offset-xl-1">
         <h5 className="base-padding-bottom">General</h5>
+        {show}
         <Card className="no-padding-top base-padding-left base-padding-right base-padding-bottom">
           <form onSubmit={(proxy, evt) => proxy.preventDefault()}>
             <Input

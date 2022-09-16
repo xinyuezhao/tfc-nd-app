@@ -190,18 +190,21 @@ function AgentTable(props) {
   const handleCreateAgent = useCallback((payload) => {
     setInfoAlert("Creating Agent");
     createAgent(payload)
-      .then((res) => {
+    .then((response) => {
         setInfoAlert("");
-        setSuccessAlert("Created Agent Successfully", res);
+        setSuccessAlert("Created Agent Successfully", response.data);
         refreshAgents();
-      })
-      .catch((error) => {
-        console.error("Failed to create agent.", error);
-        setInfoAlert("");
-        setSuccessAlert("");
-        error.response?.data?.detail?.detail &&
-          setWarningAlert(error.response?.data?.detail?.detail);
-      });
+        console.log("CREATE AGENT ", + response.status)
+      }
+      ,
+      ({response = {}}) => {
+        const {data = {}} = response;
+        const {errors = []} = data;
+        const [msg = "Unknow Error"] = errors;
+        console.log("CREATE AGENT ERROR", msg)
+        setWarningAlert(msg);
+      }
+      );
   },[refreshAgents]);
 
   const handleOpenAgent = useCallback(
@@ -216,7 +219,8 @@ function AgentTable(props) {
         title: title,
         screenId: "create-agent-modal",
         agent: data,
-        createAgent: handleCreateAgent,
+        createAgent,
+        refreshAgents,
         orgData: orgData,
         refreshOrgnizations: refreshOrgnizations,
         fetchingOrgData: fetchingOrgData,
@@ -224,11 +228,11 @@ function AgentTable(props) {
     },
     [
       action,
-      handleCreateAgent,
       authConfig,
       orgData,
       refreshOrgnizations,
       fetchingOrgData,
+      refreshAgents,
     ]
   );
 
