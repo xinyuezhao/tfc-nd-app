@@ -15,6 +15,14 @@ spec:
     metadata:
       labels:
         app: feature
+      annotations:
+        k8s.v1.cni.cncf.io/networks: '[
+          {
+            "name": "oob",
+            "namespace": "default",
+            "default-route": ["0.0.0.0"]
+          }
+        ]'
     spec:
       restartPolicy: Always
       containers:

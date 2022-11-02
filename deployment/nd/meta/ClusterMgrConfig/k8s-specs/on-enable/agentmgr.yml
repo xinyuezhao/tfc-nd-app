@@ -30,6 +30,14 @@ spec:
     metadata:
       labels:
         service: agentmgr
+      annotations:
+        k8s.v1.cni.cncf.io/networks: '[
+          {
+            "name": "oob",
+            "namespace": "default",
+            "default-route": ["0.0.0.0"]
+          }
+        ]'
     spec:
       restartPolicy: Always
       volumes:
@@ -51,7 +59,7 @@ spec:
             path: cacerts.crt
       containers:
       - name: agentmgr
-        image: agentmgr:v0.1.4
+        image: agentmgr:v0.1.5
         imagePullPolicy: IfNotPresent
         volumeMounts:
         - name: kafka-certs
