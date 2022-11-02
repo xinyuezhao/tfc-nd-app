@@ -105,7 +105,7 @@ docker-nap: bundle services
 #	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.3 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v0.1.6 agentmgr:v0.1.5 agentpoolmgr:v0.1.3 credentialsmgr:v0.1.3 hashicorp/tfc-agent:1.0.2 containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.7  | gzip > images.tar.gz
+	docker save organizationmgr:v0.1.6 agentmgr:v0.1.5 agentpoolmgr:v0.1.3 credentialsmgr:v0.1.3 hashicorp/tfc-agent:1.4.0 containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.7  | gzip > images.tar.gz
 
 docker-push: docker-nap
 	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.3

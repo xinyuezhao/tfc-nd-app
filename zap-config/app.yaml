@@ -38,6 +38,6 @@ images:
 # - layer: docker://containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.0.1
 #   name: tf-nd-app-ui
 #   tag: v0.0.1
-- layer: docker://hashicorp/tfc-agent:1.0.2
+- layer: docker://hashicorp/tfc-agent:1.4.0
   name: tf-nd-app-tfc-agent
-  tag: 1.0.2
+  tag: 1.4.0

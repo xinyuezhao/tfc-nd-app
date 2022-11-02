@@ -19,7 +19,7 @@ spec:
       restartPolicy: Always
       containers:
       - name: tf-nd-app-tfc-agent
-        image: tf-nd-app-tfc-agent:1.0.2
+        image: tf-nd-app-tfc-agent:1.4.0
         imagePullPolicy: IfNotPresent
         env:
           - name: TFC_AGENT_TOKEN
