@@ -1,10 +1,41 @@
-FROM nginx:latest
-# RUN apk --no-cache add curl
-# WORKDIR /security/
-# COPY pkg/bundle/client.cer.pem .
-# COPY pkg/bundle/client.key.pem .
-# COPY pkg/bundle/server.cer.pem .
-# WORKDIR /bin/
-# COPY ./organization .
-# COPY services/organization/config.json .
-# CMD ./organization --config.file ./config.json
+# Stage 1
+# building react application
+# FROM node:14.2.0-alpine3.11 as react-build
+FROM node:14.17-buster-slim as react-build
+
+# set working directory
+WORKDIR /ui-build
+
+# copy .npmrc and package.json to /ui-build directory
+COPY .npmrc .
+COPY package.json .
+
+#RUN apt-get update
+RUN npm install --quiet node-gyp -g
+
+# RUN npm install -g node-pre-gyp
+RUN npm install
+
+# copy all content from current directory to workdir
+COPY services/ui/ .
+
+# build the project for production
+RUN npm run build
+
+# RUN apk del native-deps
+
+# Stage 2
+# set up production environment
+FROM nginx:1.21.6-alpine
+
+# expose port 80 to the outer world
+EXPOSE 3000
+
+# copy the angular build folder to the root of nginx
+RUN rm /usr/share/nginx/html/index.html
+COPY --from=react-build /ui-build/build /usr/share/nginx/html/appcenter/cisco/terraform/ui
+RUN ln -s /usr/share/nginx/html/appcenter/cisco/terraform/ui/index.html /usr/share/nginx/html/index.html
+COPY ./temp/nginx.conf /etc/nginx/nginx.conf
+
+# start nginx
+ENTRYPOINT [ "nginx","-g","daemon off;"]

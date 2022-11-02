@@ -39,8 +39,6 @@ clean:
 	rm -rf $(BINDIR)
 	rm -rf $(CURDIR)/gen
 	rm -rf build
-	rm -f node
-	rm -f cluster
 	rm -f organization
 	rm -f agent
 	rm -f agentpool
@@ -51,19 +49,7 @@ clean:
 	rm -f images.tar.gzdocker
 	rm -rf .build
 	rm -f cisco-terraform-v*.aci
-	rm -f polaris_image.tar.gz
-	rm -f rigel_image.tar.gz
 	rm -rf imported*
-	rm -rf deployment/intersight/onprem/argo-build
-	rm -rf deployment/docker/intersight/clustermgr/config.json
-	rm -rf deployment/docker/intersight/clustermgr/rigel
-	rm -rf deployment/docker/intersight/nodemgr/config.json
-	rm -rf deployment/docker/intersight/nodemgr/polaris
-	rm -rf deployment/intersight/onprem/polaris/.build/
-	rm -rf deployment/intersight/onprem/rigel/.build/
-	rm -rf polaris-onprem.tar.gz
-	rm -rf rigel-onprem.tar.gz
-
 
 bundle:
 	wget http://aci-artifactory-001.insieme.local:8081/artifactory/argo-artifactory/argo-bundle.tar.gz
@@ -95,24 +81,24 @@ docker-images: bundle services
 	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v0.1.5 .
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v0.1.3 .
 	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v0.1.3 .
-# 	docker build --file deployment/docker/ui/Dockerfile --tag ui:v0.1.3 .
+	docker build --file deployment/docker/ui/Dockerfile --tag ui:v0.1.8 .
 
 docker-nap: bundle services
-	docker build --file deployment/docker/organizationmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.3 .
-	docker build --file deployment/docker/agentmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.1.3 .
+	docker build --file deployment/docker/organizationmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.6 .
+	docker build --file deployment/docker/agentmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.1.5 .
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.1.3 .
 	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.1.3 .
-#	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.3 .
+	docker build --file deployment/docker/ui/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.8 .
 
 docker-archive: docker-images
-	docker save organizationmgr:v0.1.6 agentmgr:v0.1.5 agentpoolmgr:v0.1.3 credentialsmgr:v0.1.3 hashicorp/tfc-agent:1.4.0 containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.7  | gzip > images.tar.gz
+	docker save organizationmgr:v0.1.6 agentmgr:v0.1.5 agentpoolmgr:v0.1.3 credentialsmgr:v0.1.3 hashicorp/tfc-agent:1.4.0 ui:v0.1.8  | gzip > images.tar.gz
 
 docker-push: docker-nap
-	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.3
-	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.1.3
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.6
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentmgr:v0.1.5
 	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-agentpoolmgr:v0.1.3
 	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-credentialsmgr:v0.1.3
-#	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.3
+	docker push containers.cisco.com/cn-ecosystem/tf-nd-app-ui:v0.1.8
 
 zap-build:
 	./zap-dynamic build src:zap-config/ oci:build --sign-pki-key ~/.ssh/dcappcenter_staging_key.pem --author dev
