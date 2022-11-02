@@ -6,5 +6,5 @@ COPY pkg/bundle/client.key.pem .
 COPY pkg/bundle/server.cer.pem .
 WORKDIR /bin/
 COPY ./agent .
-COPY cmd/agent/config.json .
+COPY services/agent/config.json .
 CMD ./agent --config.file ./config.json

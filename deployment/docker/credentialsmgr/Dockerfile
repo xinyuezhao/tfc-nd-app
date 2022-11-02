@@ -6,5 +6,5 @@ COPY pkg/bundle/client.key.pem .
 COPY pkg/bundle/server.cer.pem .
 WORKDIR /bin/
 COPY ./credentials .
-COPY cmd/credentials/config.json .
+COPY services/credentials/config.json .
 CMD ./credentials --config.file ./config.json

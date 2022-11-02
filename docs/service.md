@@ -1,13 +1,13 @@
 ## Steps to add a new ND service
 
-### Create a new directory under "cmd" for the new service
+### Create a new directory under "services" for the new service
 
-ex: cmd/inventory
+ex: services/inventory
 
 ### Add basic files that creates the ARGO app and initializes it
 
-* Use the examples in cmd/nodemgr/main.go as a guide
-* Copy the logger file "log.go" from cmd/nodemgr if you want to use the zapr logger else use stdr logger and skip the log.go file
+* Use the examples in services/nodemgr/main.go as a guide
+* Copy the logger file "log.go" from services/nodemgr if you want to use the zapr logger else use stdr logger and skip the log.go file
 
 ### Edit the top level makefile to build the service. Add a new target for the service and add the target to the list of services to be built
 
@@ -18,10 +18,10 @@ index 8151618..e510113 100644
 +++ b/Makefile
 @@ -77,10 +77,13 @@ clusterd: argo
  node: argo
-        go build ./cmd/node
+        go build ./services/node
 
 +inventory: argo
-+       go build ./cmd/inventory
++       go build ./services/inventory
 +
 
 -services: clusterd node
@@ -62,12 +62,12 @@ deployment/nd/meta/ClusterMgrConfig/k8s-specs/on-enable/nodemgr.yml
 
 ```
 @@ -91,6 +94,10 @@ docker-images:
-        cp cmd/cluster/config.json deployment/docker/clustermgr
+        cp services/cluster/config.json deployment/docker/clustermgr
         docker build --tag clustermgr:v1 deployment/docker/clustermgr
 
 -       docker save nodemgr:v1 clustermgr:v1 | gzip > images.tar.gz
 +       cp fabric deployment/docker/inventory
-+       cp cmd/fabric/config.json deployment/docker/inventory
++       cp services/fabric/config.json deployment/docker/inventory
 +       docker build --tag inventory:v1 deployment/docker/inventory
 +
 +       docker save nodemgr:v1 clustermgr:v1 inventory:v1 | gzip > images.tar.gz

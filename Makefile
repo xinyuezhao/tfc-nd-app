@@ -77,16 +77,16 @@ sanity: go test -c ./testsuite
 services: organization agent agentpool credentials
 
 organization: generate
-	go build ./cmd/organization
+	go build ./services/organization
 
 agent: generate
-	go build ./cmd/agent
+	go build ./services/agent
 
 agentpool: generate
-	go build ./cmd/agentpool
+	go build ./services/agentpool
 
 credentials: generate
-	go build ./cmd/credentials
+	go build ./services/credentials
 
 # This is used for Nexus Dashboard and kind.
 $(eval $(call build-for-linux,docker-images))

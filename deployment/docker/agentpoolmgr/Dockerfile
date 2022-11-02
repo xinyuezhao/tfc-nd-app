@@ -6,5 +6,5 @@ COPY pkg/bundle/client.key.pem .
 COPY pkg/bundle/server.cer.pem .
 WORKDIR /bin/
 COPY ./agentpool .
-COPY cmd/agentpool/config.json .
+COPY services/agentpool/config.json .
 CMD ./agentpool --config.file ./config.json

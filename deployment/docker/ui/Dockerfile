@@ -6,5 +6,5 @@ FROM nginx:latest
 # COPY pkg/bundle/server.cer.pem .
 # WORKDIR /bin/
 # COPY ./organization .
-# COPY cmd/organization/config.json .
+# COPY services/organization/config.json .
 # CMD ./organization --config.file ./config.json
