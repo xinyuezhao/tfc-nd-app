@@ -77,7 +77,7 @@ func AgentValidator(ctx context.Context, event mo.Validation) error {
 	if token == "" && (agentPool == "" || organization == "") {
 		err := core.NewError(fmt.Errorf("user token OR agentPool and organization required"))
 		return err
-	} else if token != "" && agentPool != "" && organization != "" {
+	} else if token != "" && agentPool != "" && organization != "" && event.Operation() == model.CREATE {
 		err := core.NewError(fmt.Errorf("either user token OR agentPool and organization required"))
 		return err
 	}
