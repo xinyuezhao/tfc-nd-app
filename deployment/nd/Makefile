@@ -2,7 +2,7 @@ C3_BASE_VERSION=0.3.15
 REPO_DIR=$(shell git rev-parse --show-toplevel)
 DEPL_DIR=${REPO_DIR}/deployment/nd
 BUILD_DIR=${REPO_DIR}/.build
-VERSION=v0.1.6
+VERSION=v0.1.8
 
 all: package
 
