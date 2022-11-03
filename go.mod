@@ -3,8 +3,11 @@ module golang.cisco.com/terraform
 go 1.15
 
 replace golang.cisco.com/argo => aci-github.cisco.com/atom/argo v0.12.0
+
 replace golang.cisco.com/spartan => aci-github.cisco.com/atom/spartan v0.12.0
+
 replace golang.cisco.com/argo-galaxies/nexusdashboard => aci-github.cisco.com/atom/argo-galaxies/nexusdashboard v0.12.0
+
 replace golang.cisco.com/argo-galaxies/intersight => aci-github.cisco.com/atom/argo-galaxies/intersight v0.12.0
 
 require (
@@ -12,7 +15,7 @@ require (
 	github.com/go-logr/zapr v0.4.0
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golangci/golangci-lint v1.33.0 // indirect
-	github.com/hashicorp/go-tfe v0.19.0
+	github.com/hashicorp/go-tfe v1.11.0
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/smartystreets/goconvey v1.6.4

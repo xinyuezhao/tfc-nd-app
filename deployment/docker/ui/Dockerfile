@@ -3,6 +3,9 @@
 # FROM node:14.2.0-alpine3.11 as react-build
 FROM node:14.17-buster-slim as react-build
 
+# set ENV variables
+ENV NODE_OPTIONS=--max_old_space_size=2048
+
 # set working directory
 WORKDIR /ui-build
 
@@ -17,7 +20,7 @@ RUN npm install --quiet node-gyp -g
 RUN npm install
 
 # copy all content from current directory to workdir
-COPY services/ui/ .
+COPY . .
 
 # build the project for production
 RUN npm run build

@@ -81,7 +81,7 @@ docker-images: bundle services
 	docker build --file deployment/docker/agentmgr/Dockerfile --tag agentmgr:v0.1.5 .
 	docker build --file deployment/docker/agentpoolmgr/Dockerfile --tag agentpoolmgr:v0.1.3 .
 	docker build --file deployment/docker/credentialsmgr/Dockerfile --tag credentialsmgr:v0.1.3 .
-	docker build --file deployment/docker/ui/Dockerfile --tag ui:v0.1.8 .
+	docker build --file deployment/docker/ui/Dockerfile --tag ui:v0.1.8 services/ui/
 
 docker-nap: bundle services
 	docker build --file deployment/docker/organizationmgr/Dockerfile --tag containers.cisco.com/cn-ecosystem/tf-nd-app-organizationmgr:v0.1.6 .
