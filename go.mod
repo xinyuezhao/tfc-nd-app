@@ -16,6 +16,7 @@ require (
 	github.com/gofrs/uuid v3.3.0+incompatible
 	github.com/golangci/golangci-lint v1.33.0 // indirect
 	github.com/hashicorp/go-tfe v1.11.0
+	github.com/jcmturner/gokrb5/v8 v8.4.2 // indirect
 	github.com/julienschmidt/httprouter v1.3.0
 	github.com/pkg/errors v0.9.1
 	github.com/smartystreets/goconvey v1.6.4
