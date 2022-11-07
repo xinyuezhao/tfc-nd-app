@@ -528,6 +528,14 @@ func QueryOrgProperty(org *tfe.Organization, propertyName string) (map[string]in
 	return attributes, nil
 }
 
+func ToFloat(item interface{}) float64 {
+	if item == nil {
+		return 0
+	} else {
+		return item.(float64)
+	}
+}
+
 func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) error {
 	errors := make([]error, 0)
 	usage, errUsage := QueryOrgUsage(org)
@@ -570,25 +578,25 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateSentinel(org.Permissions.CanUpdateSentinel),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetActiveAgentCount(usage["active-agent-count"].(float64)),
+			SetActiveAgentCount(ToFloat(usage["active-agent-count"])),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetAdminUserCount(usage["admin-user-count"].(float64)),
+			SetAdminUserCount(ToFloat(usage["admin-user-count"])),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetAverageAppliesPerMonth(usage["average-applies-per-month"].(float64)),
+			SetAverageAppliesPerMonth(ToFloat(usage["average-applies-per-month"])),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetConcurrencyLimitReached(usage["concurrency-limit-reached"].(float64)),
+			SetConcurrencyLimitReached(ToFloat(usage["concurrency-limit-reached"])),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetTotalApplies(usage["total-applies"].(float64)),
+			SetTotalApplies(ToFloat(usage["total-applies"])),
 		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetWorkspaceCount(usage["workspace-count"].(float64)),
+			SetWorkspaceCount(ToFloat(usage["workspace-count"])),
 		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetAgentsCeiling(subscription["agents-ceiling"].(float64)),
+			SetAgentsCeiling(ToFloat(subscription["agents-ceiling"])),
 		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetContractApplyLimit(subscription["contract-apply-limit"].(float64)),
+			SetContractApplyLimit(ToFloat(subscription["contract-apply-limit"])),
 		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetContractUserLimit(subscription["contract-user-limit"].(float64)),
+			SetContractUserLimit(ToFloat(subscription["contract-user-limit"])),
 		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetRunsCeiling(subscription["runs-ceiling"].(float64)))
+			SetRunsCeiling(ToFloat(subscription["runs-ceiling"])))
 	if err := core.NewError(errors...); err != nil {
 		return err
 	}
