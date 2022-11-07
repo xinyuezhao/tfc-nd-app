@@ -194,7 +194,7 @@ func QueryAgentPoolByName(agentPools []*tfe.AgentPool, name string) (*tfe.AgentP
 
 // Query all agentPools for an organization
 func QueryAgentPools(ctx context.Context, client *tfe.Client, name string) ([]*tfe.AgentPool, error) {
-	agentPools, err := client.AgentPools.List(ctx, name, tfe.AgentPoolListOptions{})
+	agentPools, err := client.AgentPools.List(ctx, name, &tfe.AgentPoolListOptions{})
 	if err != nil {
 		er := fmt.Errorf("error while listing agentpools")
 		return nil, core.NewError(er, err)
@@ -211,7 +211,7 @@ func CreateAgentToken(ctx context.Context, client *tfe.Client, agentPoolName, or
 		er := fmt.Errorf("error from QueryAgentPoolByName while creating agentToken")
 		return nil, "", core.NewError(er, queryErr)
 	}
-	agentToken, err := client.AgentTokens.Generate(ctx, agentPool.ID, tfe.AgentTokenGenerateOptions{Description: &desc})
+	agentToken, err := client.AgentTokens.Create(ctx, agentPool.ID, tfe.AgentTokenCreateOptions{Description: &desc})
 	if err != nil {
 		errCreateToken := fmt.Errorf("error while generating agentToken")
 		return nil, "", core.NewError(errCreateToken, err)
@@ -446,14 +446,14 @@ func CheckUserTokenExist() (bool, string, error) {
 
 func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization, error) {
 	var res []*tfe.Organization
-	orgs, err := client.Organizations.List(ctx, tfe.OrganizationListOptions{})
+	orgs, err := client.Organizations.List(ctx, &tfe.OrganizationListOptions{})
 	if err != nil {
 		er := fmt.Errorf("error while listing all orgs")
 		return nil, core.NewError(er, err)
 	}
 	// filter orgs by entitlement
 	for _, element := range orgs.Items {
-		entitlements, errors := client.Organizations.Entitlements(ctx, element.Name)
+		entitlements, errors := client.Organizations.ReadEntitlements(ctx, element.Name)
 		if errors != nil {
 			errQueryOrg := fmt.Errorf("error while filter orgs by entitlement")
 			return nil, core.NewError(errQueryOrg, errors)
