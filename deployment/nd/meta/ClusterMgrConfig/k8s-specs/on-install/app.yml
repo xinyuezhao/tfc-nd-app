@@ -20,8 +20,8 @@ spec:
     cpu:
       target:
       - resourceLabel: cpu-terraform
-        request: "1"
-        limit: "2"
+        request: "4"
+        limit: "4"
     memory:
       target:
       - resourceLabel: memory-terraform
