@@ -11,6 +11,7 @@ import (
 	"net/http/httputil"
 	"os"
 	"strings"
+	"sync"
 
 	"github.com/hashicorp/go-tfe"
 	"golang.cisco.com/argo/pkg/core"
@@ -444,25 +445,61 @@ func CheckUserTokenExist() (bool, string, error) {
 	}
 }
 
-func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]*tfe.Organization, error) {
-	var res []*tfe.Organization
+func Entitlements(ctx context.Context, client *tfe.Client, element *tfe.Organization, c chan terraformv1.Organization, wg *sync.WaitGroup) {
+	// log := core.LoggerFromContext(ctx)
+	// log.Info("check entitlement for org TEST")
+	// log.Info(fmt.Sprintf("check entitlement for org %v", element.Name))
+	defer wg.Done()
+	entitlements, errors := client.Organizations.ReadEntitlements(ctx, element.Name)
+	if errors != nil {
+		// log.Info(fmt.Sprintf("error while filter org %v by entitlement", element.Name))
+		// log.Info(errors.Error())
+		return
+	}
+	if entitlements.Agents {
+		// res = append(res, element)
+		orgObject := terraformv1.OrganizationFactory()
+		err := NewOrganization(element, orgObject)
+		if err != nil {
+			// log.Info(err.Error())
+			// log.Info(fmt.Sprintf("error while NewOrganization %v", element.Name))
+			return
+		}
+		c <- orgObject
+		return
+	}
+}
+
+func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]terraformv1.Organization, error) {
+	// var res []*tfe.Organization
 	orgs, err := client.Organizations.List(ctx, &tfe.OrganizationListOptions{})
 	if err != nil {
 		er := fmt.Errorf("error while listing all orgs")
 		return nil, core.NewError(er, err)
 	}
 	// filter orgs by entitlement
+	c := make(chan terraformv1.Organization, len(orgs.Items))
+	var wg sync.WaitGroup
+	organizationList := make([]terraformv1.Organization, 0)
 	for _, element := range orgs.Items {
-		entitlements, errors := client.Organizations.ReadEntitlements(ctx, element.Name)
-		if errors != nil {
-			errQueryOrg := fmt.Errorf("error while filter orgs by entitlement")
-			return nil, core.NewError(errQueryOrg, errors)
-		}
-		if entitlements.Agents {
-			res = append(res, element)
-		}
+		// entitlements, errors := client.Organizations.ReadEntitlements(ctx, element.Name)
+		// if errors != nil {
+		// 	errQueryOrg := fmt.Errorf("error while filter orgs by entitlement")
+		// 	return nil, core.NewError(errQueryOrg, errors)
+		// }
+		// if entitlements.Agents {
+		// 	res = append(res, element)
+		// }
+		wg.Add(1)
+		go Entitlements(ctx, client, element, c, &wg)
+		// organizationList = append(organizationList, <-c)
 	}
-	return res, nil
+	wg.Wait()
+	close(c)
+	for item := range c {
+		organizationList = append(organizationList, item)
+	}
+	return organizationList, nil
 }
 
 func QueryOrgUsage(org *tfe.Organization) (map[string]interface{}, error) {

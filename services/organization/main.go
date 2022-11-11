@@ -18,27 +18,32 @@ import (
 )
 
 func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv1.Organization, int, error) {
+	log := core.LoggerFromContext(ctx)
+	log.Info("register ListOverride for org")
 	ctxTfe, client, err := conf.ConfigTFC()
 	if err != nil {
 		er := fmt.Errorf("error from configTFC while querying organizations")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
+	log.Info("Query all organizations and filter orgs by entitlement")
 	// Query all organizations and filter orgs by entitlement
 	orgs, err := conf.QueryAllOrgs(ctxTfe, client)
+	log.Info("After query all orgs")
 	if err != nil {
 		er := fmt.Errorf("error from queryAllOrgs")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	organizationList := make([]terraformv1.Organization, 0)
-	for _, org := range orgs {
-		orgObject := terraformv1.OrganizationFactory()
-		err := conf.NewOrganization(org, orgObject)
-		if err != nil {
-			continue
-		}
-		organizationList = append(organizationList, orgObject)
-	}
-	return organizationList, http.StatusOK, nil
+	// organizationList := make([]terraformv1.Organization, 0)
+	// for _, org := range orgs {
+	// 	orgObject := terraformv1.OrganizationFactory()
+	// 	err := conf.NewOrganization(org, orgObject)
+	// 	if err != nil {
+	// 		continue
+	// 	}
+	// 	organizationList = append(organizationList, orgObject)
+	// }
+	// return organizationList, http.StatusOK, nil
+	return orgs, http.StatusOK, nil
 }
 
 func GETOverride(ctx context.Context, event *terraformv1.OrganizationDbReadEvent) (terraformv1.Organization, int, error) {
@@ -55,13 +60,18 @@ func GETOverride(ctx context.Context, event *terraformv1.OrganizationDbReadEvent
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 
+	// for _, org := range orgs {
+	// 	if org.Name == name {
+	// 		orgObject := terraformv1.OrganizationFactory()
+	// 		err := conf.NewOrganization(org, orgObject)
+	// 		if err == nil {
+	// 			return orgObject, http.StatusOK, nil
+	// 		}
+	// 	}
+	// }
 	for _, org := range orgs {
-		if org.Name == name {
-			orgObject := terraformv1.OrganizationFactory()
-			err := conf.NewOrganization(org, orgObject)
-			if err == nil {
-				return orgObject, http.StatusOK, nil
-			}
+		if org.Spec().Name() == name {
+			return org, http.StatusOK, nil
 		}
 	}
 	errMsg := utils.ErrorsNew(name + " not found")
