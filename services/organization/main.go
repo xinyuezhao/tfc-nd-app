@@ -33,16 +33,6 @@ func ListOverride(ctx context.Context, event *mo.TypeHandlerEvent) ([]terraformv
 		er := fmt.Errorf("error from queryAllOrgs")
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
-	// organizationList := make([]terraformv1.Organization, 0)
-	// for _, org := range orgs {
-	// 	orgObject := terraformv1.OrganizationFactory()
-	// 	err := conf.NewOrganization(org, orgObject)
-	// 	if err != nil {
-	// 		continue
-	// 	}
-	// 	organizationList = append(organizationList, orgObject)
-	// }
-	// return organizationList, http.StatusOK, nil
 	return orgs, http.StatusOK, nil
 }
 
@@ -60,15 +50,6 @@ func GETOverride(ctx context.Context, event *terraformv1.OrganizationDbReadEvent
 		return nil, http.StatusInternalServerError, core.NewError(er, err)
 	}
 
-	// for _, org := range orgs {
-	// 	if org.Name == name {
-	// 		orgObject := terraformv1.OrganizationFactory()
-	// 		err := conf.NewOrganization(org, orgObject)
-	// 		if err == nil {
-	// 			return orgObject, http.StatusOK, nil
-	// 		}
-	// 	}
-	// }
 	for _, org := range orgs {
 		if org.Spec().Name() == name {
 			return org, http.StatusOK, nil
