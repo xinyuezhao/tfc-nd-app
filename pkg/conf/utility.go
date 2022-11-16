@@ -457,7 +457,6 @@ func Entitlements(ctx context.Context, client *tfe.Client, element *tfe.Organiza
 		return
 	}
 	if entitlements.Agents {
-		// res = append(res, element)
 		orgObject := terraformv1.OrganizationFactory()
 		err := NewOrganization(element, orgObject)
 		if err != nil {
@@ -482,17 +481,8 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]terraformv1.Organi
 	var wg sync.WaitGroup
 	organizationList := make([]terraformv1.Organization, 0)
 	for _, element := range orgs.Items {
-		// entitlements, errors := client.Organizations.ReadEntitlements(ctx, element.Name)
-		// if errors != nil {
-		// 	errQueryOrg := fmt.Errorf("error while filter orgs by entitlement")
-		// 	return nil, core.NewError(errQueryOrg, errors)
-		// }
-		// if entitlements.Agents {
-		// 	res = append(res, element)
-		// }
 		wg.Add(1)
 		go Entitlements(ctx, client, element, c, &wg)
-		// organizationList = append(organizationList, <-c)
 	}
 	wg.Wait()
 	close(c)
@@ -502,22 +492,54 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]terraformv1.Organi
 	return organizationList, nil
 }
 
-func QueryOrgUsage(org *tfe.Organization) (map[string]interface{}, error) {
+func SetOrgUsage(org *tfe.Organization, newOrg terraformv1.Organization, c chan error, wg *sync.WaitGroup) {
+	defer wg.Done()
+	errors := make([]error, 0)
 	usage, err := QueryOrgProperty(org, "usage")
 	if err != nil {
 		errQueryUsage := fmt.Errorf("error from QueryOrgProperty in func QueryOrgUsage")
-		return nil, core.NewError(err, errQueryUsage)
+		c <- core.NewError(err, errQueryUsage)
+		return
 	}
-	return usage, nil
+	errors = append(errors, newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+		SetActiveAgentCount(ToFloat(usage["active-agent-count"])),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetAdminUserCount(ToFloat(usage["admin-user-count"])),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetAverageAppliesPerMonth(ToFloat(usage["average-applies-per-month"])),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetConcurrencyLimitReached(ToFloat(usage["concurrency-limit-reached"])),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetTotalApplies(ToFloat(usage["total-applies"])),
+		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
+			SetWorkspaceCount(ToFloat(usage["workspace-count"])))
+	if err := core.NewError(errors...); err != nil {
+		c <- err
+		return
+	}
 }
 
-func QueryOrgSubscription(org *tfe.Organization) (map[string]interface{}, error) {
+func SetOrgSubscription(org *tfe.Organization, newOrg terraformv1.Organization, c chan error, wg *sync.WaitGroup) {
+	defer wg.Done()
+	errors := make([]error, 0)
 	subscription, err := QueryOrgProperty(org, "subscription")
 	if err != nil {
 		errQuerySubscription := fmt.Errorf("error from QueryOrgProperty in func QueryOrgSubscription")
-		return nil, core.NewError(err, errQuerySubscription)
+		c <- core.NewError(err, errQuerySubscription)
+		return
 	}
-	return subscription, nil
+	errors = append(errors, newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+		SetAgentsCeiling(ToFloat(subscription["agents-ceiling"])),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetContractApplyLimit(ToFloat(subscription["contract-apply-limit"])),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetContractUserLimit(ToFloat(subscription["contract-user-limit"])),
+		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
+			SetRunsCeiling(ToFloat(subscription["runs-ceiling"])))
+	if err := core.NewError(errors...); err != nil {
+		c <- err
+		return
+	}
 }
 
 func QueryOrgProperty(org *tfe.Organization, propertyName string) (map[string]interface{}, error) {
@@ -575,15 +597,15 @@ func ToFloat(item interface{}) float64 {
 
 func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) error {
 	errors := make([]error, 0)
-	usage, errUsage := QueryOrgUsage(org)
-	if errUsage != nil {
-		err := fmt.Errorf("error from QueryOrgUsage in func NewOrganization")
-		return core.NewError(err, errUsage)
-	}
-	subscription, errSub := QueryOrgSubscription(org)
-	if errSub != nil {
-		err := fmt.Errorf("error from QueryOrgSubscription in func NewOrganization")
-		return core.NewError(err, errSub)
+	c := make(chan error, 2)
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go SetOrgUsage(org, newOrg, c, &wg)
+	go SetOrgSubscription(org, newOrg, c, &wg)
+	wg.Wait()
+	close(c)
+	for item := range c {
+		errors = append(errors, item)
 	}
 	errors = append(errors, newOrg.SpecMutable().SetName(org.Name),
 		newOrg.SpecMutable().SetEmail(org.Email),
@@ -614,26 +636,7 @@ func NewOrganization(org *tfe.Organization, newOrg terraformv1.Organization) err
 			SetCanUpdateOAuth(org.Permissions.CanUpdateOAuth),
 		newOrg.Spec().Permissions().MutableOrganizationPermissionsV1Terraform().
 			SetCanUpdateSentinel(org.Permissions.CanUpdateSentinel),
-		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetActiveAgentCount(ToFloat(usage["active-agent-count"])),
-		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetAdminUserCount(ToFloat(usage["admin-user-count"])),
-		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetAverageAppliesPerMonth(ToFloat(usage["average-applies-per-month"])),
-		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetConcurrencyLimitReached(ToFloat(usage["concurrency-limit-reached"])),
-		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetTotalApplies(ToFloat(usage["total-applies"])),
-		newOrg.Spec().Usage().MutableOrganizationUsageV1Terraform().
-			SetWorkspaceCount(ToFloat(usage["workspace-count"])),
-		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetAgentsCeiling(ToFloat(subscription["agents-ceiling"])),
-		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetContractApplyLimit(ToFloat(subscription["contract-apply-limit"])),
-		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetContractUserLimit(ToFloat(subscription["contract-user-limit"])),
-		newOrg.Spec().Subscription().MutableOrganizationSubscriptionV1Terraform().
-			SetRunsCeiling(ToFloat(subscription["runs-ceiling"])))
+	)
 	if err := core.NewError(errors...); err != nil {
 		return err
 	}
