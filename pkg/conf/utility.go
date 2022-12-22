@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"net/http/httputil"
 	"os"
+	"sort"
 	"strings"
 	"sync"
 
@@ -469,6 +470,13 @@ func Entitlements(ctx context.Context, client *tfe.Client, element *tfe.Organiza
 	}
 }
 
+func SortOrgs(organizations []terraformv1.Organization) []terraformv1.Organization {
+	sort.Slice(organizations, func(i, j int) bool {
+		return strings.Compare(organizations[i].Spec().Name(), organizations[j].Spec().Name()) <= 0
+	})
+	return organizations
+}
+
 func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]terraformv1.Organization, error) {
 	// var res []*tfe.Organization
 	orgs, err := client.Organizations.List(ctx, &tfe.OrganizationListOptions{})
@@ -489,7 +497,7 @@ func QueryAllOrgs(ctx context.Context, client *tfe.Client) ([]terraformv1.Organi
 	for item := range c {
 		organizationList = append(organizationList, item)
 	}
-	return organizationList, nil
+	return SortOrgs(organizationList), nil
 }
 
 func SetOrgUsage(org *tfe.Organization, newOrg terraformv1.Organization, c chan error, wg *sync.WaitGroup) {
